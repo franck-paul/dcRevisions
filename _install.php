@@ -2,8 +2,7 @@
 # -- BEGIN LICENSE BLOCK ----------------------------------
 # This file is part of dcRevisions, a plugin for Dotclear.
 #
-# Copyright (c) 2011 Tomtom and contributors
-# http://blog.zenstyle.fr/
+# Copyright (c) 2012 Tomtom, Franck Paul and contributors
 #
 # Licensed under the GPL version 2.0 license.
 # A copy of this license is available in LICENSE file or at
@@ -30,16 +29,16 @@ $core->blog->settings->dcrevisions->put(
 $s = new dbStruct($core->con,$core->prefix);
 
 $s->revision
-	->revision_id				('bigint',0,false)
-	->post_id					('bigint',0,false)
-	->user_id					('varchar',32,false)
-	->blog_id					('varchar',32,false)
-	->revision_dt				('timestamp',0,false,'now()')
-	->revision_tz				('varchar',128,false,"'UTC'")
-	->revision_type			('varchar',50,true,null)
-	->revision_excerpt_diff		('text',0,true,null)
+	->revision_id					('bigint',0,false)
+	->post_id						('bigint',0,false)
+	->user_id						('varchar',32,false)
+	->blog_id						('varchar',32,false)
+	->revision_dt					('timestamp',0,false,'now()')
+	->revision_tz					('varchar',128,false,"'UTC'")
+	->revision_type					('varchar',50,true,null)
+	->revision_excerpt_diff			('text',0,true,null)
 	->revision_excerpt_xhtml_diff	('text',0,true,null)
-	->revision_content_diff		('text',0,true,null)
+	->revision_content_diff			('text',0,true,null)
 	->revision_content_xhtml_diff	('text',0,true,null)
 	;
 

@@ -2,8 +2,7 @@
 # -- BEGIN LICENSE BLOCK ----------------------------------
 # This file is part of dcRevisions, a plugin for Dotclear.
 #
-# Copyright (c) 2011 Tomtom and contributors
-# http://blog.zenstyle.fr/
+# Copyright (c) 2012 Tomtom, Franck Paul and contributors
 #
 # Licensed under the GPL version 2.0 license.
 # A copy of this license is available in LICENSE file or at
@@ -12,6 +11,11 @@
 */
 #revisions-area { padding-bottom: 1em; }
 table#revisions-list { display: none; overflow: scroll; }
+table#revisions-list td.status {
+	vertical-align: top;
+	text-align: center;
+}
+
 table.preview-rev {
 	border-spacing: 0px;
 	border-collapse: separate;

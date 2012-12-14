@@ -2,8 +2,7 @@
 # -- BEGIN LICENSE BLOCK ----------------------------------
 # This file is part of dcRevisions, a plugin for Dotclear.
 #
-# Copyright (c) 2011 Tomtom and contributors
-# http://blog.zenstyle.fr/
+# Copyright (c) 2012 Tomtom, Franck Paul and contributors
 #
 # Licensed under the GPL version 2.0 license.
 # A copy of this license is available in LICENSE file or at
@@ -18,6 +17,7 @@ class dcRevisionsRestMethods
 		
 		$pid = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$rid = isset($_GET['rid']) ? $_GET['rid'] : null;
+		$type = isset($_GET['type']) ? $_GET['type'] : 'post';
 		
 		if ($pid === null) {
 			throw new Exception(__('No post ID'));
@@ -26,22 +26,20 @@ class dcRevisionsRestMethods
 			throw new Exception(__('No revision ID'));
 		}
 		
-		$p = $core->blog->getPosts(array('post_id' => $pid));
+		$p = $core->blog->getPosts(array('post_id' => $pid, 'post_type' => $type));
 		$o = array(
+			'post_excerpt' => $p->post_excerpt,
+			'post_content' => $p->post_content,
 			'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
 			'post_content_xhtml' => $p->post_content_xhtml
 		);
 		
-		$n = $core->blog->revisions->getPatch($pid,$rid);
-		unset($n['post_excerpt']);
-		unset($n['post_content']);
+		$n = $core->blog->revisions->getPatch($pid,$rid,$type);
 		
 		$rsp = new xmlTag();
-		
 		foreach ($o as $k => $v) {
 			$rsp->insertNode(self::buildNode($v,$n[$k],2,$k));
 		}
-		
 		return $rsp;
 	}
 	
@@ -86,5 +84,4 @@ class dcRevisionsRestMethods
 		return $rev;
 	}
 }
-
 ?>

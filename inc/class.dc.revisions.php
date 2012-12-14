@@ -2,8 +2,7 @@
 # -- BEGIN LICENSE BLOCK ----------------------------------
 # This file is part of dcRevisions, a plugin for Dotclear.
 #
-# Copyright (c) 2010 Tomtom and contributors
-# http://blog.zenstyle.fr/
+# Copyright (c) 2012 Tomtom and contributors
 #
 # Licensed under the GPL version 2.0 license.
 # A copy of this license is available in LICENSE file or at
@@ -59,9 +58,9 @@ class dcRevisions
 		
 		if (isset($params['post_type'])) {
 			if (is_array($params['post_type']) && !empty($params['post_type'])) {
-				$strReq .= 'AND R.revision_type '.$this->core->con->in($params['revision_type']);
+				$strReq .= 'AND R.revision_type '.$this->core->con->in($params['post_type']);
 			} elseif ($params['post_type'] != '') {
-				$strReq .= "AND R.revision_type = '".$this->core->con->escape($params['revision_type'])."' ";
+				$strReq .= "AND R.revision_type = '".$this->core->con->escape($params['post_type'])."' ";
 			}
 		}
 		
@@ -88,7 +87,7 @@ class dcRevisions
 		return $rs;
 	}
 	
-	public function addRevision($pcur,$post_id)
+	public function addRevision($pcur,$post_id,$type)
 	{
 		$rs = $this->core->con->select(
 			'SELECT MAX(revision_id) '.
@@ -96,7 +95,7 @@ class dcRevisions
 		);
 		$revision_id = $rs->f(0) + 1; 
 		
-		$rs = $this->core->blog->getPosts(array('post_id' => $post_id));
+		$rs = $this->core->blog->getPosts(array('post_id' => $post_id, 'post_type' => $type));
 		
 		$old = array(
 			'post_excerpt' => $rs->post_excerpt,
@@ -128,7 +127,7 @@ class dcRevisions
 			$rcur->blog_id = $this->core->blog->id;
 			$rcur->revision_dt = date('Y-m-d H:i:s');
 			$rcur->revision_tz = $this->core->auth->getInfo('user_tz');
-			$rcur->revision_type = $pcur->post_type;
+			$rcur->revision_type = $type;
 			$rcur->revision_excerpt_diff = $diff['post_excerpt'];
 			$rcur->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
 			$rcur->revision_content_diff = $diff['post_content'];
@@ -162,7 +161,7 @@ class dcRevisions
 		}
 	}
 	
-	public function setPatch($pid,$rid)
+	public function setPatch($pid,$rid,$type,$redir_url,$before_behaviour,$after_behaviour)
 	{
 		if (!$this->canPatch($rid)) {
 			throw new Exception(__('You are not allowed to patch this entry with this revision'));
@@ -170,9 +169,9 @@ class dcRevisions
 		
   		try
 		{
-			$patch = $this->getPatch($pid,$rid);
+			$patch = $this->getPatch($pid,$rid,$type);
 
-			$p = $this->core->blog->getPosts(array('post_id' => $pid));
+			$p = $this->core->blog->getPosts(array('post_id' => $pid, 'post_type' => $type));
 
 			$cur = $this->core->con->openCursor($this->core->prefix.'post');
 
@@ -187,21 +186,22 @@ class dcRevisions
 			$cur->post_selected = (integer) $p->post_selected;
 			$cur->post_open_comment = (integer) $p->post_open_comment;
 			$cur->post_open_tb = (integer) $p->post_open_tb;
+			$cur->post_type = $p->post_type;
 
 			$cur->post_excerpt = $patch['post_excerpt'];
 			$cur->post_excerpt_xhtml = $patch['post_excerpt_xhtml'];
 			$cur->post_content = $patch['post_content'];
 			$cur->post_content_xhtml = $patch['post_content_xhtml'];
 
-			# --BEHAVIOR-- adminBeforePostUpdate
-			$this->core->callBehavior('adminBeforePostUpdate',$cur,$pid);
+			# --BEHAVIOR-- adminBeforeXXXXUpdate
+			$this->core->callBehavior($before_behaviour,$cur,$pid);
 			
 			$this->core->auth->sudo(array($this->core->blog,'updPost'),$pid,$cur);
 			
-			# --BEHAVIOR-- adminAfterPostUpdate
-			$this->core->callBehavior('adminAfterPostUpdate',$cur,$pid);
+			# --BEHAVIOR-- adminAfterXXXXUpdate
+			$this->core->callBehavior($after_behaviour,$cur,$pid);
 			
-			http::redirect('post.php?id='.$pid.'&upd=1');
+			http::redirect(sprintf($redir_url,$pid));
 		}
 		catch (Exception $e)
 		{
@@ -209,10 +209,11 @@ class dcRevisions
 		}
 	}
 	
-	public function getPatch($pid,$rid)
+	public function getPatch($pid,$rid,$type)
 	{
 		$params = array(
-			'post_id' => $pid
+			'post_id' => $pid,
+			'post_type' => $type
 		);
 		
 		$p = $this->core->blog->getPosts($params);
@@ -243,7 +244,7 @@ class dcRevisions
 		return $patch;
 	}
 	
-	protected function canPatch($ird)
+	protected function canPatch($rid)
 	{
 		$r = $this->getRevisions(array('revision_id' => $rid));
 		

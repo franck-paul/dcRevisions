@@ -1,0 +1,54 @@
+msgid "dcRevisions"
+msgstr "Révisions"
+
+msgid "Allows entries's versionning"
+msgstr "Permet la gestion des historiques de révision des entrées"
+
+msgid "Revisions"
+msgstr "Révisions"
+
+msgid "Enable entries' versionning on this blog"
+msgstr "Active la gestion de l'historique de révision des entrées sur ce blog"
+
+msgid "Revisions:"
+msgstr "Historique des révisions :"
+
+msgid "No revision"
+msgstr "Pas de révisions"
+
+msgid "Id"
+msgstr "Numéro"
+
+msgid "Revision #%s"
+msgstr "Révision numero %s"
+
+msgid "Revision allowed"
+msgstr "Retour à cette révision autorisée"
+
+msgid "Revision blocked"
+msgstr "Retour à cette révision interdit"
+
+msgid "Apply patch"
+msgstr "Revenir à cette révision"
+
+msgid "Excerpt"
+msgstr "Extrait"
+
+msgid "Content"
+msgstr "Contenu"
+
+msgid "Current"
+msgstr "Actuel"
+
+msgid "Content identical"
+msgstr "Contenu identique"
+
+msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?"
+msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr de vouloir appliquer cette transformation sur ce billet ?"
+
+msgid "You are not allowed to patch this entry with this revision"
+msgstr "Vous n'êtes pas autorisé à modifier ce billet avec cette révision"
+
+msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
+msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr de vouloir appliquer cette transformation sur cette page ?"
+

@@ -2,7 +2,7 @@
 # -- BEGIN LICENSE BLOCK ----------------------------------
 # This file is part of dcRevisions, a plugin for Dotclear.
 #
-# Copyright (c) 2010 Tomtom and contributors
+# Copyright (c) 2012 Tomtom, Franck Paul and contributors
 # http://blog.zenstyle.fr/
 #
 # Licensed under the GPL version 2.0 license.
@@ -42,19 +42,23 @@ dotclear.viewRevisionContent = function(img,line) {
 			'services.php',{
 				f: 'getPatch',
 				pid: postId,
-				rid: revisionId
+				rid: revisionId,
+				type: dotclear.post_type
 			},
 			function(data){
 				var rsp = $(data).children('rsp')[0];
 				if(rsp.attributes[0].value == 'ok'){
-					var excerpt_nodes = $(rsp).find('post_excerpt_xhtml').children();
-					var content_nodes = $(rsp).find('post_content_xhtml').children();
+					if ($('#post_format').get(0).value != 'xhtml') {
+						var excerpt_nodes = $(rsp).find('post_excerpt_xhtml').children();
+						var content_nodes = $(rsp).find('post_content_xhtml').children();
+					} else {
+						var excerpt_nodes = $(rsp).find('post_excerpt').children();
+						var content_nodes = $(rsp).find('post_content').children();
+					}
 					if (excerpt_nodes.size() == 0 && content_nodes.size() == 0) {
 						$(td).append('<strong>' + dotclear.msg.content_identical + '</strong>');
 					}
 					else {
-						var excerpt = $(rsp).find('post_excerpt_xhtml');
-						var content = $(rsp).find('post_content_xhtml');
 						var table = '<table class="preview-rev">';
 						table += dotclear.viewRevisionRender(excerpt_nodes,dotclear.msg.excerpt,revisionId);
 						table += dotclear.viewRevisionRender(content_nodes,dotclear.msg.content,revisionId);
@@ -98,34 +102,34 @@ dotclear.viewRevisionRender = function(nodes,title,revisionId){
 			ol = nl = '&hellip;';
 		}
 		
-		var class = '';
+		var tdclass = '';
 		
 		if (name == 'skip') {
-			class = ' skip';
+			tdclass = ' skip';
 		}
 		if (name == 'context') {
-			class = ' context';
+			tdclass = ' context';
 		}
 		if (name == 'insert') {
-			class = ' insert';
+			tdclass = ' insert';
 		}
 		if (name == 'delete') {
-			class = ' delete';
+			tdclass = ' delete';
 		}
 		
 		if (name != previous && (previous == '' || previous == 'context')) {
-			class += ' first';
+			tdclass += ' first';
 		}
 		var next = nodes.size() > k+1 ? nodes.get(k+1).nodeName : '';
 		if (name != next && next != 'insert' && next != 'delete') {
-			class += ' last';
+			tdclass += ' last';
 		}
 		
 		previous = name;
 		
 		lines += '<tr><td class="minimal col-line">'+ol+
 		'</td><td class="minimal col-line">'+nl+
-		'</td><td class="'+class+'">'+content+
+		'</td><td class="'+tdclass+'">'+content+
 		'</td></tr>';
 	});
 	
