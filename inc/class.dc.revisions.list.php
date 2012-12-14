@@ -52,12 +52,13 @@ class dcRevisionsList
 		$res = '';
 		$p_img = '<img src="%1$s" alt="%2$s" title="%2$s" />';
 		$p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
+		$index = 0;
 		
 		while ($this->rs->fetch()) {
 			$res .= 
 				'<tr class="line wide'.(!$this->rs->canPatch() ? ' offline' : '').'" id="r'.$this->rs->revision_id.'">'."\n".
 				'<td class="maximal nowrap rid">'.
-					'<strong>'.sprintf(__('Revision #%s'),$this->rs->revision_id).'</strong>'.
+					'<strong>'.sprintf(__('Revision #%s'),++$index).'</strong>'.
 				"</td>\n".
 				'<td class="minimal nowrap">'.
 					$this->rs->getAuthorLink().
