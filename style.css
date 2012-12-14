@@ -1,0 +1,82 @@
+/*
+# -- BEGIN LICENSE BLOCK ----------------------------------
+# This file is part of dcRevisions, a plugin for Dotclear.
+#
+# Copyright (c) 2011 Tomtom and contributors
+# http://blog.zenstyle.fr/
+#
+# Licensed under the GPL version 2.0 license.
+# A copy of this license is available in LICENSE file or at
+# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+# -- END LICENSE BLOCK ------------------------------------
+*/
+#revisions-area { padding-bottom: 1em; }
+table#revisions-list { display: none; overflow: scroll; }
+table.preview-rev {
+	border-spacing: 0px;
+	border-collapse: separate;
+	overflow: scroll;
+}
+table.preview-rev, table.preview-rev tr, table.preview-rev th, table.preview-rev td  { border: none; }
+table.preview-rev thead {
+	border: 1px dotted #aaa;
+	background-color: #f3f3f3;
+}
+table.preview-rev tbody {
+	border: 1px dotted #aaa;
+}
+table.preview-rev thead tr.rev-header th, table.preview-rev thead tr.rev-number th {
+	border: 1px dotted #aaa;
+	text-align: center;
+}
+table.preview-rev td { font: normal 11px monospace; }
+table.preview-rev td.center { text-align: center; }
+table.preview-rev td.col-line {
+	background-color: #eceade;
+	color: #aaa;
+	border-right: 1px solid #ccc;
+	border-bottom: 1px solid #aaa;
+	border-left: 1px solid #ccc;
+	text-align: right;
+}
+/* Insert line */
+table.preview-rev td.insert {
+	background-color: #dfd;
+	border-color: #0a0;
+	border-style: solid;
+	border-width: 0 1px 0 1px;
+}
+/* Delete line */
+table.preview-rev td.delete {
+	background-color: #fdd;
+	border-color: #c00;
+	border-style: solid;
+	border-width: 0 1px 0 1px;
+}
+/* Skip line */
+table.preview-rev td.skip {
+	background-color: #F7F7F7;
+	color: #D7D7D7;
+	border-color: #D7D7D7;
+	border-style: solid;
+}
+/* Common lines */
+table.preview-rev td.first {
+	border-width: 1px 1px 0 1px;
+}
+table.preview-rev td.last {
+	border-width: 0 1px 1px 1px;
+}
+table.preview-rev td.first.last {
+	border-width: 1px;
+}
+table.preview-rev td.delete del {
+	text-decoration: none;
+	background-color: #e99;
+	padding: 0.2em 0 0.2em 0;
+}
+table.preview-rev td.insert ins {
+	text-decoration: none;
+	background-color: #9e9;
+	padding: 0.2em 0 0.2em 0;
+}
