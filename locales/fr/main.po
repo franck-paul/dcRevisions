@@ -2,34 +2,34 @@ msgid "dcRevisions"
 msgstr "Révisions"
 
 msgid "Allows entries's versionning"
-msgstr "Permet la gestion des historiques de révision des entrées"
+msgstr "Permet la gestion des historiques de modification des entrées"
 
 msgid "Revisions"
 msgstr "Révisions"
 
 msgid "Enable entries' versionning on this blog"
-msgstr "Active la gestion de l'historique de révision des entrées sur ce blog"
+msgstr "Active la gestion de l'historique de modification des entrées sur ce blog"
 
 msgid "Revisions:"
-msgstr "Historique des révisions :"
+msgstr "Historique des modifications :"
 
 msgid "No revision"
-msgstr "Pas de révisions"
+msgstr "Pas de modification"
 
 msgid "Id"
-msgstr "Numéro"
+msgstr "Modification"
 
 msgid "Revision #%s"
-msgstr "Révision numero %s"
+msgstr "No %s"
 
 msgid "Revision allowed"
-msgstr "Retour à cette révision autorisée"
+msgstr "Retour à cette version autorisée"
 
 msgid "Revision blocked"
-msgstr "Retour à cette révision interdit"
+msgstr "Retour à cette version interdit"
 
 msgid "Apply patch"
-msgstr "Revenir à cette révision"
+msgstr "Revenir à cette version"
 
 msgid "Excerpt"
 msgstr "Extrait"

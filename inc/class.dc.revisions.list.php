@@ -41,7 +41,7 @@ class dcRevisionsList
 			$res .= sprintf($html_block,$this->getLines($url));
 		}
 		else {
-			$res .= '<p style="display:none">'.__('No revision').'</p>';
+			$res .= '<p style="display:none" class="clear form-note">'.__('No revision').'</p>';
 		}
 		
 		return $res;

@@ -48,7 +48,8 @@ dotclear.viewRevisionContent = function(img,line) {
 			function(data){
 				var rsp = $(data).children('rsp')[0];
 				if(rsp.attributes[0].value == 'ok'){
-					if ($('#post_format').get(0).value != 'xhtml') {
+					var editor_mode = $('#post_format').get(0).value;
+					if (editor_mode == 'xhtml') {
 						var excerpt_nodes = $(rsp).find('post_excerpt_xhtml').children();
 						var content_nodes = $(rsp).find('post_content_xhtml').children();
 					} else {

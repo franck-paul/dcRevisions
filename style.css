@@ -9,7 +9,10 @@
 # http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 # -- END LICENSE BLOCK ------------------------------------
 */
+
 #revisions-area { padding-bottom: 1em; }
+#revisions-area p.form-note { margin-top: 0.5em; }
+
 table#revisions-list { display: none; overflow: scroll; }
 table#revisions-list td.status {
 	vertical-align: top;
