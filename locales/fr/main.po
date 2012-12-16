@@ -40,6 +40,9 @@ msgstr "Contenu"
 msgid "Current"
 msgstr "Actuel"
 
+msgid "Rev."
+msgstr "Modif."
+
 msgid "Content identical"
 msgstr "Contenu identique"
 

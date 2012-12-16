@@ -137,7 +137,7 @@ dotclear.viewRevisionRender = function(nodes,title,revisionId){
 	if (lines != '') {
 		res = '<thead><tr class="rev-header"><th colspan="3">'+title+'</th></tr>'+
 		'<tr class="rev-number"><th class="minimal nowrap">'+dotclear.msg.current+
-		'</th><th class="minimal nowrap">rev'+revisionId+
+		'</th><th class="minimal nowrap">'+dotclear.msg.revision+
 		'</th><th class="maximal"></th></tr></thead><tbody>'+
 		lines + '</tbody>';
 	}

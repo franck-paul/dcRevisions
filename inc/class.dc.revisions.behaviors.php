@@ -71,6 +71,7 @@ class dcRevisionsBehaviors
 		dcPage::jsVar('dotclear.msg.excerpt',__('Excerpt')).
 		dcPage::jsVar('dotclear.msg.content',__('Content')).
 		dcPage::jsVar('dotclear.msg.current',__('Current')).
+		dcPage::jsVar('dotclear.msg.revision',__('Rev.')).
 		dcPage::jsVar('dotclear.msg.content_identical',__('Content identical')).
 		dcPage::jsVar('dotclear.msg.confirm_apply_patch',
 			__('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?')
