@@ -19,64 +19,54 @@ table#revisions-list td.status {
 	text-align: center;
 }
 
+table.preview-rev, table.preview-rev tr, table.preview-rev th, table.preview-rev td  { 
+	border: none; 
+}
+
 table.preview-rev {
+	border: 1px solid #999;
 	border-spacing: 0px;
-	border-collapse: separate;
 	overflow: scroll;
 }
-table.preview-rev, table.preview-rev tr, table.preview-rev th, table.preview-rev td  { border: none; }
+
 table.preview-rev thead {
-	border: 1px dotted #aaa;
 	background-color: #f3f3f3;
 }
-table.preview-rev tbody {
-	border: 1px dotted #aaa;
+table.preview-rev tbody {}
+table.preview-rev thead tr.rev-number {
+	border-bottom: 1px solid #999;
 }
 table.preview-rev thead tr.rev-header th, table.preview-rev thead tr.rev-number th {
-	border: 1px dotted #aaa;
 	text-align: center;
 }
-table.preview-rev td { font: normal 11px monospace; }
+table.preview-rev td { 
+	font: 100% "Andale Mono","Courier New",monospace;
+}
 table.preview-rev td.center { text-align: center; }
 table.preview-rev td.col-line {
-	background-color: #eceade;
-	color: #aaa;
-	border-right: 1px solid #ccc;
-	border-bottom: 1px solid #aaa;
-	border-left: 1px solid #ccc;
-	text-align: right;
+	background-color: #f3f3f3;
+	color: #666;
+	text-align: center;
+}
+table.preview-rev td.context, table.preview-rev td.insert, table.preview-rev td.delete, table.preview-rev td.skip {
+	border-left: 1px solid #999;
 }
 /* Insert line */
 table.preview-rev td.insert {
 	background-color: #dfd;
-	border-color: #0a0;
-	border-style: solid;
-	border-width: 0 1px 0 1px;
 }
 /* Delete line */
 table.preview-rev td.delete {
 	background-color: #fdd;
-	border-color: #c00;
-	border-style: solid;
-	border-width: 0 1px 0 1px;
 }
 /* Skip line */
 table.preview-rev td.skip {
-	background-color: #F7F7F7;
-	color: #D7D7D7;
-	border-color: #D7D7D7;
-	border-style: solid;
+	color: #d7d7d7;
 }
 /* Common lines */
-table.preview-rev td.first {
-	border-width: 1px 1px 0 1px;
-}
-table.preview-rev td.last {
-	border-width: 0 1px 1px 1px;
-}
-table.preview-rev td.first.last {
-	border-width: 1px;
-}
+table.preview-rev td.first {}
+table.preview-rev td.last {}
+table.preview-rev td.first.last {}
 table.preview-rev td.delete del {
 	text-decoration: none;
 	background-color: #e99;
