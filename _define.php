@@ -13,7 +13,7 @@ $this->registerModule(
 		/* Name */			"dcRevisions",
 		/* Description*/		"Allows entries's versionning",
 		/* Author */			"Tomtom, Franck Paul & contributors",
-		/* Version */			'0.2',
+		/* Version */			'0.2.1',
 		/* Permissions */		'usage,contentadmin'
 );
 ?>
