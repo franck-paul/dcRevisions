@@ -9,6 +9,8 @@
 # http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 # -- END LICENSE BLOCK ------------------------------------
 
+global $__autoload;
+
 $__autoload['dcRevisions'] = dirname(__FILE__).'/inc/class.dc.revisions.php';
 $__autoload['dcRevisionsRestMethods'] = dirname(__FILE__).'/_services.php';
 $__autoload['dcRevisionsBehaviors'] = dirname(__FILE__).'/inc/class.dc.revisions.behaviors.php';
