@@ -17,11 +17,11 @@ class dcRevisionsBehaviors
 			$settings->addNameSpace('dcrevisions');
 
 			echo
-			'<fieldset><legend>'.__('Revisions').'</legend>'.
+			'<div class="fieldset"><h4>'.__('Revisions').'</h4>'.
 			'<p><label class="classic" for="dcrevisions_enable">'.
 			form::checkbox('dcrevisions_enable', 1, $settings->dcrevisions->enable).
 			__('Enable entries\' versionning on this blog').'</label><p>'.
-			'</fieldset>';
+			'</div>';
 		}
 	}
 
