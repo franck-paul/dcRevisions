@@ -1,35 +1,31 @@
-msgid "dcRevisions"
-msgstr "Révisions"
+msgid ""
+msgstr ""
+"Project-Id-Version: Dotclear 2 discreteCat module\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-09-19 16:45+0200\n"
+"PO-Revision-Date: 2012-11-05 16:54+0100\n"
+"Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
 
-msgid "Allows entries's versionning"
-msgstr "Permet la gestion des historiques de modification des entrées"
+msgid "No post ID"
+msgstr "Pas d'identifiant d'entrée"
+
+msgid "No revision ID"
+msgstr "Pas d'identifiant de révision"
 
 msgid "Revisions"
 msgstr "Révisions"
 
 msgid "Enable entries' versionning on this blog"
-msgstr "Active la gestion de l'historique de modification des entrées sur ce blog"
+msgstr "Active la gestion de l'historique de modification des entres sur ce blog"
 
 msgid "Revisions:"
 msgstr "Historique des modifications :"
-
-msgid "No revision"
-msgstr "Pas de modification"
-
-msgid "Id"
-msgstr "Modification"
-
-msgid "Revision #%s"
-msgstr "No %s"
-
-msgid "Revision allowed"
-msgstr "Retour à cette version autorisée"
-
-msgid "Revision blocked"
-msgstr "Retour à cette version interdit"
-
-msgid "Apply patch"
-msgstr "Revenir à cette version"
 
 msgid "Excerpt"
 msgstr "Extrait"
@@ -49,9 +45,33 @@ msgstr "Contenu identique"
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?"
 msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr de vouloir appliquer cette transformation sur ce billet ?"
 
-msgid "You are not allowed to patch this entry with this revision"
-msgstr "Vous n'êtes pas autorisé à modifier ce billet avec cette révision"
-
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
 msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr de vouloir appliquer cette transformation sur cette page ?"
 
+msgid "Id"
+msgstr "Modification"
+
+msgid "No revision"
+msgstr "Pas de modification"
+
+#, php-format
+msgid "Revision #%s"
+msgstr "No %s"
+
+msgid "Revision allowed"
+msgstr "Retour à cette version autorise"
+
+msgid "Revision blocked"
+msgstr "Retour à cette version interdit"
+
+msgid "Apply patch"
+msgstr "Revenir à cette version"
+
+msgid "You are not allowed to patch this entry with this revision"
+msgstr "Vous n'êtes pas autorisé modifier ce billet avec cette révision"
+
+msgid "dcRevisions"
+msgstr "Révisions"
+
+msgid "Allows entries's versionning"
+msgstr "Permet la gestion des historiques de modification des entrées"

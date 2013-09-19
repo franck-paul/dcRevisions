@@ -39,30 +39,30 @@ class dcRevisionsBehaviors
 	public static function adminPostForm($post)
 	{
 		global $core;
-		
+
 		$id = isset($post) && !$post->isEmpty() ? $post->post_id : null;
 		$page = isset($_GET['page']) ? $_GET['page'] : 1;
 		$url = sprintf('post.php?id=%1$s&amp;patch=%2$s',$id,'%s');
-		
+
 		$params = array(
 			'post_id' => $id,
 			'post_type' => 'post'
 		);
-		
+
 		$rs = $core->blog->revisions->getRevisions($params);
-		
+
 		if (is_null($id)) {
 			$rs = staticRecord::newFromArray(array());
 			$rs->core = $core;
 		}
-		
+
 		$list = new dcRevisionsList($rs);
-		
+
 		echo '<div class="area" id="revisions-area"><label>'.__('Revisions:').'</label>'.
 		$list->display($url).
 		'</div>';
 	}
-	
+
 	public static function adminPostHeaders()
 	{
 		return
@@ -86,7 +86,7 @@ class dcRevisionsBehaviors
 	public static function adminBeforePostUpdate($cur,$post_id)
 	{
 		global $core;
-		
+
 		try {
 			$core->blog->revisions->addRevision($cur,$post_id,'post');
 		} catch (Exception $e) {
@@ -97,29 +97,29 @@ class dcRevisionsBehaviors
 	public static function adminPageForm($post)
 	{
 		global $core,$redir_url;
-		
+
 		$id = isset($post) && !$post->isEmpty() ? $post->post_id : null;
 		$url = sprintf($redir_url.'&amp;id=%1$s&amp;patch=%2$s',$id,'%s');
-		
+
 		$params = array(
 			'post_id' => $id,
 			'post_type' => 'page'
 		);
-		
+
 		$rs = $core->blog->revisions->getRevisions($params);
-		
+
 		if (is_null($id)) {
 			$rs = staticRecord::newFromArray(array());
 			$rs->core = $core;
 		}
-		
+
 		$list = new dcRevisionsList($rs);
-		
+
 		echo '<div class="area" id="revisions-area"><label>'.__('Revisions:').'</label>'.
 		$list->display($url).
 		'</div>';
 	}
-	
+
 	public static function adminPageHeaders()
 	{
 		return
@@ -138,11 +138,11 @@ class dcRevisionsBehaviors
 		'<script type="text/javascript" src="index.php?pf=dcRevisions/js/_revision.js"></script>'."\n".
 		'<link rel="stylesheet" type="text/css" href="index.php?pf=dcRevisions/style.css" />';
 	}
-	
+
 	public static function adminBeforePageUpdate($cur,$post_id)
 	{
 		global $core;
-		
+
 		try {
 			$core->blog->revisions->addRevision($cur,$post_id,'page');
 		} catch (Exception $e) {
@@ -150,5 +150,4 @@ class dcRevisionsBehaviors
 		}
 	}
 }
-
 ?>

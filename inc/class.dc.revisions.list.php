@@ -13,17 +13,17 @@
 class dcRevisionsList
 {
 	protected $rs = null;
-	
+
 	public function __construct($rs)
 	{
 		$this->rs = $rs;
 		$this->core = $rs->core;
 	}
-	
+
 	public function display($url)
 	{
 		$res = '';
-		
+
 		if (!$this->rs->isEmpty()) {
 			$html_block =
 				'<table id="revisions-list" summary="'.__('Revisions').'" class="clear maximal" style="display: none;">'.
@@ -38,25 +38,25 @@ class dcRevisionsList
 				'</thead>'.
 				'<tbody>%s</tbody>'.
 				'</table>';
-				
+
 			$res .= sprintf($html_block,$this->getLines($url));
 		}
 		else {
 			$res .= '<p style="display:none" class="clear form-note">'.__('No revision').'</p>';
 		}
-		
+
 		return $res;
 	}
-	
+
 	private function getLines($url)
 	{
 		$res = '';
 		$p_img = '<img src="%1$s" alt="%2$s" title="%2$s" />';
 		$p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
 		$index = count($this->rs);
-		
+
 		while ($this->rs->fetch()) {
-			$res .= 
+			$res .=
 				'<tr class="line wide'.(!$this->rs->canPatch() ? ' offline' : '').'" id="r'.$this->rs->revision_id.'">'."\n".
 				'<td class="maximal nowrap rid">'.
 					'<strong>'.sprintf(__('Revision #%s'),$index--).'</strong>'.
@@ -79,9 +79,8 @@ class dcRevisionsList
 				"</td>\n".
 				"</tr>\n";
 		}
-		
+
 		return $res;
 	}
 }
-
 ?>

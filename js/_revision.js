@@ -1,15 +1,3 @@
-/*
-# -- BEGIN LICENSE BLOCK ----------------------------------
-# This file is part of dcRevisions, a plugin for Dotclear.
-#
-# Copyright (c) 2012 Tomtom, Franck Paul and contributors
-# http://blog.zenstyle.fr/
-#
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-# -- END LICENSE BLOCK ------------------------------------
-*/
 dotclear.revisionExpander = function() {
 	$('#revisions-list tr.line').each(function() {
 		var img = document.createElement('img');
@@ -91,20 +79,20 @@ dotclear.viewRevisionContent = function(img,line) {
 
 dotclear.viewRevisionRender = function(nodes,title,revisionId){
 	var res = lines = previous = '';
-		
+
 	nodes.each(function(k) {
 		var name = this.nodeName;
 		var content = $(this).text();
-		
+
 		var ol = $(this).attr('oline') != undefined ? $(this).attr('oline') : '';
 		var nl = $(this).attr('nline') != undefined ? $(this).attr('nline') : '';
-		
+
 		if (name == 'skip') {
 			ol = nl = '&hellip;';
 		}
-		
+
 		var tdclass = '';
-		
+
 		if (name == 'skip') {
 			tdclass = ' skip';
 		}
@@ -117,7 +105,7 @@ dotclear.viewRevisionRender = function(nodes,title,revisionId){
 		if (name == 'delete') {
 			tdclass = ' delete';
 		}
-		
+
 		if (name != previous && (previous == '' || previous == 'context')) {
 			tdclass += ' first';
 		}
@@ -125,15 +113,15 @@ dotclear.viewRevisionRender = function(nodes,title,revisionId){
 		if (name != next && next != 'insert' && next != 'delete') {
 			tdclass += ' last';
 		}
-		
+
 		previous = name;
-		
+
 		lines += '<tr><td class="minimal col-line">'+ol+
 		'</td><td class="minimal col-line">'+nl+
 		'</td><td class="'+tdclass+'">'+content+
 		'</td></tr>';
 	});
-	
+
 	if (lines != '') {
 		res = '<thead><tr class="rev-header"><th colspan="3">'+title+'</th></tr>'+
 		'<tr class="rev-number"><th class="minimal nowrap">'+dotclear.msg.current+
@@ -141,7 +129,7 @@ dotclear.viewRevisionRender = function(nodes,title,revisionId){
 		'</th><th class="maximal"></th></tr></thead><tbody>'+
 		lines + '</tbody>';
 	}
-	
+
 	return res;
 };
 

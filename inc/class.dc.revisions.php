@@ -16,7 +16,7 @@ class dcRevisions
 	{
 		$this->core = $core;
 	}
-	
+
 	public function getRevisions($params,$count_only = false)
 	{
 		if ($count_only) {
@@ -29,16 +29,16 @@ class dcRevisions
 			'R.revision_content_xhtml_diff, U.user_url, U.user_name, '.
 			'U.user_firstname, U.user_displayname';
 		}
-		
+
 		$strReq = 'SELECT '.$f.' FROM '.$this->core->prefix.'revision R '.
 		'LEFT JOIN '.$this->core->prefix.'user U ON R.user_id = U.user_id ';
-		
+
 		if (!empty($params['from'])) {
 			$strReq .= $params['from'].' ';
 		}
-		
+
 		$strReq .= "WHERE R.blog_id = '".$this->core->con->escape($this->core->blog->id)."' ";
-		
+
 		if (!empty($params['post_id'])) {
 			if (is_array($params['post_id'])) {
 				array_walk($params['post_id'],create_function('&$v,$k','if($v!==null){$v=(integer)$v;}'));
@@ -47,7 +47,7 @@ class dcRevisions
 			}
 			$strReq .= 'AND R.post_id '.$this->core->con->in($params['post_id']);
 		}
-		
+
 		if (!empty($params['revision_id'])) {
 			if (is_array($params['revision_id'])) {
 				array_walk($params['revision_id'],create_function('&$v,$k','if($v!==null){$v=(integer)$v;}'));
@@ -56,7 +56,7 @@ class dcRevisions
 			}
 			$strReq .= 'AND R.revision_id '.$this->core->con->in($params['revision_id']);
 		}
-		
+
 		if (isset($params['post_type'])) {
 			if (is_array($params['post_type']) && !empty($params['post_type'])) {
 				$strReq .= 'AND R.revision_type '.$this->core->con->in($params['post_type']);
@@ -64,11 +64,11 @@ class dcRevisions
 				$strReq .= "AND R.revision_type = '".$this->core->con->escape($params['post_type'])."' ";
 			}
 		}
-		
+
 		if (!empty($params['sql'])) {
 			$strReq .= $params['sql'].' ';
 		}
-		
+
 		if (!$count_only) {
 			if (!empty($params['order'])) {
 				$strReq .= 'ORDER BY '.$this->core->con->escape($params['order']).' ';
@@ -76,28 +76,28 @@ class dcRevisions
 				$strReq .= 'ORDER BY revision_dt DESC ';
 			}
 		}
-		
+
 		if (!$count_only && !empty($params['limit'])) {
 			$strReq .= $this->core->con->limit($params['limit']);
 		}
-		
+
 		$rs = $this->core->con->select($strReq);
 		$rs->core = $this->core;
 		$rs->extend('dcRevisionsExtensions');
-		
+
 		return $rs;
 	}
-	
+
 	public function addRevision($pcur,$post_id,$type)
 	{
 		$rs = $this->core->con->select(
 			'SELECT MAX(revision_id) '.
-			'FROM '.$this->core->prefix.'revision' 
+			'FROM '.$this->core->prefix.'revision'
 		);
-		$revision_id = $rs->f(0) + 1; 
-		
+		$revision_id = $rs->f(0) + 1;
+
 		$rs = $this->core->blog->getPosts(array('post_id' => $post_id, 'post_type' => $type));
-		
+
 		$old = array(
 			'post_excerpt' => $rs->post_excerpt,
 			'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
@@ -110,16 +110,16 @@ class dcRevisions
 			'post_content' => $pcur->post_content,
 			'post_content_xhtml' => $pcur->post_content_xhtml
 		);
-		
+
 		$diff = $this->getDiff($new,$old);
-		
+
 		$insert = false;
 		foreach ($diff as $k => $v) {
 			if ($v !== '') {
 				$insert = true;
 			}
 		}
-		
+
 		if ($insert) {
 			$rcur = $this->core->con->openCursor($this->core->prefix.'revision');
 			$rcur->revision_id = $revision_id;
@@ -133,13 +133,13 @@ class dcRevisions
 			$rcur->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
 			$rcur->revision_content_diff = $diff['post_content'];
 			$rcur->revision_content_xhtml_diff = $diff['post_content_xhtml'];
-	 
+
 			$this->core->con->writeLock($this->core->prefix.'revision');
 			$rcur->insert();
 			$this->core->con->unlock();
 		}
 	}
-	
+
 	public function getDiff($n,$o)
 	{
 		$diff = array(
@@ -148,12 +148,11 @@ class dcRevisions
 			'post_content' => '',
 			'post_content_xhtml' => ''
 		);
-		
+
 		try {
 			foreach ($diff as $k => $v) {
 				$diff[$k] = diff::uniDiff($n[$k],$o[$k]);
 			}
-		
 			return $diff;
 		}
 		catch (Exception $e)
@@ -161,13 +160,13 @@ class dcRevisions
 			$this->core->error->add($e->getMessage());
 		}
 	}
-	
+
 	public function setPatch($pid,$rid,$type,$redir_url,$before_behaviour,$after_behaviour)
 	{
 		if (!$this->canPatch($rid)) {
 			throw new Exception(__('You are not allowed to patch this entry with this revision'));
 		}
-		
+
   		try
 		{
 			$patch = $this->getPatch($pid,$rid,$type);
@@ -196,12 +195,12 @@ class dcRevisions
 
 			# --BEHAVIOR-- adminBeforeXXXXUpdate
 			$this->core->callBehavior($before_behaviour,$cur,$pid);
-			
+
 			$this->core->auth->sudo(array($this->core->blog,'updPost'),$pid,$cur);
-			
+
 			# --BEHAVIOR-- adminAfterXXXXUpdate
 			$this->core->callBehavior($after_behaviour,$cur,$pid);
-			
+
 			http::redirect(sprintf($redir_url,$pid));
 		}
 		catch (Exception $e)
@@ -209,17 +208,17 @@ class dcRevisions
 			$this->core->error->add($e->getMessage());
 		}
 	}
-	
+
 	public function getPatch($pid,$rid,$type)
 	{
 		$params = array(
 			'post_id' => $pid,
 			'post_type' => $type
 		);
-		
+
 		$p = $this->core->blog->getPosts($params);
 		$r = $this->getRevisions($params);
-		
+
 		$patch = array(
 			'post_excerpt' => $p->post_excerpt,
 			'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
@@ -233,7 +232,7 @@ class dcRevisions
 				if ($k === 'post_excerpt_xhtml') { $f = 'revision_excerpt_xhtml_diff'; }
 				if ($k === 'post_content') { $f = 'revision_content_diff'; }
 				if ($k === 'post_content_xhtml') { $f = 'revision_content_xhtml_diff'; }
-				
+
 				$patch[$k] = diff::uniPatch($v,$r->{$f});
 			}
 
@@ -241,16 +240,15 @@ class dcRevisions
 				break;
 			}
 		}
-		
+
 		return $patch;
 	}
-	
+
 	protected function canPatch($rid)
 	{
 		$r = $this->getRevisions(array('revision_id' => $rid));
-		
+
 		return ($r->canPatch());
 	}
 }
-
 ?>

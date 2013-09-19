@@ -17,18 +17,18 @@ class dcRevisionsRestMethods
 	public static function getPatch()
 	{
 		global $core;
-		
+
 		$pid = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$rid = isset($_GET['rid']) ? $_GET['rid'] : null;
 		$type = isset($_GET['type']) ? $_GET['type'] : 'post';
-		
+
 		if ($pid === null) {
 			throw new Exception(__('No post ID'));
 		}
 		if ($rid === null) {
 			throw new Exception(__('No revision ID'));
 		}
-		
+
 		$p = $core->blog->getPosts(array('post_id' => $pid, 'post_type' => $type));
 		$o = array(
 			'post_excerpt' => $p->post_excerpt,
@@ -36,23 +36,23 @@ class dcRevisionsRestMethods
 			'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
 			'post_content_xhtml' => $p->post_content_xhtml
 		);
-		
+
 		$n = $core->blog->revisions->getPatch($pid,$rid,$type);
-		
+
 		$rsp = new xmlTag();
 		foreach ($o as $k => $v) {
 			$rsp->insertNode(self::buildNode($v,$n[$k],2,$k));
 		}
 		return $rsp;
 	}
-	
+
 	public static function buildNode($src,$dst,$ctx,$root)
 	{
 		$udiff = diff::uniDiff($src,$dst,$ctx);
 		$tdiff = new tidyDiff(htmlspecialchars($udiff),true);
-		
+
 		$rev = new xmlTag($root);
-		
+
 		foreach ($tdiff->getChunks() as $k => $chunk) {
 			foreach ($chunk->getLines() as $line) {
 				switch ($line->type) {
