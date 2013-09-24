@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 discreteCat module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-19 16:45+0200\n"
+"POT-Creation-Date: 2013-09-24 13:31+0200\n"
 "PO-Revision-Date: 2012-11-05 16:54+0100\n"
 "Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
 "Language-Team: \n"
@@ -11,6 +11,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.4\n"
+
+msgid "Allows entries's versionning"
+msgstr "Permet la gestion des historiques de modification des entrées"
+
+msgid "dcRevisions"
+msgstr "Révisions"
 
 msgid "No post ID"
 msgstr "Pas d'identifiant d'entrée"
@@ -69,9 +75,3 @@ msgstr "Revenir à cette version"
 
 msgid "You are not allowed to patch this entry with this revision"
 msgstr "Vous n'êtes pas autorisé modifier ce billet avec cette révision"
-
-msgid "dcRevisions"
-msgstr "Révisions"
-
-msgid "Allows entries's versionning"
-msgstr "Permet la gestion des historiques de modification des entrées"

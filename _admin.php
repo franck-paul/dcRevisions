@@ -12,6 +12,9 @@
 
 if (!defined('DC_CONTEXT_ADMIN')) { return; }
 
+// dead but useful code, in order to have translations
+__('dcRevisions').__('Allows entries\'s versionning');
+
 $core->addBehavior('adminBlogPreferencesForm',array('dcRevisionsBehaviors','adminBlogPreferencesForm'));
 $core->addBehavior('adminBeforeBlogSettingsUpdate',array('dcRevisionsBehaviors','adminBeforeBlogSettingsUpdate'));
 
