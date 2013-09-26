@@ -61,4 +61,3 @@ try {
 $core->setVersion('dcrevisions',$m_version);
 
 return true;
-?>

@@ -83,4 +83,3 @@ class dcRevisionsList
 		return $res;
 	}
 }
-?>

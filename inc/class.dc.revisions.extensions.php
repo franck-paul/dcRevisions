@@ -67,4 +67,3 @@ class dcRevisionsExtensions
 		return false;
 	}
 }
-?>

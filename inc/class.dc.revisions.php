@@ -251,4 +251,3 @@ class dcRevisions
 		return ($r->canPatch());
 	}
 }
-?>

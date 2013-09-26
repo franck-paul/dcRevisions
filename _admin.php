@@ -49,4 +49,3 @@ if ($core->blog->settings->dcrevisions->enable) {
 		$core->blog->revisions->setPatch($_GET['id'],$_GET['patch'],'page',$redir_url,'adminBeforePageUpdate','adminAfterPageUpdate');
 	}
 }
-?>
