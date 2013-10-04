@@ -13,9 +13,12 @@
 if (!defined('DC_RC_PATH')) { return; }
 
 $this->registerModule(
-		/* Name */			"dcRevisions",
-		/* Description*/		"Allows entries's versionning",
-		/* Author */			"Tomtom, Franck Paul & contributors",
-		/* Version */			'0.3',
-		/* Permissions */		'usage,contentadmin'
+	/* Name */			"dcRevisions",
+	/* Description*/		"Allows entries's versionning",
+	/* Author */			"Tomtom, Franck Paul & contributors",
+	/* Version */			'0.3',
+	array(
+		/* Permissions */	'permissions' =>	'usage,contentadmin',
+		/* Type */			'type' =>			'plugin'
+	)
 );
