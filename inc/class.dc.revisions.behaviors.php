@@ -41,7 +41,6 @@ class dcRevisionsBehaviors
 		global $core;
 
 		$id = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-		$page = isset($_GET['page']) ? $_GET['page'] : 1;
 		$url = sprintf('post.php?id=%1$s&amp;patch=%2$s',$id,'%s');
 
 		$params = array(

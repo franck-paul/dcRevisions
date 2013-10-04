@@ -28,7 +28,7 @@ msgid "Revisions"
 msgstr "Révisions"
 
 msgid "Enable entries' versionning on this blog"
-msgstr "Active la gestion de l'historique de modification des entres sur ce blog"
+msgstr "Active la gestion de l'historique de modification des entrées sur ce blog"
 
 msgid "Revisions:"
 msgstr "Historique des modifications :"

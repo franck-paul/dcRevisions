@@ -23,7 +23,6 @@ class dcRevisionsList
 	public function display($url)
 	{
 		$res = '';
-
 		if (!$this->rs->isEmpty()) {
 			$html_block =
 				'<table id="revisions-list" summary="'.__('Revisions').'" class="clear maximal" style="display: none;">'.
@@ -44,7 +43,6 @@ class dcRevisionsList
 		else {
 			$res .= '<p style="display:none" class="clear form-note">'.__('No revision').'</p>';
 		}
-
 		return $res;
 	}
 
