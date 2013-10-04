@@ -6,7 +6,6 @@
 		}
 
 table#revisions-list {
-	display: none;
 	overflow: scroll;
 	}
 	table#revisions-list td.status {

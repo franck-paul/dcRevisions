@@ -25,7 +25,7 @@ class dcRevisionsList
 		$res = '';
 		if (!$this->rs->isEmpty()) {
 			$html_block =
-				'<table id="revisions-list" summary="'.__('Revisions').'" class="clear maximal" style="display: none;">'.
+				'<table id="revisions-list" summary="'.__('Revisions').'" class="clear maximal">'.
 				'<thead>'.
 				'<tr>'.
 				'<th>'.__('Id').'</th>'.
@@ -41,7 +41,7 @@ class dcRevisionsList
 			$res .= sprintf($html_block,$this->getLines($url));
 		}
 		else {
-			$res .= '<p style="display:none" class="clear form-note">'.__('No revision').'</p>';
+			$res .= '<p class="clear form-note">'.__('No revision').'</p>';
 		}
 		return $res;
 	}

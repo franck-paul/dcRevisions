@@ -63,7 +63,7 @@ dotclear.viewRevisionContent = function(img,line) {
 		$(line).toggleClass('expand');
 		line.parentNode.insertBefore(tr,line.nextSibling);
 	}
-	else if (tr.style.display=='none') {
+	else if (tr.style.display=='none' || $(tr).hasClass('hide')) {
 		$(tr).toggle();
 		$(line).toggleClass('expand');
 		img.src = dotclear.img_minus_src;
@@ -137,8 +137,9 @@ $(function() {
 	$('#edit-entry').onetabload(function() {
 		$('#revisions-area label').toggleWithLegend(
 			$('#revisions-area').children().not('label'),{
-				cookie:'dcx_post_revisions',
-				fn:dotclear.revisionExpander()
+				user_pref: 'dcx_post_revisions',
+				legend_click: true,
+				fn: dotclear.revisionExpander()
 			}
 		);
 		$('#revisions-list tr.line a.patch').click(function() {
