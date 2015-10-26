@@ -73,7 +73,8 @@ class dcRevisionsList
 					).
 				"</td>\n".
 				'<td class="minimal nowrap status">'.
-					($this->rs->canPatch() ? sprintf($p_link,sprintf($url,$this->rs->revision_id),'index.php?pf=dcRevisions/images/apply.png',__('Apply patch')) : '').
+					($this->rs->canPatch() ? sprintf($p_link,sprintf($url,$this->rs->revision_id),
+						urldecode(dcPage::getPF('dcRevisions/images/apply.png')),__('Apply patch')) : '').
 				"</td>\n".
 				"</tr>\n";
 		}

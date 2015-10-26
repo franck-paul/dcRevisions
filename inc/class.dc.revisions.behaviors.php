@@ -64,6 +64,8 @@ class dcRevisionsBehaviors
 
 	public static function adminPostHeaders()
 	{
+		global $core;
+
 		return
 		'<script type="text/javascript">'."\n".
 		"//<![CDATA[\n".
@@ -78,8 +80,8 @@ class dcRevisionsBehaviors
 		).
 		"\n//]]>\n".
 		"</script>\n".
-		'<script type="text/javascript" src="index.php?pf=dcRevisions/js/_revision.js"></script>'."\n".
-		'<link rel="stylesheet" type="text/css" href="index.php?pf=dcRevisions/style.css" />';
+		dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')),$core->getVersion('dcrevisions'))."\n".
+		dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')),'screen',$core->getVersion('dcrevisions'))."\n";
 	}
 
 	public static function adminBeforePostUpdate($cur,$post_id)
@@ -134,8 +136,8 @@ class dcRevisionsBehaviors
 		).
 		"\n//]]>\n".
 		"</script>\n".
-		'<script type="text/javascript" src="index.php?pf=dcRevisions/js/_revision.js"></script>'."\n".
-		'<link rel="stylesheet" type="text/css" href="index.php?pf=dcRevisions/style.css" />';
+		dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')),$core->getVersion('dcrevisions'))."\n".
+		dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')),'screen',$core->getVersion('dcrevisions'))."\n";
 	}
 
 	public static function adminBeforePageUpdate($cur,$post_id)
