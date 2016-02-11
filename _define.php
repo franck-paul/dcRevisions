@@ -16,9 +16,10 @@ $this->registerModule(
 	/* Name */			"dcRevisions",
 	/* Description*/		"Allows entries's versionning",
 	/* Author */			"Tomtom, Franck Paul & contributors",
-	/* Version */			'0.3',
+	/* Version */			'0.4',
 	array(
-		/* Permissions */	'permissions' =>	'usage,contentadmin',
-		/* Type */			'type' =>			'plugin'
+		/* Dependencies */	'requires' 		=>	array(array('core','2.9')),
+		/* Permissions */	'permissions' 	=>	'usage,contentadmin',
+		/* Type */			'type' 			=>	'plugin'
 	)
 );

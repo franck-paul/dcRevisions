@@ -123,6 +123,8 @@ class dcRevisionsBehaviors
 
 	public static function adminPageHeaders()
 	{
+		global $core;
+
 		return
 		'<script type="text/javascript">'."\n".
 		"//<![CDATA[\n".
