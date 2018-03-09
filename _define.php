@@ -1,25 +1,26 @@
 <?php
-# -- BEGIN LICENSE BLOCK ----------------------------------
-# This file is part of dcRevisions, a plugin for Dotclear 2.
-#
-# Copyright (c) TomTom, Franck Paul and contributors
-# carnet.franck.paul@gmail.com
-#
-# Licensed under the GPL version 2.0 license.
-# A copy of this license is available in LICENSE file or at
-# http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-# -- END LICENSE BLOCK ------------------------------------
+/**
+ * @brief dcRevisions, a plugin for Dotclear 2
+ *
+ * @package Dotclear
+ * @subpackage Plugins
+ *
+ * @author TomTom, Franck Paul and contributors
+ *
+ * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
+ */
 
-if (!defined('DC_RC_PATH')) { return; }
+if (!defined('DC_RC_PATH')) {return;}
 
 $this->registerModule(
-	/* Name */			"dcRevisions",
-	/* Description*/		"Allows entries's versionning",
-	/* Author */			"Tomtom, Franck Paul & contributors",
-	/* Version */			'0.4',
-	array(
-		/* Dependencies */	'requires' 		=>	array(array('core','2.9')),
-		/* Permissions */	'permissions' 	=>	'usage,contentadmin',
-		/* Type */			'type' 			=>	'plugin'
-	)
+    "dcRevisions",                        // Name
+    "Allows entries's versionning",       // Description
+    "Tomtom, Franck Paul & contributors", // Author
+    '0.4',                                // Version
+    array(
+        'requires'    => array(array('core', '2.9')), // Dependencies
+        'permissions' => 'usage,contentadmin',        // Permissions
+        'type'        => 'plugin'                    // Type
+    )
 );
