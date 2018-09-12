@@ -16,24 +16,24 @@ if (!defined('DC_CONTEXT_ADMIN')) {return;}
 // dead but useful code, in order to have translations
 __('dcRevisions') . __('Allows entries\'s versionning');
 
-$core->addBehavior('adminBlogPreferencesForm', array('dcRevisionsBehaviors', 'adminBlogPreferencesForm'));
-$core->addBehavior('adminBeforeBlogSettingsUpdate', array('dcRevisionsBehaviors', 'adminBeforeBlogSettingsUpdate'));
+$core->addBehavior('adminBlogPreferencesForm', ['dcRevisionsBehaviors', 'adminBlogPreferencesForm']);
+$core->addBehavior('adminBeforeBlogSettingsUpdate', ['dcRevisionsBehaviors', 'adminBeforeBlogSettingsUpdate']);
 
 $core->blog->settings->addNameSpace('dcrevisions');
 
 if ($core->blog->settings->dcrevisions->enable) {
 
-    $core->addBehavior('adminPostHeaders', array('dcRevisionsBehaviors', 'adminPostHeaders'));
-    $core->addBehavior('adminPostForm', array('dcRevisionsBehaviors', 'adminPostForm'));
+    $core->addBehavior('adminPostHeaders', ['dcRevisionsBehaviors', 'adminPostHeaders']);
+    $core->addBehavior('adminPostForm', ['dcRevisionsBehaviors', 'adminPostForm']);
 
-    $core->addBehavior('adminBeforePostUpdate', array('dcRevisionsBehaviors', 'adminBeforePostUpdate'));
+    $core->addBehavior('adminBeforePostUpdate', ['dcRevisionsBehaviors', 'adminBeforePostUpdate']);
 
-    $core->addBehavior('adminPageHeaders', array('dcRevisionsBehaviors', 'adminPageHeaders'));
-    $core->addBehavior('adminPageForm', array('dcRevisionsBehaviors', 'adminPageForm'));
+    $core->addBehavior('adminPageHeaders', ['dcRevisionsBehaviors', 'adminPageHeaders']);
+    $core->addBehavior('adminPageForm', ['dcRevisionsBehaviors', 'adminPageForm']);
 
-    $core->addBehavior('adminBeforePageUpdate', array('dcRevisionsBehaviors', 'adminBeforePageUpdate'));
+    $core->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
 
-    $core->rest->addFunction('getPatch', array('dcRevisionsRestMethods', 'getPatch'));
+    $core->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
 
     $core->blog->revisions = new dcRevisions($core);
 

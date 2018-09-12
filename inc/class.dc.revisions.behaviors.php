@@ -44,15 +44,15 @@ class dcRevisionsBehaviors
         $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
 
-        $params = array(
+        $params = [
             'post_id'   => $id,
             'post_type' => 'post'
-        );
+        ];
 
         $rs = $core->blog->revisions->getRevisions($params);
 
         if (is_null($id)) {
-            $rs       = staticRecord::newFromArray(array());
+            $rs       = staticRecord::newFromArray([]);
             $rs->core = $core;
         }
 
@@ -101,15 +101,15 @@ class dcRevisionsBehaviors
         $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url = sprintf($redir_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
 
-        $params = array(
+        $params = [
             'post_id'   => $id,
             'post_type' => 'page'
-        );
+        ];
 
         $rs = $core->blog->revisions->getRevisions($params);
 
         if (is_null($id)) {
-            $rs       = staticRecord::newFromArray(array());
+            $rs       = staticRecord::newFromArray([]);
             $rs->core = $core;
         }
 

@@ -30,13 +30,13 @@ class dcRevisionsRestMethods
             throw new Exception(__('No revision ID'));
         }
 
-        $p = $core->blog->getPosts(array('post_id' => $pid, 'post_type' => $type));
-        $o = array(
+        $p = $core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+        $o = [
             'post_excerpt'       => $p->post_excerpt,
             'post_content'       => $p->post_content,
             'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
             'post_content_xhtml' => $p->post_content_xhtml
-        );
+        ];
 
         $n = $core->blog->revisions->getPatch($pid, $rid, $type);
 
@@ -67,14 +67,14 @@ class dcRevisionsRestMethods
                     case 'delete':
                         $node        = new xmlTag('delete');
                         $node->oline = $line->lines[0];
-                        $c           = str_replace(array('\0', '\1'), array('<del>', '</del>'), $line->content);
+                        $c           = str_replace(['\0', '\1'], ['<del>', '</del>'], $line->content);
                         $node->insertNode($c);
                         $rev->insertNode($node);
                         break;
                     case 'insert':
                         $node        = new xmlTag('insert');
                         $node->nline = $line->lines[1];
-                        $c           = str_replace(array('\0', '\1'), array('<ins>', '</ins>'), $line->content);
+                        $c           = str_replace(['\0', '\1'], ['<ins>', '</ins>'], $line->content);
                         $node->insertNode($c);
                         $rev->insertNode($node);
                         break;

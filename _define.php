@@ -18,9 +18,9 @@ $this->registerModule(
     "Allows entries's versionning",       // Description
     "Tomtom, Franck Paul & contributors", // Author
     '0.4',                                // Version
-    array(
-        'requires'    => array(array('core', '2.9')), // Dependencies
-        'permissions' => 'usage,contentadmin',        // Permissions
-        'type'        => 'plugin'                    // Type
-    )
+    [
+        'requires'    => [['core', '2.13']],   // Dependencies
+        'permissions' => 'usage,contentadmin', // Permissions
+        'type'        => 'plugin'             // Type
+    ]
 );

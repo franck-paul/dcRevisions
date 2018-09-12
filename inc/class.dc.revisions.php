@@ -42,11 +42,10 @@ class dcRevisions
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
                 array_walk($params['post_id'],
-//                    create_function('&$v,$k','if($v!==null){$v=(integer)$v;}')
                     function (&$v, $k) {if ($v !== null) {$v = (integer) $v;}}
                 );
             } else {
-                $params['post_id'] = array((integer) $params['post_id']);
+                $params['post_id'] = [(integer) $params['post_id']];
             }
             $strReq .= 'AND R.post_id ' . $this->core->con->in($params['post_id']);
         }
@@ -54,11 +53,10 @@ class dcRevisions
         if (!empty($params['revision_id'])) {
             if (is_array($params['revision_id'])) {
                 array_walk($params['revision_id'],
-//                    create_function('&$v,$k','if($v!==null){$v=(integer)$v;}')
                     function (&$v, $k) {if ($v !== null) {$v = (integer) $v;}}
                 );
             } else {
-                $params['revision_id'] = array((integer) $params['revision_id']);
+                $params['revision_id'] = [(integer) $params['revision_id']];
             }
             $strReq .= 'AND R.revision_id ' . $this->core->con->in($params['revision_id']);
         }
@@ -102,20 +100,20 @@ class dcRevisions
         );
         $revision_id = $rs->f(0) + 1;
 
-        $rs = $this->core->blog->getPosts(array('post_id' => $post_id, 'post_type' => $type));
+        $rs = $this->core->blog->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
-        $old = array(
+        $old = [
             'post_excerpt'       => $rs->post_excerpt,
             'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
             'post_content'       => $rs->post_content,
             'post_content_xhtml' => $rs->post_content_xhtml
-        );
-        $new = array(
+        ];
+        $new = [
             'post_excerpt'       => $pcur->post_excerpt,
             'post_excerpt_xhtml' => $pcur->post_excerpt_xhtml,
             'post_content'       => $pcur->post_content,
             'post_content_xhtml' => $pcur->post_content_xhtml
-        );
+        ];
 
         $diff = $this->getDiff($new, $old);
 
@@ -148,12 +146,12 @@ class dcRevisions
 
     public function getDiff($n, $o)
     {
-        $diff = array(
+        $diff = [
             'post_excerpt'       => '',
             'post_excerpt_xhtml' => '',
             'post_content'       => '',
             'post_content_xhtml' => ''
-        );
+        ];
 
         try {
             foreach ($diff as $k => $v) {
@@ -175,7 +173,7 @@ class dcRevisions
         {
             $patch = $this->getPatch($pid, $rid, $type);
 
-            $p = $this->core->blog->getPosts(array('post_id' => $pid, 'post_type' => $type));
+            $p = $this->core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
 
             $cur = $this->core->con->openCursor($this->core->prefix . 'post');
 
@@ -200,7 +198,7 @@ class dcRevisions
             # --BEHAVIOR-- adminBeforeXXXXUpdate
             $this->core->callBehavior($before_behaviour, $cur, $pid);
 
-            $this->core->auth->sudo(array($this->core->blog, 'updPost'), $pid, $cur);
+            $this->core->auth->sudo([$this->core->blog, 'updPost'], $pid, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
             $this->core->callBehavior($after_behaviour, $cur, $pid);
@@ -213,20 +211,20 @@ class dcRevisions
 
     public function getPatch($pid, $rid, $type)
     {
-        $params = array(
+        $params = [
             'post_id'   => $pid,
             'post_type' => $type
-        );
+        ];
 
         $p = $this->core->blog->getPosts($params);
         $r = $this->getRevisions($params);
 
-        $patch = array(
+        $patch = [
             'post_excerpt'       => $p->post_excerpt,
             'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
             'post_content'       => $p->post_content,
             'post_content_xhtml' => $p->post_content_xhtml
-        );
+        ];
 
         while ($r->fetch()) {
             foreach ($patch as $k => $v) {
@@ -248,7 +246,7 @@ class dcRevisions
 
     protected function canPatch($rid)
     {
-        $r = $this->getRevisions(array('revision_id' => $rid));
+        $r = $this->getRevisions(['revision_id' => $rid]);
 
         return ($r->canPatch());
     }
