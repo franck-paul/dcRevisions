@@ -49,10 +49,13 @@ msgid "Content identical"
 msgstr "Contenu identique"
 
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?"
-msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr·e de vouloir appliquer cette transformation sur ce billet ?"
+msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes-vous sûr·e de vouloir appliquer cette transformation sur ce billet ?"
 
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
-msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes vous sûr·e de vouloir appliquer cette transformation sur cette page ?"
+msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes-vous sûr·e de vouloir appliquer cette transformation sur cette page ?"
+
+msgid "CAUTION: This operation will delete all the revisions. Are you sure to want to do this?"
+msgstr "Attention : Cette opération va supprimer toutes les révisions. Êtes-vous sûr·e de vouloir les supprimer ?"
 
 msgid "Id"
 msgstr "Modification"
@@ -73,5 +76,11 @@ msgstr "Retour à cette version interdit"
 msgid "Apply patch"
 msgstr "Revenir à cette version"
 
+msgid "Purge all revisions"
+msgstr "Supprimer toutes les révisions"
+
 msgid "You are not allowed to patch this entry with this revision"
 msgstr "Vous n'êtes pas autorisé·e modifier ce billet avec cette révision"
+
+msgid "All revisions have been deleted."
+msgstr "Toutes les révisions ont été supprimées."

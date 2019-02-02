@@ -41,8 +41,9 @@ class dcRevisionsBehaviors
     {
         global $core;
 
-        $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
+        $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
+        $url       = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
+        $purge_url = sprintf('post.php?id=%1$s&amp;revpurge=1', $id);
 
         $params = [
             'post_id'   => $id,
@@ -58,8 +59,8 @@ class dcRevisionsBehaviors
 
         $list = new dcRevisionsList($rs);
 
-        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' .
-        $list->display($url) .
+        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
+            ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
             '</div>';
     }
 
@@ -76,8 +77,9 @@ class dcRevisionsBehaviors
         dcPage::jsVar('dotclear.msg.revision', __('Rev.')) .
         dcPage::jsVar('dotclear.msg.content_identical', __('Content identical')) .
         dcPage::jsVar('dotclear.msg.confirm_apply_patch',
-            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?')
-        ) .
+            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?')) .
+        dcPage::jsVar('dotclear.msg.confirm_purge_revision',
+            __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')) .
         "</script>\n" .
         dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')), $core->getVersion('dcrevisions')) . "\n" .
         dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')), 'screen', $core->getVersion('dcrevisions')) . "\n";
@@ -98,8 +100,9 @@ class dcRevisionsBehaviors
     {
         global $core, $redir_url;
 
-        $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url = sprintf($redir_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
+        $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
+        $url       = sprintf($redir_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
+        $purge_url = sprintf($redir_url . '&amp;id=%1$s&amp;revpurge=1', $id);
 
         $params = [
             'post_id'   => $id,
@@ -115,8 +118,8 @@ class dcRevisionsBehaviors
 
         $list = new dcRevisionsList($rs);
 
-        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' .
-        $list->display($url) .
+        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
+            ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
             '</div>';
     }
 
@@ -132,8 +135,9 @@ class dcRevisionsBehaviors
         dcPage::jsVar('dotclear.msg.current', __('Current')) .
         dcPage::jsVar('dotclear.msg.content_identical', __('Content identical')) .
         dcPage::jsVar('dotclear.msg.confirm_apply_patch',
-            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?')
-        ) .
+            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?')) .
+        dcPage::jsVar('dotclear.msg.confirm_purge_revision',
+            __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')) .
         "</script>\n" .
         dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')), $core->getVersion('dcrevisions')) . "\n" .
         dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')), 'screen', $core->getVersion('dcrevisions')) . "\n";

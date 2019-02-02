@@ -163,6 +163,28 @@ class dcRevisions
         }
     }
 
+    public function purge($pid, $type, $redir_url)
+    {
+        if (!$this->canPurge($pid, $type)) {
+            throw new Exception(__('You are not allowed to delete revisions of this entry'));
+        }
+
+        try
+        {
+            // Purge all revisions of the entry
+            $strReq = 'DELETE FROM ' . $this->core->prefix . 'revision ' .
+                "WHERE post_id = '" . $this->core->con->escape($pid) . "' ";
+            $this->core->con->execute($strReq);
+
+            if (!$this->core->error->flag()) {
+                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                http::redirect(sprintf($redir_url, $pid));
+            }
+        } catch (Exception $e) {
+            $this->core->error->add($e->getMessage());
+        }
+    }
+
     public function setPatch($pid, $rid, $type, $redir_url, $before_behaviour, $after_behaviour)
     {
         if (!$this->canPatch($rid)) {
@@ -249,5 +271,12 @@ class dcRevisions
         $r = $this->getRevisions(['revision_id' => $rid]);
 
         return ($r->canPatch());
+    }
+
+    protected function canPurge($pid, $type)
+    {
+        $rs = $this->core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+
+        return ($rs->isEditable());
     }
 }

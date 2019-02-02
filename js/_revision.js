@@ -152,5 +152,8 @@ $(function() {
     $('#revisions-list tr.line a.patch').click(function() {
       return window.confirm(dotclear.msg.confirm_apply_patch);
     });
+    $('#revpurge').click(function() {
+      return window.confirm(dotclear.msg.confirm_purge_revision);
+    });
   });
 });

@@ -21,6 +21,11 @@ class dcRevisionsList
         $this->core = $rs->core;
     }
 
+    public function count()
+    {
+        return $this->rs->count();
+    }
+
     public function display($url)
     {
         $res = '';
