@@ -33,6 +33,10 @@ if ($core->blog->settings->dcrevisions->enable) {
 
     $core->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
 
+    /* Add behavior callbacks for posts actions */
+    $core->addBehavior('adminPostsActionsPage', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
+    $core->addBehavior('adminPagesActionsPage', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
+
     $core->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
 
     $core->blog->revisions = new dcRevisions($core);

@@ -163,7 +163,7 @@ class dcRevisions
         }
     }
 
-    public function purge($pid, $type, $redir_url)
+    public function purge($pid, $type, $redir_url = null)
     {
         if (!$this->canPurge($pid, $type)) {
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
@@ -177,8 +177,10 @@ class dcRevisions
             $this->core->con->execute($strReq);
 
             if (!$this->core->error->flag()) {
-                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
-                http::redirect(sprintf($redir_url, $pid));
+                if ($redir_url !== null) {
+                    dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                    http::redirect(sprintf($redir_url, $pid));
+                }
             }
         } catch (Exception $e) {
             $this->core->error->add($e->getMessage());

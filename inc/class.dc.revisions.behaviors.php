@@ -153,4 +153,86 @@ class dcRevisionsBehaviors
             $core->error->add($e->getMessage());
         }
     }
+
+    public static function adminPostsActionsPage($core, $ap)
+    {
+        // Add menuitem in actions dropdown list
+        if ($core->auth->check('contentadmin', $core->blog->id)) {
+            $ap->addAction(
+                [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
+                ['dcRevisionsBehaviors', 'adminPostsDoReplacements']
+            );
+        }
+    }
+
+    public static function adminPagesActionsPage($core, $ap)
+    {
+        // Add menuitem in actions dropdown list
+        if ($core->auth->check('contentadmin', $core->blog->id)) {
+            $ap->addAction(
+                [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
+                ['dcRevisionsBehaviors', 'adminPagesDoReplacements']
+            );
+        }
+    }
+
+    public static function adminPostsDoReplacements($core, dcPostsActionsPage $ap, $post)
+    {
+        self::adminEntriesDoReplacements($core, $ap, $post, 'post');
+    }
+
+    public static function adminPagesDoReplacements($core, dcPostsActionsPage $ap, $post)
+    {
+        self::adminEntriesDoReplacements($core, $ap, $post, 'page');
+    }
+
+    public static function adminEntriesDoReplacements($core, dcPostsActionsPage $ap, $post, $type = 'post')
+    {
+        if (!empty($post['dopurge'])) {
+            // Do replacements
+            $posts = $ap->getRS();
+            if ($posts->rows()) {
+                while ($posts->fetch()) {
+                    // Purge
+                    $core->blog->revisions->purge($posts->post_id, $type);
+                }
+                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                $ap->redirect(true);
+            } else {
+                $ap->redirect();
+            }
+        } else {
+            // Ask confirmation for replacements
+            if ($type == 'page') {
+                $ap->beginPage(
+                    dcPage::breadcrumb(
+                        [
+                            html::escapeHTML($core->blog->name) => '',
+                            __('Pages')                         => 'plugin.php?p=pages',
+                            __('Purge all revisions')           => ''
+                        ]));
+            } else {
+                $ap->beginPage(
+                    dcPage::breadcrumb(
+                        [
+                            html::escapeHTML($core->blog->name) => '',
+                            __('Entries')                       => 'posts.php',
+                            __('Purge all revisions')           => ''
+                        ]));
+            }
+
+            dcPage::warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
+
+            echo
+            '<form action="' . $ap->getURI() . '" method="post">' .
+            $ap->getCheckboxes() .
+            '<p><input type="submit" value="' . __('save') . '" /></p>' .
+
+            $core->formNonce() . $ap->getHiddenFields() .
+            form::hidden(['dopurge'], 'true') .
+            form::hidden(['action'], 'revpurge') .
+                '</form>';
+            $ap->endPage();
+        }
+    }
 }
