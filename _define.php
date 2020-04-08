@@ -17,10 +17,15 @@ $this->registerModule(
     "dcRevisions",                        // Name
     "Allows entries's versionning",       // Description
     "Tomtom, Franck Paul & contributors", // Author
-    '0.4',                                // Version
+    '0.5',                                // Version
     [
-        'requires'    => [['core', '2.13']],   // Dependencies
-        'permissions' => 'usage,contentadmin', // Permissions
-        'type'        => 'plugin'             // Type
+        'requires'    => [['core', '2.16']],                           // Dependencies
+        'permissions' => 'usage,contentadmin',                         // Permissions
+        'type'        => 'plugin',                                     // Type
+        'details'     => 'https://open-time.net/?q=dcRevisions',       // Details URL
+        'support'     => 'https://github.com/franck-paul/dcRevisions', // Support URL
+        'settings'    => [                                             // Settings
+            'blog' => '#params.dc-revisions'
+        ]
     ]
 );

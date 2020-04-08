@@ -1,4 +1,4 @@
-/*global $, dotclear */
+/*global $, dotclear, getData */
 'use strict';
 
 dotclear.revisionExpander = function() {
@@ -23,7 +23,7 @@ dotclear.viewRevisionContent = function( /*img, */ line, action) {
         f: 'getPatch',
         pid: postId,
         rid: revisionId,
-        type: dotclear.post_type
+        type: dotclear.dcrevisions.post_type
       },
       function(data) {
         const rsp = $(data).children('rsp')[0];
@@ -47,11 +47,11 @@ dotclear.viewRevisionContent = function( /*img, */ line, action) {
             content_nodes = $(rsp).find('post_content').children();
           }
           if (excerpt_nodes.length == 0 && content_nodes.length == 0) {
-            $(td).append(`<strong>${dotclear.msg.content_identical}</strong>`);
+            $(td).append(`<strong>${dotclear.dcrevisions.msg.content_identical}</strong>`);
           } else {
             let table = '<table class="preview-rev">';
-            table += dotclear.viewRevisionRender(excerpt_nodes, dotclear.msg.excerpt, revisionId);
-            table += dotclear.viewRevisionRender(content_nodes, dotclear.msg.content, revisionId);
+            table += dotclear.viewRevisionRender(excerpt_nodes, dotclear.dcrevisions.msg.excerpt, revisionId);
+            table += dotclear.viewRevisionRender(content_nodes, dotclear.dcrevisions.msg.content, revisionId);
             table += '</table>';
             $(td).append(table);
           }
@@ -126,8 +126,8 @@ dotclear.viewRevisionRender = function(nodes, title) {
    <th colspan="3">${title}</th>
   </tr>
   <tr class="rev-number">
-   <th class="minimal nowrap">${dotclear.msg.current}</th>
-   <th class="minimal nowrap">${dotclear.msg.revision}</th>
+   <th class="minimal nowrap">${dotclear.dcrevisions.msg.current}</th>
+   <th class="minimal nowrap">${dotclear.dcrevisions.msg.revision}</th>
    <th class="maximal"></th>
   </tr>
 </thead>
@@ -141,7 +141,8 @@ ${lines}
 };
 
 $(function() {
-  $('#edit-entry').onetabload(function() {
+  dotclear.dcrevisions = getData('dcrevisions');
+  $('#edit-entry').on('onetabload', function() {
     $('#revisions-area label').toggleWithLegend(
       $('#revisions-area').children().not('label'), {
         user_pref: 'dcx_post_revisions',
@@ -149,11 +150,11 @@ $(function() {
         fn: dotclear.revisionExpander()
       }
     );
-    $('#revisions-list tr.line a.patch').click(function() {
-      return window.confirm(dotclear.msg.confirm_apply_patch);
+    $('#revisions-list tr.line a.patch').on('click', function() {
+      return window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch);
     });
-    $('#revpurge').click(function() {
-      return window.confirm(dotclear.msg.confirm_purge_revision);
+    $('#revpurge').on('click', function() {
+      return window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision);
     });
   });
 });

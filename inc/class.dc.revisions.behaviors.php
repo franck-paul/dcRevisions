@@ -19,7 +19,7 @@ class dcRevisionsBehaviors
             $settings->addNameSpace('dcrevisions');
 
             echo
-            '<div class="fieldset"><h4>' . __('Revisions') . '</h4>' .
+            '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
             '<p><label class="classic" for="dcrevisions_enable">' .
             form::checkbox('dcrevisions_enable', 1, $settings->dcrevisions->enable) .
             __('Enable entries\' versionning on this blog') . '</label></p>' .
@@ -69,18 +69,18 @@ class dcRevisionsBehaviors
         global $core;
 
         return
-        '<script type="text/javascript">' . "\n" .
-        dcPage::jsVar('dotclear.post_type', 'post') .
-        dcPage::jsVar('dotclear.msg.excerpt', __('Excerpt')) .
-        dcPage::jsVar('dotclear.msg.content', __('Content')) .
-        dcPage::jsVar('dotclear.msg.current', __('Current')) .
-        dcPage::jsVar('dotclear.msg.revision', __('Rev.')) .
-        dcPage::jsVar('dotclear.msg.content_identical', __('Content identical')) .
-        dcPage::jsVar('dotclear.msg.confirm_apply_patch',
-            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?')) .
-        dcPage::jsVar('dotclear.msg.confirm_purge_revision',
-            __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')) .
-        "</script>\n" .
+        dcPage::jsJson('dcrevisions', [
+            'post_type' => 'post',
+            'msg'       => [
+                'excerpt'                => __('Excerpt'),
+                'content'                => __('Content'),
+                'current'                => __('Current'),
+                'revision'               => __('Rev.'),
+                'content_identical'      => __('Content identical'),
+                'confirm_apply_patch'    => __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?'),
+                'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')
+            ]
+        ]) .
         dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')), $core->getVersion('dcrevisions')) . "\n" .
         dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')), 'screen', $core->getVersion('dcrevisions')) . "\n";
     }
@@ -128,17 +128,18 @@ class dcRevisionsBehaviors
         global $core;
 
         return
-        '<script type="text/javascript">' . "\n" .
-        dcPage::jsVar('dotclear.post_type', 'page') .
-        dcPage::jsVar('dotclear.msg.excerpt', __('Excerpt')) .
-        dcPage::jsVar('dotclear.msg.content', __('Content')) .
-        dcPage::jsVar('dotclear.msg.current', __('Current')) .
-        dcPage::jsVar('dotclear.msg.content_identical', __('Content identical')) .
-        dcPage::jsVar('dotclear.msg.confirm_apply_patch',
-            __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?')) .
-        dcPage::jsVar('dotclear.msg.confirm_purge_revision',
-            __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')) .
-        "</script>\n" .
+        dcPage::jsJson('dcrevisions', [
+            'post_type' => 'page',
+            'msg'       => [
+                'excerpt'                => __('Excerpt'),
+                'content'                => __('Content'),
+                'current'                => __('Current'),
+                'revision'               => __('Rev.'),
+                'content_identical'      => __('Content identical'),
+                'confirm_apply_patch'    => __('CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?'),
+                'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?')
+            ]
+        ]) .
         dcPage::jsLoad(urldecode(dcPage::getPF('dcRevisions/js/_revision.js')), $core->getVersion('dcrevisions')) . "\n" .
         dcPage::cssLoad(urldecode(dcPage::getPF('dcRevisions/style.css')), 'screen', $core->getVersion('dcrevisions')) . "\n";
     }
