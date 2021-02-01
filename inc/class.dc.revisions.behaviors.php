@@ -50,11 +50,11 @@ class dcRevisionsBehaviors
             'post_type' => 'post'
         ];
 
-        $rs = $core->blog->revisions->getRevisions($params);
-
         if (is_null($id)) {
             $rs       = staticRecord::newFromArray([]);
             $rs->core = $core;
+        } else {
+            $rs = $core->blog->revisions->getRevisions($params);
         }
 
         $list = new dcRevisionsList($rs);
