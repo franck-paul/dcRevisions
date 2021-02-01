@@ -20,9 +20,9 @@ class dcRevisionsRestMethods
     {
         global $core;
 
-        $pid  = isset($_GET['pid']) ? $_GET['pid'] : null;
-        $rid  = isset($_GET['rid']) ? $_GET['rid'] : null;
-        $type = isset($_GET['type']) ? $_GET['type'] : 'post';
+        $pid  = $_GET['pid']  ?? null;
+        $rid  = $_GET['rid']  ?? null;
+        $type = $_GET['type'] ?? 'post';
 
         if ($pid === null) {
             throw new Exception(__('No post ID'));

@@ -20,7 +20,7 @@ $this->registerModule(
     'Tomtom, Franck Paul & contributors', // Author
     '0.5.1',                              // Version
     [
-        'requires'    => [['core', '2.16']],                           // Dependencies
+        'requires'    => [['core', '2.19']],                           // Dependencies
         'permissions' => 'usage,contentadmin',                         // Permissions
         'type'        => 'plugin',                                     // Type
         'details'     => 'https://open-time.net/?q=dcRevisions',       // Details URL
