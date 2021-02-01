@@ -10,7 +10,6 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class dcRevisionsList
 {
     protected $rs = null;
@@ -30,8 +29,7 @@ class dcRevisionsList
     {
         $res = '';
         if (!$this->rs->isEmpty()) {
-            $html_block =
-            '<table id="revisions-list" summary="' . __('Revisions') . '" class="clear maximal">' .
+            $html_block = '<table id="revisions-list" summary="' . __('Revisions') . '" class="clear maximal">' .
             '<thead>' .
             '<tr>' .
             '<th>' . __('Id') . '</th>' .
@@ -48,6 +46,7 @@ class dcRevisionsList
         } else {
             $res .= '<p class="clear form-note">' . __('No revision') . '</p>';
         }
+
         return $res;
     }
 
@@ -59,8 +58,7 @@ class dcRevisionsList
         $index  = count($this->rs);
 
         while ($this->rs->fetch()) {
-            $res .=
-            '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
+            $res .= '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
             '<td class="maximal nowrap rid">' .
             '<strong>' . sprintf(__('Revision #%s'), $index--) . '</strong>' .
             "</td>\n" .

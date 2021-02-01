@@ -10,7 +10,6 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class dcRevisions
 {
     public function __construct($core)
@@ -42,7 +41,7 @@ class dcRevisions
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
                 array_walk($params['post_id'],
-                    function (&$v, $k) {if ($v !== null) {$v = (integer) $v;}}
+                    function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}}
                 );
             } else {
                 $params['post_id'] = [(integer) $params['post_id']];
@@ -53,7 +52,7 @@ class dcRevisions
         if (!empty($params['revision_id'])) {
             if (is_array($params['revision_id'])) {
                 array_walk($params['revision_id'],
-                    function (&$v, $k) {if ($v !== null) {$v = (integer) $v;}}
+                    function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}}
                 );
             } else {
                 $params['revision_id'] = [(integer) $params['revision_id']];
@@ -157,6 +156,7 @@ class dcRevisions
             foreach ($diff as $k => $v) {
                 $diff[$k] = diff::uniDiff($n[$k], $o[$k]);
             }
+
             return $diff;
         } catch (Exception $e) {
             $this->core->error->add($e->getMessage());
@@ -169,8 +169,7 @@ class dcRevisions
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
         }
 
-        try
-        {
+        try {
             // Purge all revisions of the entry
             $strReq = 'DELETE FROM ' . $this->core->prefix . 'revision ' .
                 "WHERE post_id = '" . $this->core->con->escape($pid) . "' ";
@@ -193,8 +192,7 @@ class dcRevisions
             throw new Exception(__('You are not allowed to patch this entry with this revision'));
         }
 
-        try
-        {
+        try {
             $patch = $this->getPatch($pid, $rid, $type);
 
             $p = $this->core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
@@ -252,10 +250,18 @@ class dcRevisions
 
         while ($r->fetch()) {
             foreach ($patch as $k => $v) {
-                if ($k === 'post_excerpt') {$f = 'revision_excerpt_diff';}
-                if ($k === 'post_excerpt_xhtml') {$f = 'revision_excerpt_xhtml_diff';}
-                if ($k === 'post_content') {$f = 'revision_content_diff';}
-                if ($k === 'post_content_xhtml') {$f = 'revision_content_xhtml_diff';}
+                if ($k === 'post_excerpt') {
+                    $f = 'revision_excerpt_diff';
+                }
+                if ($k === 'post_excerpt_xhtml') {
+                    $f = 'revision_excerpt_xhtml_diff';
+                }
+                if ($k === 'post_content') {
+                    $f = 'revision_content_diff';
+                }
+                if ($k === 'post_content_xhtml') {
+                    $f = 'revision_content_xhtml_diff';
+                }
 
                 $patch[$k] = diff::uniPatch($v, $r->{$f});
             }

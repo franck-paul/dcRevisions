@@ -10,8 +10,9 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
-if (!defined('DC_RC_PATH')) {return;}
+if (!defined('DC_RC_PATH')) {
+    return;
+}
 
 class dcRevisionsRestMethods
 {
@@ -44,6 +45,7 @@ class dcRevisionsRestMethods
         foreach ($o as $k => $v) {
             $rsp->insertNode(self::buildNode($v, $n[$k], 2, $k));
         }
+
         return $rsp;
     }
 
@@ -63,6 +65,7 @@ class dcRevisionsRestMethods
                         $node->nline = $line->lines[1];
                         $node->insertNode($line->content);
                         $rev->insertNode($node);
+
                         break;
                     case 'delete':
                         $node        = new xmlTag('delete');
@@ -70,6 +73,7 @@ class dcRevisionsRestMethods
                         $c           = str_replace(['\0', '\1'], ['<del>', '</del>'], $line->content);
                         $node->insertNode($c);
                         $rev->insertNode($node);
+
                         break;
                     case 'insert':
                         $node        = new xmlTag('insert');
@@ -77,6 +81,7 @@ class dcRevisionsRestMethods
                         $c           = str_replace(['\0', '\1'], ['<ins>', '</ins>'], $line->content);
                         $node->insertNode($c);
                         $rev->insertNode($node);
+
                         break;
                 }
             }
@@ -85,6 +90,7 @@ class dcRevisionsRestMethods
                 $rev->insertNode($node);
             }
         }
+
         return $rev;
     }
 }

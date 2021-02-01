@@ -10,7 +10,6 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class dcRevisionsExtensions
 {
     public static function getDate($rs, $format = null)
@@ -65,6 +64,7 @@ class dcRevisionsExtensions
             && $rs->user_id == $rs->core->auth->userID()) {
             return true;
         }
+
         return false;
     }
 }

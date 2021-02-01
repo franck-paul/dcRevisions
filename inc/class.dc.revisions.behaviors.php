@@ -10,7 +10,6 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-
 class dcRevisionsBehaviors
 {
     public static function adminBlogPreferencesForm($core, $settings)

@@ -1,79 +1,107 @@
 #revisions-area {
   padding-bottom: 1em;
 }
+
 #revisions-area p.form-note {
   margin-top: 0.5em;
 }
+
 table#revisions-list {
   overflow: scroll;
 }
+
 table#revisions-list td.status {
   vertical-align: top;
   text-align: center;
 }
+
 table.preview-rev {
   border: 1px solid #999;
   border-spacing: 0px;
   overflow: scroll;
 }
-table.preview-rev, table.preview-rev tr, table.preview-rev th, table.preview-rev td {
+
+table.preview-rev,
+table.preview-rev tr,
+table.preview-rev th,
+table.preview-rev td {
   border: none;
 }
+
 table.preview-rev thead {
   color: currentcolor;
 }
+
 table.preview-rev thead tr.rev-number {
   border-bottom: 1px solid #999;
 }
-table.preview-rev thead tr.rev-header th, table.preview-rev thead tr.rev-number th {
+
+table.preview-rev thead tr.rev-header th,
+table.preview-rev thead tr.rev-number th {
   text-align: center;
 }
+
 table.preview-rev tbody {}
+
 table.preview-rev td {
   font: 100% "Andale Mono", AndaleMono, Consolas, Monaco, "Courier New", monospace;
 }
+
 table.preview-rev td.center {
   text-align: center;
 }
+
 table.preview-rev td.col-line {
   background-color: #f3f3f3;
   color: #666;
   text-align: center;
 }
-table.preview-rev td.context, table.preview-rev td.insert, table.preview-rev td.delete, table.preview-rev td.skip {
+
+table.preview-rev td.context,
+table.preview-rev td.insert,
+table.preview-rev td.delete,
+table.preview-rev td.skip {
   border-left: 1px solid #999;
 }
+
 /* Insert line */
 
 table.preview-rev td.insert {
   background-color: #dfd;
   color: #666;
 }
+
 table.preview-rev td.insert ins {
   text-decoration: none;
   background-color: #9e9;
   color: #666;
   padding: 0.2em 0 0.2em 0;
 }
+
 /* Delete line */
 
 table.preview-rev td.delete {
   background-color: #fdd;
   color: #666;
 }
+
 table.preview-rev td.delete del {
   text-decoration: none;
   background-color: #e99;
   color: #666;
   padding: 0.2em 0 0.2em 0;
 }
+
 /* Skip line */
 
 table.preview-rev td.skip {
   color: #d7d7d7;
 }
+
 /* Common lines */
 
 table.preview-rev td.first {}
+
 table.preview-rev td.last {}
+
 table.preview-rev td.first.last {}
