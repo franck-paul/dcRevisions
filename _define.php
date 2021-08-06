@@ -18,7 +18,7 @@ $this->registerModule(
     'dcRevisions',                        // Name
     "Allows entries's versionning",       // Description
     'Tomtom, Franck Paul & contributors', // Author
-    '0.5.1',                              // Version
+    '0.6',                                // Version
     [
         'requires'    => [['core', '2.19']],                           // Dependencies
         'permissions' => 'usage,contentadmin',                         // Permissions

@@ -1,4 +1,4 @@
-/*global $, dotclear, getData */
+/*global $, dotclear */
 'use strict';
 
 dotclear.revisionExpander = function () {
@@ -48,21 +48,11 @@ dotclear.viewRevisionContent = function (/*img, */ line, action) {
             content_nodes = $(rsp).find('post_content').children();
           }
           if (excerpt_nodes.length == 0 && content_nodes.length == 0) {
-            $(td).append(
-              `<strong>${dotclear.dcrevisions.msg.content_identical}</strong>`
-            );
+            $(td).append(`<strong>${dotclear.dcrevisions.msg.content_identical}</strong>`);
           } else {
             let table = '<table class="preview-rev">';
-            table += dotclear.viewRevisionRender(
-              excerpt_nodes,
-              dotclear.dcrevisions.msg.excerpt,
-              revisionId
-            );
-            table += dotclear.viewRevisionRender(
-              content_nodes,
-              dotclear.dcrevisions.msg.content,
-              revisionId
-            );
+            table += dotclear.viewRevisionRender(excerpt_nodes, dotclear.dcrevisions.msg.excerpt, revisionId);
+            table += dotclear.viewRevisionRender(content_nodes, dotclear.dcrevisions.msg.content, revisionId);
             table += '</table>';
             $(td).append(table);
           }
@@ -150,16 +140,13 @@ ${lines}
 };
 
 $(function () {
-  dotclear.dcrevisions = getData('dcrevisions');
+  dotclear.dcrevisions = dotclear.getData('dcrevisions');
   $('#edit-entry').on('onetabload', function () {
-    $('#revisions-area label').toggleWithLegend(
-      $('#revisions-area').children().not('label'),
-      {
-        user_pref: 'dcx_post_revisions',
-        legend_click: true,
-        fn: dotclear.revisionExpander(),
-      }
-    );
+    $('#revisions-area label').toggleWithLegend($('#revisions-area').children().not('label'), {
+      user_pref: 'dcx_post_revisions',
+      legend_click: true,
+      fn: dotclear.revisionExpander(),
+    });
     $('#revisions-list tr.line a.patch').on('click', function () {
       return window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch);
     });
