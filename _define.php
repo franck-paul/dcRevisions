@@ -23,10 +23,12 @@ $this->registerModule(
         'requires'    => [['core', '2.19']],                           // Dependencies
         'permissions' => 'usage,contentadmin',                         // Permissions
         'type'        => 'plugin',                                     // Type
-        'details'     => 'https://open-time.net/?q=dcRevisions',       // Details URL
-        'support'     => 'https://github.com/franck-paul/dcRevisions', // Support URL
         'settings'    => [                                             // Settings
             'blog' => '#params.dc-revisions'
-        ]
+        ],
+
+        'details'    => 'https://open-time.net/?q=dcRevisions',       // Details URL
+        'support'    => 'https://github.com/franck-paul/dcRevisions', // Support URL
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/main/dcstore.xml'
     ]
 );
