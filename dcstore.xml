@@ -1,8 +1,8 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="dcRevisions">
-    <name>Allows entries&apos;s versionning</name>
+    <name>dcRevisions</name>
     <version>0.6</version>
-    <author>Allows entries&apos;s versionning</author>
+    <author>Tomtom, Franck Paul &amp; contributors</author>
     <desc>Allows entries&apos;s versionning</desc>
     <file>https://github.com/franck-paul/dcRevisions/releases/download/0.6/plugin-dcRevisions-0.6.zip</file>
     <da:dcmin>2.19</da:dcmin>
