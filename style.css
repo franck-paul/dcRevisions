@@ -41,10 +41,8 @@ table.preview-rev thead tr.rev-number th {
   text-align: center;
 }
 
-table.preview-rev tbody {}
-
 table.preview-rev td {
-  font: 100% "Andale Mono", AndaleMono, Consolas, Monaco, "Courier New", monospace;
+  font: 100% 'Andale Mono', AndaleMono, Consolas, Monaco, 'Courier New', monospace;
 }
 
 table.preview-rev td.center {
@@ -97,11 +95,3 @@ table.preview-rev td.delete del {
 table.preview-rev td.skip {
   color: #d7d7d7;
 }
-
-/* Common lines */
-
-table.preview-rev td.first {}
-
-table.preview-rev td.last {}
-
-table.preview-rev td.first.last {}

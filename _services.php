@@ -18,8 +18,6 @@ class dcRevisionsRestMethods
 {
     public static function getPatch()
     {
-        global $core;
-
         $pid  = $_GET['pid']  ?? null;
         $rid  = $_GET['rid']  ?? null;
         $type = $_GET['type'] ?? 'post';
@@ -31,15 +29,15 @@ class dcRevisionsRestMethods
             throw new Exception(__('No revision ID'));
         }
 
-        $p = $core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+        $p = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
         $o = [
             'post_excerpt'       => $p->post_excerpt,
             'post_content'       => $p->post_content,
             'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
-            'post_content_xhtml' => $p->post_content_xhtml
+            'post_content_xhtml' => $p->post_content_xhtml,
         ];
 
-        $n = $core->blog->revisions->getPatch($pid, $rid, $type);
+        $n = dcCore::app()->blog->revisions->getPatch($pid, $rid, $type);
 
         $rsp = new xmlTag();
         foreach ($o as $k => $v) {

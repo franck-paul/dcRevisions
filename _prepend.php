@@ -14,8 +14,8 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-$__autoload['dcRevisions']            = dirname(__FILE__) . '/inc/class.dc.revisions.php';
-$__autoload['dcRevisionsRestMethods'] = dirname(__FILE__) . '/_services.php';
-$__autoload['dcRevisionsBehaviors']   = dirname(__FILE__) . '/inc/class.dc.revisions.behaviors.php';
-$__autoload['dcRevisionsExtensions']  = dirname(__FILE__) . '/inc/class.dc.revisions.extensions.php';
-$__autoload['dcRevisionsList']        = dirname(__FILE__) . '/inc/class.dc.revisions.list.php';
+$__autoload['dcRevisions']            = __DIR__ . '/inc/class.dc.revisions.php';
+$__autoload['dcRevisionsRestMethods'] = __DIR__ . '/_services.php';
+$__autoload['dcRevisionsBehaviors']   = __DIR__ . '/inc/class.dc.revisions.behaviors.php';
+$__autoload['dcRevisionsExtensions']  = __DIR__ . '/inc/class.dc.revisions.extensions.php';
+$__autoload['dcRevisionsList']        = __DIR__ . '/inc/class.dc.revisions.list.php';

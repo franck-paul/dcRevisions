@@ -1,23 +1,25 @@
 /*global $, dotclear */
 'use strict';
 
-dotclear.revisionExpander = function () {
+dotclear.revisionExpander = () => {
   $.expandContent({
     lines: $('#revisions-list tr.line'),
     callback: dotclear.viewRevisionContent,
   });
 };
 
-dotclear.viewRevisionContent = function (/*img, */ line, action) {
-  action = action || 'toggle';
+dotclear.viewRevisionContent = (line, action = 'toggle') => {
   if ($(line).attr('id') == undefined) {
     return;
   }
 
   const revisionId = $(line).attr('id').substr(1);
   const postId = $('#id').val();
-  let tr = document.getElementById('re' + revisionId);
-  if (!tr) {
+  let tr = document.getElementById(`re${revisionId}`);
+  if (tr) {
+    $(tr).toggle();
+    $(line).toggleClass('expand');
+  } else {
     $.get(
       'services.php',
       {
@@ -26,12 +28,12 @@ dotclear.viewRevisionContent = function (/*img, */ line, action) {
         rid: revisionId,
         type: dotclear.dcrevisions.post_type,
       },
-      function (data) {
+      (data) => {
         const rsp = $(data).children('rsp')[0];
         if (rsp.attributes[0].value == 'ok') {
           // Patch found
           tr = document.createElement('tr');
-          tr.id = 're' + revisionId;
+          tr.id = `re${revisionId}`;
           const td = document.createElement('td');
           td.colSpan = $(line).children('td').length;
           td.className = 'expand';
@@ -62,16 +64,12 @@ dotclear.viewRevisionContent = function (/*img, */ line, action) {
           $(line).toggleClass('expand');
           window.alert($(rsp).find('message').text());
         }
-      }
+      },
     );
-  } else {
-    $(tr).toggle();
-    $(line).toggleClass('expand');
   }
 };
 
-dotclear.viewRevisionRender = function (nodes, title) {
-  let res = '';
+dotclear.viewRevisionRender = (nodes, title) => {
   let lines = '';
   let previous = '';
 
@@ -79,8 +77,8 @@ dotclear.viewRevisionRender = function (nodes, title) {
     const name = this.nodeName;
     const content = $(this).text();
 
-    let ol = $(this).attr('oline') != undefined ? $(this).attr('oline') : '';
-    let nl = $(this).attr('nline') != undefined ? $(this).attr('nline') : '';
+    let ol = $(this).attr('oline') ?? '';
+    let nl = $(this).attr('nline') ?? '';
 
     if (name == 'skip') {
       ol = nl = '&hellip;';
@@ -120,38 +118,34 @@ dotclear.viewRevisionRender = function (nodes, title) {
   });
 
   if (lines != '') {
-    res = `<thead>
-  <tr class="rev-header">
-   <th colspan="3">${title}</th>
-  </tr>
-  <tr class="rev-number">
-   <th class="minimal nowrap">${dotclear.dcrevisions.msg.current}</th>
-   <th class="minimal nowrap">${dotclear.dcrevisions.msg.revision}</th>
-   <th class="maximal"></th>
-  </tr>
-</thead>
-<tbody>
-${lines}
-</tbody>
-`;
+    return `<thead>
+      <tr class="rev-header">
+       <th colspan="3">${title}</th>
+      </tr>
+      <tr class="rev-number">
+       <th class="minimal nowrap">${dotclear.dcrevisions.msg.current}</th>
+       <th class="minimal nowrap">${dotclear.dcrevisions.msg.revision}</th>
+       <th class="maximal"></th>
+      </tr>
+    </thead>
+    <tbody>
+    ${lines}
+    </tbody>
+    `;
   }
 
-  return res;
+  return '';
 };
 
-$(function () {
+$(() => {
   dotclear.dcrevisions = dotclear.getData('dcrevisions');
-  $('#edit-entry').on('onetabload', function () {
+  $('#edit-entry').on('onetabload', () => {
     $('#revisions-area label').toggleWithLegend($('#revisions-area').children().not('label'), {
       user_pref: 'dcx_post_revisions',
       legend_click: true,
       fn: dotclear.revisionExpander(),
     });
-    $('#revisions-list tr.line a.patch').on('click', function () {
-      return window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch);
-    });
-    $('#revpurge').on('click', function () {
-      return window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision);
-    });
+    $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
+    $('#revpurge').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision));
   });
 });

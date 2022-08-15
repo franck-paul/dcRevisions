@@ -12,11 +12,6 @@
  */
 class dcRevisions
 {
-    public function __construct($core)
-    {
-        $this->core = $core;
-    }
-
     public function getRevisions($params, $count_only = false)
     {
         if ($count_only) {
@@ -29,42 +24,48 @@ class dcRevisions
                 'U.user_firstname, U.user_displayname';
         }
 
-        $strReq = 'SELECT ' . $f . ' FROM ' . $this->core->prefix . 'revision R ' .
-        'LEFT JOIN ' . $this->core->prefix . 'user U ON R.user_id = U.user_id ';
+        $strReq = 'SELECT ' . $f . ' FROM ' . dcCore::app()->prefix . 'revision R ' .
+        'LEFT JOIN ' . dcCore::app()->prefix . 'user U ON R.user_id = U.user_id ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE R.blog_id = '" . $this->core->con->escape($this->core->blog->id) . "' ";
+        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escape(dcCore::app()->blog->id) . "' ";
 
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
-                array_walk($params['post_id'],
-                    function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}}
+                array_walk(
+                    $params['post_id'],
+                    function (&$v, $k) { if ($v !== null) {$v = (int) $v;}}
                 );
             } else {
-                $params['post_id'] = [(integer) $params['post_id']];
+                $params['post_id'] = [(int) $params['post_id']];
             }
-            $strReq .= 'AND R.post_id ' . $this->core->con->in($params['post_id']);
+            $strReq .= 'AND R.post_id ' . dcCore::app()->con->in($params['post_id']);
         }
 
         if (!empty($params['revision_id'])) {
             if (is_array($params['revision_id'])) {
-                array_walk($params['revision_id'],
-                    function (&$v, $k) { if ($v !== null) {$v = (integer) $v;}}
+                array_walk(
+                    $params['revision_id'],
+                    function (&$v, $k) {
+                        if ($v !== null) {
+                            $v = (int) $v;
+                        }
+                    }
                 );
             } else {
-                $params['revision_id'] = [(integer) $params['revision_id']];
+                $params['revision_id'] = [(int) $params['revision_id']];
             }
-            $strReq .= 'AND R.revision_id ' . $this->core->con->in($params['revision_id']);
+            $strReq .= 'AND R.revision_id ' . dcCore::app()->con->in($params['revision_id']);
         }
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && !empty($params['post_type'])) {
-                $strReq .= 'AND R.revision_type ' . $this->core->con->in($params['post_type']);
+                $strReq .= 'AND R.revision_type ' . dcCore::app()->con->in($params['post_type']);
             } elseif ($params['post_type'] != '') {
-                $strReq .= "AND R.revision_type = '" . $this->core->con->escape($params['post_type']) . "' ";
+                $strReq .= "AND R.revision_type = '" . dcCore::app()->con->escape($params['post_type']) . "' ";
             }
         }
 
@@ -74,18 +75,18 @@ class dcRevisions
 
         if (!$count_only) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . $this->core->con->escape($params['order']) . ' ';
+                $strReq .= 'ORDER BY ' . dcCore::app()->con->escape($params['order']) . ' ';
             } else {
                 $strReq .= 'ORDER BY revision_dt DESC ';
             }
         }
 
         if (!$count_only && !empty($params['limit'])) {
-            $strReq .= $this->core->con->limit($params['limit']);
+            $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
-        $rs       = $this->core->con->select($strReq);
-        $rs->core = $this->core;
+        $rs       = dcCore::app()->con->select($strReq);
+        $rs->core = dcCore::app();
         $rs->extend('dcRevisionsExtensions');
 
         return $rs;
@@ -93,25 +94,25 @@ class dcRevisions
 
     public function addRevision($pcur, $post_id, $type)
     {
-        $rs = $this->core->con->select(
+        $rs = dcCore::app()->con->select(
             'SELECT MAX(revision_id) ' .
-            'FROM ' . $this->core->prefix . 'revision'
+            'FROM ' . dcCore::app()->prefix . 'revision'
         );
         $revision_id = $rs->f(0) + 1;
 
-        $rs = $this->core->blog->getPosts(['post_id' => $post_id, 'post_type' => $type]);
+        $rs = dcCore::app()->blog->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
         $old = [
             'post_excerpt'       => $rs->post_excerpt,
             'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
             'post_content'       => $rs->post_content,
-            'post_content_xhtml' => $rs->post_content_xhtml
+            'post_content_xhtml' => $rs->post_content_xhtml,
         ];
         $new = [
             'post_excerpt'       => $pcur->post_excerpt,
             'post_excerpt_xhtml' => $pcur->post_excerpt_xhtml,
             'post_content'       => $pcur->post_content,
-            'post_content_xhtml' => $pcur->post_content_xhtml
+            'post_content_xhtml' => $pcur->post_content_xhtml,
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -124,22 +125,22 @@ class dcRevisions
         }
 
         if ($insert) {
-            $rcur                              = $this->core->con->openCursor($this->core->prefix . 'revision');
+            $rcur                              = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'revision');
             $rcur->revision_id                 = $revision_id;
             $rcur->post_id                     = $post_id;
-            $rcur->user_id                     = $this->core->auth->userID();
-            $rcur->blog_id                     = $this->core->blog->id;
+            $rcur->user_id                     = dcCore::app()->auth->userID();
+            $rcur->blog_id                     = dcCore::app()->blog->id;
             $rcur->revision_dt                 = date('Y-m-d H:i:s');
-            $rcur->revision_tz                 = $this->core->auth->getInfo('user_tz');
+            $rcur->revision_tz                 = dcCore::app()->auth->getInfo('user_tz');
             $rcur->revision_type               = $type;
             $rcur->revision_excerpt_diff       = $diff['post_excerpt'];
             $rcur->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
             $rcur->revision_content_diff       = $diff['post_content'];
             $rcur->revision_content_xhtml_diff = $diff['post_content_xhtml'];
 
-            $this->core->con->writeLock($this->core->prefix . 'revision');
+            dcCore::app()->con->writeLock(dcCore::app()->prefix . 'revision');
             $rcur->insert();
-            $this->core->con->unlock();
+            dcCore::app()->con->unlock();
         }
     }
 
@@ -149,7 +150,7 @@ class dcRevisions
             'post_excerpt'       => '',
             'post_excerpt_xhtml' => '',
             'post_content'       => '',
-            'post_content_xhtml' => ''
+            'post_content_xhtml' => '',
         ];
 
         try {
@@ -159,7 +160,7 @@ class dcRevisions
 
             return $diff;
         } catch (Exception $e) {
-            $this->core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
@@ -171,18 +172,18 @@ class dcRevisions
 
         try {
             // Purge all revisions of the entry
-            $strReq = 'DELETE FROM ' . $this->core->prefix . 'revision ' .
-                "WHERE post_id = '" . $this->core->con->escape($pid) . "' ";
-            $this->core->con->execute($strReq);
+            $strReq = 'DELETE FROM ' . dcCore::app()->prefix . 'revision ' .
+                "WHERE post_id = '" . dcCore::app()->con->escape($pid) . "' ";
+            dcCore::app()->con->execute($strReq);
 
-            if (!$this->core->error->flag()) {
+            if (!dcCore::app()->error->flag()) {
                 if ($redir_url !== null) {
                     dcPage::addSuccessNotice(__('All revisions have been deleted.'));
                     http::redirect(sprintf($redir_url, $pid));
                 }
             }
         } catch (Exception $e) {
-            $this->core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
@@ -195,9 +196,9 @@ class dcRevisions
         try {
             $patch = $this->getPatch($pid, $rid, $type);
 
-            $p = $this->core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+            $p = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
 
-            $cur = $this->core->con->openCursor($this->core->prefix . 'post');
+            $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'post');
 
             $cur->post_title        = $p->post_title;
             $cur->cat_id            = $p->cat_id ?: null;
@@ -207,9 +208,9 @@ class dcRevisions
             $cur->post_lang         = $p->post_lang;
             $cur->post_notes        = $p->post_notes;
             $cur->post_status       = $p->post_status;
-            $cur->post_selected     = (integer) $p->post_selected;
-            $cur->post_open_comment = (integer) $p->post_open_comment;
-            $cur->post_open_tb      = (integer) $p->post_open_tb;
+            $cur->post_selected     = (int) $p->post_selected;
+            $cur->post_open_comment = (int) $p->post_open_comment;
+            $cur->post_open_tb      = (int) $p->post_open_tb;
             $cur->post_type         = $p->post_type;
 
             $cur->post_excerpt       = $patch['post_excerpt'];
@@ -218,16 +219,16 @@ class dcRevisions
             $cur->post_content_xhtml = $patch['post_content_xhtml'];
 
             # --BEHAVIOR-- adminBeforeXXXXUpdate
-            $this->core->callBehavior($before_behaviour, $cur, $pid);
+            dcCore::app()->callBehavior($before_behaviour, $cur, $pid);
 
-            $this->core->auth->sudo([$this->core->blog, 'updPost'], $pid, $cur);
+            dcCore::app()->auth->sudo([dcCore::app()->blog, 'updPost'], $pid, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
-            $this->core->callBehavior($after_behaviour, $cur, $pid);
+            dcCore::app()->callBehavior($after_behaviour, $cur, $pid);
 
             http::redirect(sprintf($redir_url, $pid));
         } catch (Exception $e) {
-            $this->core->error->add($e->getMessage());
+            dcCore::app()->error->add($e->getMessage());
         }
     }
 
@@ -235,19 +236,20 @@ class dcRevisions
     {
         $params = [
             'post_id'   => $pid,
-            'post_type' => $type
+            'post_type' => $type,
         ];
 
-        $p = $this->core->blog->getPosts($params);
+        $p = dcCore::app()->blog->getPosts($params);
         $r = $this->getRevisions($params);
 
         $patch = [
             'post_excerpt'       => $p->post_excerpt,
             'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
             'post_content'       => $p->post_content,
-            'post_content_xhtml' => $p->post_content_xhtml
+            'post_content_xhtml' => $p->post_content_xhtml,
         ];
 
+        $f = '';
         while ($r->fetch()) {
             foreach ($patch as $k => $v) {
                 if ($k === 'post_excerpt') {
@@ -283,7 +285,7 @@ class dcRevisions
 
     protected function canPurge($pid, $type)
     {
-        $rs = $this->core->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+        $rs = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
 
         return ($rs->isEditable());
     }

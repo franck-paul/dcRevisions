@@ -18,17 +18,17 @@ $this->registerModule(
     'dcRevisions',                        // Name
     "Allows entries's versionning",       // Description
     'Tomtom, Franck Paul & contributors', // Author
-    '0.6',                                // Version
+    '0.7',
     [
-        'requires'    => [['core', '2.19']],                           // Dependencies
+        'requires'    => [['core', '2.23']],                           // Dependencies
         'permissions' => 'usage,contentadmin',                         // Permissions
         'type'        => 'plugin',                                     // Type
         'settings'    => [                                             // Settings
-            'blog' => '#params.dc-revisions'
+            'blog' => '#params.dc-revisions',
         ],
 
         'details'    => 'https://open-time.net/?q=dcRevisions',       // Details URL
         'support'    => 'https://github.com/franck-paul/dcRevisions', // Support URL
-        'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/master/dcstore.xml'
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/master/dcstore.xml',
     ]
 );

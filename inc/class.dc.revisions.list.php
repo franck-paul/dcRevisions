@@ -16,8 +16,7 @@ class dcRevisionsList
 
     public function __construct($rs)
     {
-        $this->rs   = $rs;
-        $this->core = $rs->core;
+        $this->rs = $rs;
     }
 
     public function count()
@@ -76,8 +75,12 @@ class dcRevisionsList
             ) .
                 "</td>\n" .
                 '<td class="minimal nowrap status">' .
-                ($this->rs->canPatch() ? sprintf($p_link, sprintf($url, $this->rs->revision_id),
-                urldecode(dcPage::getPF('dcRevisions/images/apply.png')), __('Apply patch')) : '') .
+                ($this->rs->canPatch() ? sprintf(
+                    $p_link,
+                    sprintf($url, $this->rs->revision_id),
+                    urldecode(dcPage::getPF('dcRevisions/images/apply.png')),
+                    __('Apply patch')
+                ) : '') .
                 "</td>\n" .
                 "</tr>\n";
         }

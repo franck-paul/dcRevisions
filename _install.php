@@ -14,22 +14,25 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$m_version = $core->plugins->moduleInfo('dcRevisions', 'version');
-$i_version = $core->getVersion('dcrevisions');
+$m_version = dcCore::app()->plugins->moduleInfo('dcRevisions', 'version');
+$i_version = dcCore::app()->getVersion('dcrevisions');
 
 if (version_compare($i_version, $m_version, '>=')) {
     return;
 }
 
-$core->blog->settings->addNamespace('dcrevisions');
-$core->blog->settings->dcrevisions->put(
+dcCore::app()->blog->settings->addNamespace('dcrevisions');
+dcCore::app()->blog->settings->dcrevisions->put(
     'enable',
     false,
-    'boolean', 'Enable revisions', false, true
+    'boolean',
+    'Enable revisions',
+    false,
+    true
 );
 
 # --INSTALL AND UPDATE PROCEDURES--
-$s = new dbStruct($core->con, $core->prefix);
+$s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
 
 $s->revision
     ->revision_id('bigint', 0, false)
@@ -52,14 +55,14 @@ $s->revision->index('idx_revision_post_id', 'btree', 'post_id');
 $s->revision->reference('fk_revision_post', 'post_id', 'post', 'post_id', 'cascade', 'cascade');
 $s->revision->reference('fk_revision_blog', 'blog_id', 'blog', 'blog_id', 'cascade', 'cascade');
 
-$si = new dbStruct($core->con, $core->prefix);
+$si = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
 
 try {
     $changes = $si->synchronize($s);
 } catch (Exception $e) {
-    $core->error->add($e);
+    dcCore::app()->error->add($e);
 }
 
-$core->setVersion('dcrevisions', $m_version);
+dcCore::app()->setVersion('dcrevisions', $m_version);
 
 return true;

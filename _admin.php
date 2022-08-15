@@ -17,29 +17,29 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 // dead but useful code, in order to have translations
 __('dcRevisions') . __('Allows entries\'s versionning');
 
-$core->addBehavior('adminBlogPreferencesForm', ['dcRevisionsBehaviors', 'adminBlogPreferencesForm']);
-$core->addBehavior('adminBeforeBlogSettingsUpdate', ['dcRevisionsBehaviors', 'adminBeforeBlogSettingsUpdate']);
+dcCore::app()->addBehavior('adminBlogPreferencesForm', ['dcRevisionsBehaviors', 'adminBlogPreferencesForm']);
+dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', ['dcRevisionsBehaviors', 'adminBeforeBlogSettingsUpdate']);
 
-$core->blog->settings->addNameSpace('dcrevisions');
+dcCore::app()->blog->settings->addNameSpace('dcrevisions');
 
-if ($core->blog->settings->dcrevisions->enable) {
-    $core->addBehavior('adminPostHeaders', ['dcRevisionsBehaviors', 'adminPostHeaders']);
-    $core->addBehavior('adminPostForm', ['dcRevisionsBehaviors', 'adminPostForm']);
+if (dcCore::app()->blog->settings->dcrevisions->enable) {
+    dcCore::app()->addBehavior('adminPostHeaders', ['dcRevisionsBehaviors', 'adminPostHeaders']);
+    dcCore::app()->addBehavior('adminPostForm', ['dcRevisionsBehaviors', 'adminPostForm']);
 
-    $core->addBehavior('adminBeforePostUpdate', ['dcRevisionsBehaviors', 'adminBeforePostUpdate']);
+    dcCore::app()->addBehavior('adminBeforePostUpdate', ['dcRevisionsBehaviors', 'adminBeforePostUpdate']);
 
-    $core->addBehavior('adminPageHeaders', ['dcRevisionsBehaviors', 'adminPageHeaders']);
-    $core->addBehavior('adminPageForm', ['dcRevisionsBehaviors', 'adminPageForm']);
+    dcCore::app()->addBehavior('adminPageHeaders', ['dcRevisionsBehaviors', 'adminPageHeaders']);
+    dcCore::app()->addBehavior('adminPageForm', ['dcRevisionsBehaviors', 'adminPageForm']);
 
-    $core->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
+    dcCore::app()->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
 
     /* Add behavior callbacks for posts actions */
-    $core->addBehavior('adminPostsActionsPage', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
-    $core->addBehavior('adminPagesActionsPage', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
+    dcCore::app()->addBehavior('adminPostsActionsPage', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
+    dcCore::app()->addBehavior('adminPagesActionsPage', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
 
-    $core->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
+    dcCore::app()->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
 
-    $core->blog->revisions = new dcRevisions($core);
+    dcCore::app()->blog->revisions = new dcRevisions();
 
     if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
         // We have a post or a page ID
@@ -49,10 +49,10 @@ if ($core->blog->settings->dcrevisions->enable) {
             if (isset($_GET['patch'])) {
                 // Patch
                 $redir_url .= '&upd=1';
-                $core->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redir_url, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
+                dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redir_url, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
             } else {
                 // Purge
-                $core->blog->revisions->purge($_GET['id'], 'post', $redir_url);
+                dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redir_url);
             }
         } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=[0-9]+(.*)$/', $_SERVER['REQUEST_URI'])) {
             // It's a page
@@ -60,10 +60,10 @@ if ($core->blog->settings->dcrevisions->enable) {
             if (isset($_GET['patch'])) {
                 // Patch
                 $redir_url .= '&upd=1';
-                $core->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redir_url, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
+                dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redir_url, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
             } else {
                 // Purge
-                $core->blog->revisions->purge($_GET['id'], 'page', $redir_url);
+                dcCore::app()->blog->revisions->purge($_GET['id'], 'page', $redir_url);
             }
         }
     }
