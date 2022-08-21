@@ -164,7 +164,7 @@ class dcRevisions
         }
     }
 
-    public function purge($pid, $type, $redir_url = null)
+    public function purge($pid, $type, $redirect_url = null)
     {
         if (!$this->canPurge($pid, $type)) {
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
@@ -177,9 +177,9 @@ class dcRevisions
             dcCore::app()->con->execute($strReq);
 
             if (!dcCore::app()->error->flag()) {
-                if ($redir_url !== null) {
+                if ($redirect_url !== null) {
                     dcPage::addSuccessNotice(__('All revisions have been deleted.'));
-                    http::redirect(sprintf($redir_url, $pid));
+                    http::redirect(sprintf($redirect_url, $pid));
                 }
             }
         } catch (Exception $e) {
@@ -187,7 +187,7 @@ class dcRevisions
         }
     }
 
-    public function setPatch($pid, $rid, $type, $redir_url, $before_behaviour, $after_behaviour)
+    public function setPatch($pid, $rid, $type, $redirect_url, $before_behaviour, $after_behaviour)
     {
         if (!$this->canPatch($rid)) {
             throw new Exception(__('You are not allowed to patch this entry with this revision'));
@@ -226,7 +226,7 @@ class dcRevisions
             # --BEHAVIOR-- adminAfterXXXXUpdate
             dcCore::app()->callBehavior($after_behaviour, $cur, $pid);
 
-            http::redirect(sprintf($redir_url, $pid));
+            http::redirect(sprintf($redirect_url, $pid));
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
