@@ -142,7 +142,7 @@ class dcRevisionsBehaviors
         }
     }
 
-    public static function adminPostsActionsPage($core, $ap)
+    public static function adminPostsActionsPage(dcPostsActions $ap)
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
@@ -153,7 +153,7 @@ class dcRevisionsBehaviors
         }
     }
 
-    public static function adminPagesActionsPage($core, $ap)
+    public static function adminPagesActionsPage(dcPagesActions $ap)
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
@@ -164,17 +164,17 @@ class dcRevisionsBehaviors
         }
     }
 
-    public static function adminPostsDoReplacements($core, dcPostsActionsPage $ap, $post)
+    public static function adminPostsDoReplacements(dcPostsActions $ap, arrayObject $post)
     {
-        self::adminEntriesDoReplacements(dcCore::app(), $ap, $post, 'post');
+        self::adminEntriesDoReplacements($ap, $post, 'post');
     }
 
-    public static function adminPagesDoReplacements($core, dcPostsActionsPage $ap, $post)
+    public static function adminPagesDoReplacements(dcPagesActions $ap, arrayObject $post)
     {
-        self::adminEntriesDoReplacements(dcCore::app(), $ap, $post, 'page');
+        self::adminEntriesDoReplacements($ap, $post, 'page');
     }
 
-    public static function adminEntriesDoReplacements($core, dcPostsActionsPage $ap, $post, $type = 'post')
+    public static function adminEntriesDoReplacements($ap, arrayObject $post, $type = 'post')
     {
         if (!empty($post['dopurge'])) {
             // Do replacements

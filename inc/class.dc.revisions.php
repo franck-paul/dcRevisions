@@ -37,7 +37,11 @@ class dcRevisions
             if (is_array($params['post_id'])) {
                 array_walk(
                     $params['post_id'],
-                    function (&$v, $k) { if ($v !== null) {$v = (int) $v;}}
+                    function (&$v) {
+                        if ($v !== null) {
+                            $v = (int) $v;
+                        }
+                    }
                 );
             } else {
                 $params['post_id'] = [(int) $params['post_id']];
@@ -49,7 +53,7 @@ class dcRevisions
             if (is_array($params['revision_id'])) {
                 array_walk(
                     $params['revision_id'],
-                    function (&$v, $k) {
+                    function (&$v) {
                         if ($v !== null) {
                             $v = (int) $v;
                         }
@@ -118,7 +122,7 @@ class dcRevisions
         $diff = $this->getDiff($new, $old);
 
         $insert = false;
-        foreach ($diff as $k => $v) {
+        foreach ($diff as $v) {
             if ($v !== '') {
                 $insert = true;
             }
@@ -176,11 +180,9 @@ class dcRevisions
                 "WHERE post_id = '" . dcCore::app()->con->escape($pid) . "' ";
             dcCore::app()->con->execute($strReq);
 
-            if (!dcCore::app()->error->flag()) {
-                if ($redirect_url !== null) {
-                    dcPage::addSuccessNotice(__('All revisions have been deleted.'));
-                    http::redirect(sprintf($redirect_url, $pid));
-                }
+            if (!dcCore::app()->error->flag() && $redirect_url !== null) {
+                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                http::redirect(sprintf($redirect_url, $pid));
             }
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());

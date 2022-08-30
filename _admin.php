@@ -34,8 +34,8 @@ if (dcCore::app()->blog->settings->dcrevisions->enable) {
     dcCore::app()->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
 
     /* Add behavior callbacks for posts actions */
-    dcCore::app()->addBehavior('adminPostsActionsPage', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
-    dcCore::app()->addBehavior('adminPagesActionsPage', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
+    dcCore::app()->addBehavior('adminPostsActions', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
+    dcCore::app()->addBehavior('adminPagesActions', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
 
     dcCore::app()->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
 
@@ -43,7 +43,7 @@ if (dcCore::app()->blog->settings->dcrevisions->enable) {
 
     if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
         // We have a post or a page ID
-        if (preg_match('/post.php\?id=[0-9]+(.*)$/', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
             // It's a post
             $redir_url = 'post.php?id=%s';
             if (isset($_GET['patch'])) {
@@ -54,7 +54,7 @@ if (dcCore::app()->blog->settings->dcrevisions->enable) {
                 // Purge
                 dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redir_url);
             }
-        } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=[0-9]+(.*)$/', $_SERVER['REQUEST_URI'])) {
+        } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
             // It's a page
             $redir_url = 'plugin.php?p=pages&act=page&id=%s';
             if (isset($_GET['patch'])) {

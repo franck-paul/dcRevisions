@@ -20,7 +20,7 @@ $this->registerModule(
     'Tomtom, Franck Paul & contributors', // Author
     '0.7',
     [
-        'requires'    => [['core', '2.23']],                           // Dependencies
+        'requires'    => [['core', '2.24']],                           // Dependencies
         'permissions' => 'usage,contentadmin',                         // Permissions
         'type'        => 'plugin',                                     // Type
         'settings'    => [                                             // Settings
