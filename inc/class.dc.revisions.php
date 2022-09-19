@@ -89,8 +89,7 @@ class dcRevisions
             $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
-        $rs       = dcCore::app()->con->select($strReq);
-        $rs->core = dcCore::app();
+        $rs = dcCore::app()->con->select($strReq);
         $rs->extend('dcRevisionsExtensions');
 
         return $rs;

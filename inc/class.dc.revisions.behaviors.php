@@ -46,8 +46,7 @@ class dcRevisionsBehaviors
         ];
 
         if (is_null($id)) {
-            $rs       = staticRecord::newFromArray([]);
-            $rs->core = dcCore::app();
+            $rs = staticRecord::newFromArray([]);
         } else {
             $rs = dcCore::app()->blog->revisions->getRevisions($params);
         }
@@ -103,8 +102,7 @@ class dcRevisionsBehaviors
         $rs = dcCore::app()->blog->revisions->getRevisions($params);
 
         if (is_null($id)) {
-            $rs       = staticRecord::newFromArray([]);
-            $rs->core = dcCore::app();
+            $rs = staticRecord::newFromArray([]);
         }
 
         $list = new dcRevisionsList($rs);

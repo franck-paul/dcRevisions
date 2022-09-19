@@ -14,14 +14,14 @@ class dcRevisionsExtensions
 {
     public static function getDate($rs, $format = null)
     {
-        $format === null ? $format = $rs->core->blog->settings->system->date_format : $format;
+        $format === null ? $format = dcCore::app()->blog->settings->system->date_format : $format;
 
         return dt::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
 
     public static function getTime($rs, $format = null)
     {
-        $format === null ? $format = $rs->core->blog->settings->system->time_format : $format;
+        $format === null ? $format = dcCore::app()->blog->settings->system->time_format : $format;
 
         return dt::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
@@ -45,12 +45,12 @@ class dcRevisionsExtensions
     public static function canPatch($rs)
     {
         # If user is super admin, true
-        if ($rs->core->auth->isSuperAdmin()) {
+        if (dcCore::app()->auth->isSuperAdmin()) {
             return true;
         }
 
         # If user is admin or contentadmin, true
-        if ($rs->core->auth->check('contentadmin', $rs->core->blog->id)) {
+        if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
             return true;
         }
 
@@ -60,8 +60,8 @@ class dcRevisionsExtensions
         }
 
         # If user is usage and owner of the entry
-        if ($rs->core->auth->check('usage', $rs->core->blog->id)
-            && $rs->user_id == $rs->core->auth->userID()) {
+        if (dcCore::app()->auth->check('usage', dcCore::app()->blog->id)
+            && $rs->user_id == dcCore::app()->auth->userID()) {
             return true;
         }
 
