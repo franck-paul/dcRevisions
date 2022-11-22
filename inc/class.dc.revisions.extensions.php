@@ -50,7 +50,9 @@ class dcRevisionsExtensions
         }
 
         # If user is admin or contentadmin, true
-        if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
             return true;
         }
 
@@ -60,7 +62,9 @@ class dcRevisionsExtensions
         }
 
         # If user is usage and owner of the entry
-        if (dcCore::app()->auth->check('usage', dcCore::app()->blog->id)
+        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_USAGE,
+        ]), dcCore::app()->blog->id)
             && $rs->user_id == dcCore::app()->auth->userID()) {
             return true;
         }

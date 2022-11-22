@@ -17,27 +17,27 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 // dead but useful code, in order to have translations
 __('dcRevisions') . __('Allows entries\'s versionning');
 
-dcCore::app()->addBehavior('adminBlogPreferencesForm', ['dcRevisionsBehaviors', 'adminBlogPreferencesForm']);
-dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', ['dcRevisionsBehaviors', 'adminBeforeBlogSettingsUpdate']);
+dcCore::app()->addBehavior('adminBlogPreferencesFormV2', [dcRevisionsBehaviors::class, 'adminBlogPreferencesForm']);
+dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', [dcRevisionsBehaviors::class, 'adminBeforeBlogSettingsUpdate']);
 
 dcCore::app()->blog->settings->addNameSpace('dcrevisions');
 
 if (dcCore::app()->blog->settings->dcrevisions->enable) {
-    dcCore::app()->addBehavior('adminPostHeaders', ['dcRevisionsBehaviors', 'adminPostHeaders']);
-    dcCore::app()->addBehavior('adminPostForm', ['dcRevisionsBehaviors', 'adminPostForm']);
+    dcCore::app()->addBehavior('adminPostHeaders', [dcRevisionsBehaviors::class, 'adminPostHeaders']);
+    dcCore::app()->addBehavior('adminPostForm', [dcRevisionsBehaviors::class, 'adminPostForm']);
 
-    dcCore::app()->addBehavior('adminBeforePostUpdate', ['dcRevisionsBehaviors', 'adminBeforePostUpdate']);
+    dcCore::app()->addBehavior('adminBeforePostUpdate', [dcRevisionsBehaviors::class, 'adminBeforePostUpdate']);
 
-    dcCore::app()->addBehavior('adminPageHeaders', ['dcRevisionsBehaviors', 'adminPageHeaders']);
-    dcCore::app()->addBehavior('adminPageForm', ['dcRevisionsBehaviors', 'adminPageForm']);
+    dcCore::app()->addBehavior('adminPageHeaders', [dcRevisionsBehaviors::class, 'adminPageHeaders']);
+    dcCore::app()->addBehavior('adminPageForm', [dcRevisionsBehaviors::class, 'adminPageForm']);
 
-    dcCore::app()->addBehavior('adminBeforePageUpdate', ['dcRevisionsBehaviors', 'adminBeforePageUpdate']);
+    dcCore::app()->addBehavior('adminBeforePageUpdate', [dcRevisionsBehaviors::class, 'adminBeforePageUpdate']);
 
     /* Add behavior callbacks for posts actions */
-    dcCore::app()->addBehavior('adminPostsActions', ['dcRevisionsBehaviors', 'adminPostsActionsPage']);
-    dcCore::app()->addBehavior('adminPagesActions', ['dcRevisionsBehaviors', 'adminPagesActionsPage']);
+    dcCore::app()->addBehavior('adminPostsActions', [dcRevisionsBehaviors::class, 'adminPostsActions']);
+    dcCore::app()->addBehavior('adminPagesActions', [dcRevisionsBehaviors::class, 'adminPagesActions']);
 
-    dcCore::app()->rest->addFunction('getPatch', ['dcRevisionsRestMethods', 'getPatch']);
+    dcCore::app()->rest->addFunction('getPatch', [dcRevisionsRestMethods::class, 'getPatch']);
 
     dcCore::app()->blog->revisions = new dcRevisions();
 

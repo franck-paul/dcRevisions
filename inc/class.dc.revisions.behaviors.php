@@ -12,9 +12,11 @@
  */
 class dcRevisionsBehaviors
 {
-    public static function adminBlogPreferencesForm($core, $settings)
+    public static function adminBlogPreferencesForm($settings)
     {
-        if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+        if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
             $settings->addNameSpace('dcrevisions');
 
             echo
@@ -28,7 +30,9 @@ class dcRevisionsBehaviors
 
     public static function adminBeforeBlogSettingsUpdate($settings)
     {
-        if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+        if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
             $settings->addNameSpace('dcrevisions');
             $settings->dcrevisions->put('enable', empty($_POST['dcrevisions_enable']) ? false : true);
         }
@@ -46,7 +50,7 @@ class dcRevisionsBehaviors
         ];
 
         if (is_null($id)) {
-            $rs = staticRecord::newFromArray([]);
+            $rs = dcRecord::newFromArray([]);
         } else {
             $rs = dcCore::app()->blog->revisions->getRevisions($params);
         }
@@ -88,11 +92,10 @@ class dcRevisionsBehaviors
 
     public static function adminPageForm($post)
     {
-        global $redir_url;
-
+        $base_url  = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page']);
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url       = sprintf($redir_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
-        $purge_url = sprintf($redir_url . '&amp;id=%1$s&amp;revpurge=1', $id);
+        $url       = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
+        $purge_url = sprintf($base_url . '&amp;id=%1$s&amp;revpurge=1', $id);
 
         $params = [
             'post_id'   => $id,
@@ -102,7 +105,7 @@ class dcRevisionsBehaviors
         $rs = dcCore::app()->blog->revisions->getRevisions($params);
 
         if (is_null($id)) {
-            $rs = staticRecord::newFromArray([]);
+            $rs = dcRecord::newFromArray([]);
         }
 
         $list = new dcRevisionsList($rs);
@@ -140,24 +143,28 @@ class dcRevisionsBehaviors
         }
     }
 
-    public static function adminPostsActionsPage(dcPostsActions $ap)
+    public static function adminPostsActions(dcPostsActions $ap)
     {
         // Add menuitem in actions dropdown list
-        if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                ['dcRevisionsBehaviors', 'adminPostsDoReplacements']
+                [dcRevisionsBehaviors::class, 'adminPostsDoReplacements']
             );
         }
     }
 
-    public static function adminPagesActionsPage(dcPagesActions $ap)
+    public static function adminPagesActions(dcPagesActions $ap)
     {
         // Add menuitem in actions dropdown list
-        if (dcCore::app()->auth->check('contentadmin', dcCore::app()->blog->id)) {
+        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                ['dcRevisionsBehaviors', 'adminPagesDoReplacements']
+                [dcRevisionsBehaviors::class, 'adminPagesDoReplacements']
             );
         }
     }

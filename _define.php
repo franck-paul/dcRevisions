@@ -15,20 +15,23 @@ if (!defined('DC_RC_PATH')) {
 }
 
 $this->registerModule(
-    'dcRevisions',                        // Name
-    "Allows entries's versionning",       // Description
-    'Tomtom, Franck Paul & contributors', // Author
-    '0.7',
+    'dcRevisions',
+    "Allows entries's versionning",
+    'Tomtom, Franck Paul & contributors',
+    '0.8',
     [
-        'requires'    => [['core', '2.24']],                           // Dependencies
-        'permissions' => 'usage,contentadmin',                         // Permissions
-        'type'        => 'plugin',                                     // Type
-        'settings'    => [                                             // Settings
+        'requires'    => [['core', '2.24']],
+        'permissions' => dcCore::app()->auth->makePermissions([
+            dcAuth::PERMISSION_USAGE,
+            dcAuth::PERMISSION_CONTENT_ADMIN,
+        ]),
+        'type'     => 'plugin',
+        'settings' => [
             'blog' => '#params.dc-revisions',
         ],
 
-        'details'    => 'https://open-time.net/?q=dcRevisions',       // Details URL
-        'support'    => 'https://github.com/franck-paul/dcRevisions', // Support URL
+        'details'    => 'https://open-time.net/?q=dcRevisions',
+        'support'    => 'https://github.com/franck-paul/dcRevisions',
         'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/master/dcstore.xml',
     ]
 );

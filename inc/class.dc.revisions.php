@@ -12,6 +12,8 @@
  */
 class dcRevisions
 {
+    public const REVISION_TABLE_NAME = 'revision';
+
     public function getRevisions($params, $count_only = false)
     {
         if ($count_only) {
@@ -24,7 +26,7 @@ class dcRevisions
                 'U.user_firstname, U.user_displayname';
         }
 
-        $strReq = 'SELECT ' . $f . ' FROM ' . dcCore::app()->prefix . 'revision R ' .
+        $strReq = 'SELECT ' . $f . ' FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' R ' .
         'LEFT JOIN ' . dcCore::app()->prefix . 'user U ON R.user_id = U.user_id ';
 
         if (!empty($params['from'])) {
@@ -89,33 +91,33 @@ class dcRevisions
             $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
-        $rs = dcCore::app()->con->select($strReq);
-        $rs->extend('dcRevisionsExtensions');
+        $rs = new dcRecord(dcCore::app()->con->select($strReq));
+        $rs->extend(dcRevisionsExtensions::class);
 
         return $rs;
     }
 
     public function addRevision($pcur, $post_id, $type)
     {
-        $rs = dcCore::app()->con->select(
+        $rs = new dcRecord(dcCore::app()->con->select(
             'SELECT MAX(revision_id) ' .
-            'FROM ' . dcCore::app()->prefix . 'revision'
-        );
+            'FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME
+        ));
         $revision_id = $rs->f(0) + 1;
 
         $rs = dcCore::app()->blog->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
         $old = [
-            'post_excerpt'       => $rs->post_excerpt,
-            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
-            'post_content'       => $rs->post_content,
-            'post_content_xhtml' => $rs->post_content_xhtml,
+            'post_excerpt'       => $rs->post_excerpt       ?? '',
+            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml ?? '',
+            'post_content'       => $rs->post_content       ?? '',
+            'post_content_xhtml' => $rs->post_content_xhtml ?? '',
         ];
         $new = [
-            'post_excerpt'       => $pcur->post_excerpt,
-            'post_excerpt_xhtml' => $pcur->post_excerpt_xhtml,
-            'post_content'       => $pcur->post_content,
-            'post_content_xhtml' => $pcur->post_content_xhtml,
+            'post_excerpt'       => $pcur->post_excerpt       ?? '',
+            'post_excerpt_xhtml' => $pcur->post_excerpt_xhtml ?? '',
+            'post_content'       => $pcur->post_content       ?? '',
+            'post_content_xhtml' => $pcur->post_content_xhtml ?? '',
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -175,7 +177,7 @@ class dcRevisions
 
         try {
             // Purge all revisions of the entry
-            $strReq = 'DELETE FROM ' . dcCore::app()->prefix . 'revision ' .
+            $strReq = 'DELETE FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' ' .
                 "WHERE post_id = '" . dcCore::app()->con->escape($pid) . "' ";
             dcCore::app()->con->execute($strReq);
 
@@ -199,7 +201,7 @@ class dcRevisions
 
             $p = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
 
-            $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'post');
+            $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcBlog::POST_TABLE_NAME);
 
             $cur->post_title        = $p->post_title;
             $cur->cat_id            = $p->cat_id ?: null;

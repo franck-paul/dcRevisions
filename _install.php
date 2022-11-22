@@ -52,8 +52,8 @@ $s->revision->primary('pk_revision', 'revision_id');
 
 $s->revision->index('idx_revision_post_id', 'btree', 'post_id');
 
-$s->revision->reference('fk_revision_post', 'post_id', 'post', 'post_id', 'cascade', 'cascade');
-$s->revision->reference('fk_revision_blog', 'blog_id', 'blog', 'blog_id', 'cascade', 'cascade');
+$s->revision->reference('fk_revision_post', 'post_id', dcBlog::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
+$s->revision->reference('fk_revision_blog', 'blog_id', dcBlog::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
 $si = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
 

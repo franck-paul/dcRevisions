@@ -14,8 +14,10 @@ if (!defined('DC_RC_PATH')) {
     return;
 }
 
-$__autoload['dcRevisions']            = __DIR__ . '/inc/class.dc.revisions.php';
-$__autoload['dcRevisionsRestMethods'] = __DIR__ . '/_services.php';
-$__autoload['dcRevisionsBehaviors']   = __DIR__ . '/inc/class.dc.revisions.behaviors.php';
-$__autoload['dcRevisionsExtensions']  = __DIR__ . '/inc/class.dc.revisions.extensions.php';
-$__autoload['dcRevisionsList']        = __DIR__ . '/inc/class.dc.revisions.list.php';
+Clearbricks::lib()->autoload([
+    'dcRevisions'            => __DIR__ . '/inc/class.dc.revisions.php',
+    'dcRevisionsRestMethods' => __DIR__ . '/_services.php',
+    'dcRevisionsBehaviors'   => __DIR__ . '/inc/class.dc.revisions.behaviors.php',
+    'dcRevisionsExtensions'  => __DIR__ . '/inc/class.dc.revisions.extensions.php',
+    'dcRevisionsList'        => __DIR__ . '/inc/class.dc.revisions.list.php',
+]);
