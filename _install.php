@@ -17,7 +17,7 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 $m_version = dcCore::app()->plugins->moduleInfo('dcRevisions', 'version');
 $i_version = dcCore::app()->getVersion('dcrevisions');
 
-if (version_compare($i_version, $m_version, '>=')) {
+if (version_compare((string) $i_version, $m_version, '>=')) {
     return;
 }
 

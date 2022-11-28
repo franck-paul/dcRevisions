@@ -18,7 +18,7 @@ $this->registerModule(
     'dcRevisions',
     "Allows entries's versionning",
     'Tomtom, Franck Paul & contributors',
-    '0.8',
+    '1.0',
     [
         'requires'    => [['core', '2.24']],
         'permissions' => dcCore::app()->auth->makePermissions([
