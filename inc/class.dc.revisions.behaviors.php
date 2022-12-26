@@ -78,7 +78,7 @@ class dcRevisionsBehaviors
             ],
         ]) .
         dcPage::jsModuleLoad('dcRevisions/js/_revision.js', dcCore::app()->getVersion('dcrevisions')) . "\n" .
-        dcPage::cssModuleLoad('dcRevisions/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
+        dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
     }
 
     public static function adminBeforePostUpdate($cur, $post_id)
@@ -131,7 +131,7 @@ class dcRevisionsBehaviors
             ],
         ]) .
         dcPage::jsModuleLoad('dcRevisions/js/_revision.js', dcCore::app()->getVersion('dcrevisions')) . "\n" .
-        dcPage::cssModuleLoad('dcRevisions/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
+        dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
     }
 
     public static function adminBeforePageUpdate($cur, $post_id)
