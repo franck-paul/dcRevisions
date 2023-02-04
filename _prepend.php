@@ -10,10 +10,6 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-if (!defined('DC_RC_PATH')) {
-    return;
-}
-
 Clearbricks::lib()->autoload([
     'dcRevisions'            => __DIR__ . '/inc/class.dc.revisions.php',
     'dcRevisionsRestMethods' => __DIR__ . '/_services.php',

@@ -54,7 +54,7 @@ class dcRevisionsList
         $res    = '';
         $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" />';
         $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
-        $index  = count($this->rs);
+        $index  = is_countable($this->rs) ? count($this->rs) : 0;
 
         while ($this->rs->fetch()) {
             $res .= '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .

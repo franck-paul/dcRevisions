@@ -14,14 +14,10 @@ if (!defined('DC_CONTEXT_ADMIN')) {
     return;
 }
 
-$m_version = dcCore::app()->plugins->moduleInfo('dcRevisions', 'version');
-$i_version = dcCore::app()->getVersion('dcrevisions');
-
-if (version_compare((string) $i_version, $m_version, '>=')) {
+if (!dcCore::app()->newVersion(basename(__DIR__), dcCore::app()->plugins->moduleInfo(basename(__DIR__), 'version'))) {
     return;
 }
 
-dcCore::app()->blog->settings->addNamespace('dcrevisions');
 dcCore::app()->blog->settings->dcrevisions->put(
     'enable',
     false,
@@ -62,7 +58,5 @@ try {
 } catch (Exception $e) {
     dcCore::app()->error->add($e);
 }
-
-dcCore::app()->setVersion('dcrevisions', $m_version);
 
 return true;

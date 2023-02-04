@@ -17,25 +17,27 @@ if (!defined('DC_CONTEXT_ADMIN')) {
 // dead but useful code, in order to have translations
 __('dcRevisions') . __('Allows entries\'s versionning');
 
-dcCore::app()->addBehavior('adminBlogPreferencesFormV2', [dcRevisionsBehaviors::class, 'adminBlogPreferencesForm']);
-dcCore::app()->addBehavior('adminBeforeBlogSettingsUpdate', [dcRevisionsBehaviors::class, 'adminBeforeBlogSettingsUpdate']);
-
-dcCore::app()->blog->settings->addNameSpace('dcrevisions');
+dcCore::app()->addBehaviors([
+    'adminBlogPreferencesFormV2'    => [dcRevisionsBehaviors::class, 'adminBlogPreferencesForm'],
+    'adminBeforeBlogSettingsUpdate' => [dcRevisionsBehaviors::class, 'adminBeforeBlogSettingsUpdate'],
+]);
 
 if (dcCore::app()->blog->settings->dcrevisions->enable) {
-    dcCore::app()->addBehavior('adminPostHeaders', [dcRevisionsBehaviors::class, 'adminPostHeaders']);
-    dcCore::app()->addBehavior('adminPostForm', [dcRevisionsBehaviors::class, 'adminPostForm']);
+    dcCore::app()->addBehaviors([
+        'adminPostHeaders'      => [dcRevisionsBehaviors::class, 'adminPostHeaders'],
+        'adminPostForm'         => [dcRevisionsBehaviors::class, 'adminPostForm'],
 
-    dcCore::app()->addBehavior('adminBeforePostUpdate', [dcRevisionsBehaviors::class, 'adminBeforePostUpdate']);
+        'adminBeforePostUpdate' => [dcRevisionsBehaviors::class, 'adminBeforePostUpdate'],
 
-    dcCore::app()->addBehavior('adminPageHeaders', [dcRevisionsBehaviors::class, 'adminPageHeaders']);
-    dcCore::app()->addBehavior('adminPageForm', [dcRevisionsBehaviors::class, 'adminPageForm']);
+        'adminPageHeaders'      => [dcRevisionsBehaviors::class, 'adminPageHeaders'],
+        'adminPageForm'         => [dcRevisionsBehaviors::class, 'adminPageForm'],
 
-    dcCore::app()->addBehavior('adminBeforePageUpdate', [dcRevisionsBehaviors::class, 'adminBeforePageUpdate']);
+        'adminBeforePageUpdate' => [dcRevisionsBehaviors::class, 'adminBeforePageUpdate'],
 
-    /* Add behavior callbacks for posts actions */
-    dcCore::app()->addBehavior('adminPostsActions', [dcRevisionsBehaviors::class, 'adminPostsActions']);
-    dcCore::app()->addBehavior('adminPagesActions', [dcRevisionsBehaviors::class, 'adminPagesActions']);
+        /* Add behavior callbacks for posts actions */
+        'adminPostsActions'     => [dcRevisionsBehaviors::class, 'adminPostsActions'],
+        'adminPagesActions'     => [dcRevisionsBehaviors::class, 'adminPagesActions'],
+    ]);
 
     dcCore::app()->rest->addFunction('getPatch', [dcRevisionsRestMethods::class, 'getPatch']);
 
@@ -43,7 +45,7 @@ if (dcCore::app()->blog->settings->dcrevisions->enable) {
 
     if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
         // We have a post or a page ID
-        if (preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+        if (preg_match('/post.php\?id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
             // It's a post
             $redir_url = 'post.php?id=%s';
             if (isset($_GET['patch'])) {
@@ -54,7 +56,7 @@ if (dcCore::app()->blog->settings->dcrevisions->enable) {
                 // Purge
                 dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redir_url);
             }
-        } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+        } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
             // It's a page
             $redir_url = 'plugin.php?p=pages&act=page&id=%s';
             if (isset($_GET['patch'])) {

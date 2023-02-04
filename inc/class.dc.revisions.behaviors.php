@@ -10,6 +10,9 @@
  * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+
+use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
+
 class dcRevisionsBehaviors
 {
     public static function adminBlogPreferencesForm($settings)
@@ -17,8 +20,6 @@ class dcRevisionsBehaviors
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
-            $settings->addNameSpace('dcrevisions');
-
             echo
             '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
             '<p><label class="classic" for="dcrevisions_enable">' .
@@ -33,7 +34,6 @@ class dcRevisionsBehaviors
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
-            $settings->addNameSpace('dcrevisions');
             $settings->dcrevisions->put('enable', empty($_POST['dcrevisions_enable']) ? false : true);
         }
     }
@@ -156,7 +156,7 @@ class dcRevisionsBehaviors
         }
     }
 
-    public static function adminPagesActions(dcPagesActions $ap)
+    public static function adminPagesActions(PagesBackendActions $ap)
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
@@ -174,7 +174,7 @@ class dcRevisionsBehaviors
         self::adminEntriesDoReplacements($ap, $post, 'post');
     }
 
-    public static function adminPagesDoReplacements(dcPagesActions $ap, arrayObject $post)
+    public static function adminPagesDoReplacements(PagesBackendActions $ap, arrayObject $post)
     {
         self::adminEntriesDoReplacements($ap, $post, 'page');
     }
