@@ -7,10 +7,20 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class dcRevisionsRestMethods
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\dcRevisions;
+
+use dcCore;
+use Dotclear\Helper\Diff\Diff;
+use Dotclear\Helper\Diff\TidyDiff;
+use Exception;
+use xmlTag;
+
+class BackendRest
 {
     public static function getPatch()
     {
@@ -45,8 +55,8 @@ class dcRevisionsRestMethods
 
     public static function buildNode($src, $dst, $ctx, $root)
     {
-        $udiff = diff::uniDiff($src, $dst, $ctx);
-        $tdiff = new tidyDiff(htmlspecialchars($udiff), true);
+        $udiff = Diff::uniDiff($src, $dst, $ctx);
+        $tdiff = new TidyDiff(htmlspecialchars($udiff), true);
 
         $rev = new xmlTag($root);
 

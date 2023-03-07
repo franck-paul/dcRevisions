@@ -7,13 +7,25 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
+declare(strict_types=1);
 
+namespace Dotclear\Plugin\dcRevisions;
+
+use ArrayObject;
+use dcAuth;
+use dcCore;
+use dcPage;
+use dcPostsActions;
+use dcRecord;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
+use Exception;
+use form;
+use html;
 
-class dcRevisionsBehaviors
+class BackendBehaviors
 {
     public static function adminBlogPreferencesForm($settings)
     {
@@ -55,7 +67,7 @@ class dcRevisionsBehaviors
             $rs = dcCore::app()->blog->revisions->getRevisions($params);
         }
 
-        $list = new dcRevisionsList($rs);
+        $list = new RevisionsList($rs);
 
         echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
             ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
@@ -108,7 +120,7 @@ class dcRevisionsBehaviors
             $rs = dcRecord::newFromArray([]);
         }
 
-        $list = new dcRevisionsList($rs);
+        $list = new RevisionsList($rs);
 
         echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
             ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
@@ -151,7 +163,7 @@ class dcRevisionsBehaviors
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                [dcRevisionsBehaviors::class, 'adminPostsDoReplacements']
+                [BackendBehaviors::class, 'adminPostsDoReplacements']
             );
         }
     }
@@ -164,7 +176,7 @@ class dcRevisionsBehaviors
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                [dcRevisionsBehaviors::class, 'adminPagesDoReplacements']
+                [BackendBehaviors::class, 'adminPagesDoReplacements']
             );
         }
     }

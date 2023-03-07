@@ -7,10 +7,16 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class dcRevisionsList
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\dcRevisions;
+
+use dcPage;
+
+class RevisionsList
 {
     protected $rs = null;
 

@@ -7,10 +7,22 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul carnet.franck.paul@gmail.com
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
-class dcRevisions
+declare(strict_types=1);
+
+namespace Dotclear\Plugin\dcRevisions;
+
+use dcBlog;
+use dcCore;
+use dcPage;
+use dcRecord;
+use Dotclear\Helper\Diff\Diff;
+use Exception;
+use http;
+
+class Revisions
 {
     public const REVISION_TABLE_NAME = 'revision';
 
@@ -92,7 +104,7 @@ class dcRevisions
         }
 
         $rs = new dcRecord(dcCore::app()->con->select($strReq));
-        $rs->extend(dcRevisionsExtensions::class);
+        $rs->extend(RevisionsExtensions::class);
 
         return $rs;
     }
@@ -160,7 +172,7 @@ class dcRevisions
 
         try {
             foreach ($diff as $k => $v) {
-                $diff[$k] = diff::uniDiff($n[$k], $o[$k]);
+                $diff[$k] = Diff::uniDiff($n[$k], $o[$k]);
             }
 
             return $diff;
@@ -268,7 +280,7 @@ class dcRevisions
                     $f = 'revision_content_xhtml_diff';
                 }
 
-                $patch[$k] = diff::uniPatch($v, $r->{$f});
+                $patch[$k] = Diff::uniPatch($v, $r->{$f});
             }
 
             if ($r->revision_id === $rid) {
