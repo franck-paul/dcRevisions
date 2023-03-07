@@ -22,45 +22,62 @@ use xmlTag;
 
 class BackendRest
 {
-    public static function getPatch()
+    /**
+     * Gets the patch.
+     *
+     * @throws     Exception
+     *
+     * @return     xmlTag     The patch.
+     */
+    public static function getPatch(): xmlTag
     {
-        $pid  = $_GET['pid']  ?? null;
-        $rid  = $_GET['rid']  ?? null;
-        $type = $_GET['type'] ?? 'post';
+        $postID     = $_GET['pid']  ?? null;
+        $revisionID = $_GET['rid']  ?? null;
+        $type       = $_GET['type'] ?? 'post';
 
-        if ($pid === null) {
+        if ($postID === null) {
             throw new Exception(__('No post ID'));
         }
-        if ($rid === null) {
+        if ($revisionID === null) {
             throw new Exception(__('No revision ID'));
         }
 
-        $p = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
-        $o = [
-            'post_excerpt'       => $p->post_excerpt,
-            'post_content'       => $p->post_content,
-            'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
-            'post_content_xhtml' => $p->post_content_xhtml,
+        $rs  = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $old = [
+            'post_excerpt'       => $rs->post_excerpt,
+            'post_content'       => $rs->post_content,
+            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
+            'post_content_xhtml' => $rs->post_content_xhtml,
         ];
 
-        $n = dcCore::app()->blog->revisions->getPatch($pid, $rid, $type);
+        $new = dcCore::app()->blog->revisions->getPatch($postID, $revisionID, $type);
 
         $rsp = new xmlTag();
-        foreach ($o as $k => $v) {
-            $rsp->insertNode(self::buildNode($v, $n[$k], 2, $k));
+        foreach ($old as $field => $value) {
+            $rsp->insertNode(self::buildNode($value, $new[$field], 2, $field));
         }
 
         return $rsp;
     }
 
-    public static function buildNode($src, $dst, $ctx, $root)
+    /**
+     * Builds a node.
+     *
+     * @param      string  $src    The source
+     * @param      string  $dst    The destination
+     * @param      int     $ctx    The context
+     * @param      string  $root   The root
+     *
+     * @return     xmlTag  The node.
+     */
+    public static function buildNode(string $src, string $dst, int $ctx, string $root): xmlTag
     {
-        $udiff = Diff::uniDiff($src, $dst, $ctx);
-        $tdiff = new TidyDiff(htmlspecialchars($udiff), true);
+        $uniDiff  = Diff::uniDiff($src, $dst, $ctx);
+        $tidyDiff = new TidyDiff(htmlspecialchars($uniDiff), true);
 
         $rev = new xmlTag($root);
 
-        foreach ($tdiff->getChunks() as $k => $chunk) {
+        foreach ($tidyDiff->getChunks() as $k => $chunk) {
             foreach ($chunk->getLines() as $line) {
                 switch ($line->type) {
                     case 'context':
@@ -74,22 +91,22 @@ class BackendRest
                     case 'delete':
                         $node        = new xmlTag('delete');
                         $node->oline = $line->lines[0];
-                        $c           = str_replace(['\0', '\1'], ['<del>', '</del>'], $line->content);
-                        $node->insertNode($c);
+                        $content     = str_replace(['\0', '\1'], ['<del>', '</del>'], $line->content);
+                        $node->insertNode($content);
                         $rev->insertNode($node);
 
                         break;
                     case 'insert':
                         $node        = new xmlTag('insert');
                         $node->nline = $line->lines[1];
-                        $c           = str_replace(['\0', '\1'], ['<ins>', '</ins>'], $line->content);
-                        $node->insertNode($c);
+                        $content     = str_replace(['\0', '\1'], ['<ins>', '</ins>'], $line->content);
+                        $node->insertNode($content);
                         $rev->insertNode($node);
 
                         break;
                 }
             }
-            if ($k < count($tdiff->getChunks()) - 1) {
+            if ($k < count($tidyDiff->getChunks()) - 1) {
                 $node = new xmlTag('skip');
                 $rev->insertNode($node);
             }

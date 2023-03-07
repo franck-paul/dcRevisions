@@ -15,11 +15,13 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use ArrayObject;
+use cursor;
 use dcAuth;
 use dcCore;
 use dcPage;
 use dcPostsActions;
 use dcRecord;
+use dcSettings;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
 use Exception;
 use form;
@@ -27,7 +29,12 @@ use html;
 
 class BackendBehaviors
 {
-    public static function adminBlogPreferencesForm($settings)
+    /**
+     * Display plugin settings
+     *
+     * @param      dcSettings  $settings  The settings
+     */
+    public static function adminBlogPreferencesForm(dcSettings $settings)
     {
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
@@ -41,7 +48,12 @@ class BackendBehaviors
         }
     }
 
-    public static function adminBeforeBlogSettingsUpdate($settings)
+    /**
+     * Register plugin settings
+     *
+     * @param      dcSettings  $settings  The settings
+     */
+    public static function adminBeforeBlogSettingsUpdate(dcSettings $settings)
     {
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_CONTENT_ADMIN,
@@ -50,7 +62,12 @@ class BackendBehaviors
         }
     }
 
-    public static function adminPostForm($post)
+    /**
+     * Add revision form on entry form
+     *
+     * @param      dcRecord|null  $post   The post
+     */
+    public static function adminPostForm(?dcRecord $post)
     {
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url       = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
@@ -74,7 +91,12 @@ class BackendBehaviors
             '</div>';
     }
 
-    public static function adminPostHeaders()
+    /**
+     * Return HTML plugin specific header on post form
+     *
+     * @return     string
+     */
+    public static function adminPostHeaders(): string
     {
         return
         dcPage::jsJson('dcrevisions', [
@@ -93,16 +115,27 @@ class BackendBehaviors
         dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
     }
 
-    public static function adminBeforePostUpdate($cur, $post_id)
+    /**
+     * Add a revision before post update
+     *
+     * @param      cursor  $cur      The cursor
+     * @param      string  $postID   The post identifier
+     */
+    public static function adminBeforePostUpdate(cursor $cur, string $postID)
     {
         try {
-            dcCore::app()->blog->revisions->addRevision($cur, $post_id, 'post');
+            dcCore::app()->blog->revisions->addRevision($cur, $postID, 'post');
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
     }
 
-    public static function adminPageForm($post)
+    /**
+     * Add revision form on page form
+     *
+     * @param      dcRecord|null  $post   The post
+     */
+    public static function adminPageForm(?dcRecord $post)
     {
         $base_url  = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page']);
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
@@ -127,7 +160,12 @@ class BackendBehaviors
             '</div>';
     }
 
-    public static function adminPageHeaders()
+    /**
+     * Return HTML plugin specific header on page form
+     *
+     * @return     string
+     */
+    public static function adminPageHeaders(): string
     {
         return
         dcPage::jsJson('dcrevisions', [
@@ -146,15 +184,26 @@ class BackendBehaviors
         dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
     }
 
-    public static function adminBeforePageUpdate($cur, $post_id)
+    /**
+     * Add a revision before page update
+     *
+     * @param      cursor  $cur      The cursor
+     * @param      string  $postID   The post identifier
+     */
+    public static function adminBeforePageUpdate(cursor $cur, string $postID)
     {
         try {
-            dcCore::app()->blog->revisions->addRevision($cur, $post_id, 'page');
+            dcCore::app()->blog->revisions->addRevision($cur, $postID, 'page');
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
     }
 
+    /**
+     * Add action for posts
+     *
+     * @param      dcPostsActions  $ap     Posts' actions
+     */
     public static function adminPostsActions(dcPostsActions $ap)
     {
         // Add menuitem in actions dropdown list
@@ -168,6 +217,11 @@ class BackendBehaviors
         }
     }
 
+    /**
+     * Add action for pages
+     *
+     * @param      PagesBackendActions  $ap     Pages' actions
+     */
     public static function adminPagesActions(PagesBackendActions $ap)
     {
         // Add menuitem in actions dropdown list
@@ -181,17 +235,35 @@ class BackendBehaviors
         }
     }
 
+    /**
+     * Do posts action
+     *
+     * @param      dcPostsActions  $ap     Posts' actions
+     * @param      arrayObject     $post   The post
+     */
     public static function adminPostsDoReplacements(dcPostsActions $ap, arrayObject $post)
     {
         self::adminEntriesDoReplacements($ap, $post, 'post');
     }
 
+    /**
+     * Do pages action
+     *
+     * @param      PagesBackendActions  $ap     Pages' actions
+     * @param      arrayObject          $post   The post
+     */
     public static function adminPagesDoReplacements(PagesBackendActions $ap, arrayObject $post)
     {
         self::adminEntriesDoReplacements($ap, $post, 'page');
     }
 
-    public static function adminEntriesDoReplacements($ap, arrayObject $post, $type = 'post')
+    /**
+     * Do posts/pages action
+     *
+     * @param      dcPostsActions|PagesBackendActions   $ap     Posts'/Pages' actions
+     * @param      arrayObject                          $post   The post
+     */
+    public static function adminEntriesDoReplacements($ap, arrayObject $post, string $type = 'post')
     {
         if (!empty($post['dopurge'])) {
             // Do replacements

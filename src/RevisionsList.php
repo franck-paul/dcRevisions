@@ -15,22 +15,41 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use dcPage;
+use dcRecord;
 
 class RevisionsList
 {
+    // Records
     protected $rs = null;
 
-    public function __construct($rs)
+    /**
+     * Constructs a new instance.
+     *
+     * @param      dcRecord  $rs     List of revisions
+     */
+    public function __construct(dcRecord $rs)
     {
         $this->rs = $rs;
     }
 
-    public function count()
+    /**
+     * Return number of revisions in record
+     *
+     * @return     int
+     */
+    public function count(): int
     {
         return $this->rs->count();
     }
 
-    public function display($url)
+    /**
+     * Return HTML code to display the revisions list.
+     *
+     * @param      string  $url    The url base for patching
+     *
+     * @return     string
+     */
+    public function display(string $url): string
     {
         $res = '';
         if (!$this->rs->isEmpty()) {
@@ -42,10 +61,10 @@ class RevisionsList
             '<th class="nowrap">' . __('Date') . '</th>' .
             '<th class="nowrap">' . __('Status') . '</th>' .
             '<th class="nowrap">' . __('Actions') . '</th>' .
-                '</tr>' .
-                '</thead>' .
-                '<tbody>%s</tbody>' .
-                '</table>';
+            '</tr>' .
+            '</thead>' .
+            '<tbody>%s</tbody>' .
+            '</table>';
 
             $res .= sprintf($html_block, $this->getLines($url));
         } else {
@@ -55,7 +74,14 @@ class RevisionsList
         return $res;
     }
 
-    private function getLines($url)
+    /**
+     * Gets the HTML code to display revisions lines.
+     *
+     * @param      string  $url    The url base for patching
+     *
+     * @return     string.
+     */
+    private function getLines(string $url): string
     {
         $res    = '';
         $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" />';
@@ -79,16 +105,16 @@ class RevisionsList
                 ('images/' . ($this->rs->canPatch() ? 'check-on.png' : 'locker.png')),
                 ($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked'))
             ) .
-                "</td>\n" .
-                '<td class="minimal nowrap status">' .
-                ($this->rs->canPatch() ? sprintf(
-                    $p_link,
-                    sprintf($url, $this->rs->revision_id),
-                    urldecode(dcPage::getPF('dcRevisions/images/apply.png')),
-                    __('Apply patch')
-                ) : '') .
-                "</td>\n" .
-                "</tr>\n";
+            "</td>\n" .
+            '<td class="minimal nowrap status">' .
+            ($this->rs->canPatch() ? sprintf(
+                $p_link,
+                sprintf($url, $this->rs->revision_id),
+                urldecode(dcPage::getPF('dcRevisions/images/apply.png')),
+                __('Apply patch')
+            ) : '') .
+            "</td>\n" .
+            "</tr>\n";
         }
 
         return $res;

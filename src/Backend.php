@@ -57,33 +57,35 @@ class Backend extends dcNsProcess
                 'adminPagesActions' => [BackendBehaviors::class, 'adminPagesActions'],
             ]);
 
+            // REST method
             dcCore::app()->rest->addFunction('getPatch', [BackendRest::class, 'getPatch']);
 
+            // Init Revision object
             dcCore::app()->blog->revisions = new Revisions();
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
                 if (preg_match('/post.php\?id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
                     // It's a post
-                    $redir_url = 'post.php?id=%s';
+                    $redirURL = 'post.php?id=%s';
                     if (isset($_GET['patch'])) {
                         // Patch
-                        $redir_url .= '&upd=1';
-                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redir_url, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
+                        $redirURL .= '&upd=1';
+                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redirURL, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
                     } else {
                         // Purge
-                        dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redir_url);
+                        dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redirURL);
                     }
                 } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
                     // It's a page
-                    $redir_url = 'plugin.php?p=pages&act=page&id=%s';
+                    $redirURL = 'plugin.php?p=pages&act=page&id=%s';
                     if (isset($_GET['patch'])) {
                         // Patch
-                        $redir_url .= '&upd=1';
-                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redir_url, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
+                        $redirURL .= '&upd=1';
+                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redirURL, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
                     } else {
                         // Purge
-                        dcCore::app()->blog->revisions->purge($_GET['id'], 'page', $redir_url);
+                        dcCore::app()->blog->revisions->purge($_GET['id'], 'page', $redirURL);
                     }
                 }
             }

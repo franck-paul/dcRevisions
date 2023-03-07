@@ -16,32 +16,63 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use dcAuth;
 use dcCore;
+use dcRecord;
 use dcUtils;
 use dt;
 use html;
 
 class RevisionsExtensions
 {
-    public static function getDate($rs, $format = null)
+    /**
+     * Gets the date.
+     *
+     * @param      dcRecord     $rs         Invisible parameter
+     * @param      null|string  $format     The format
+     *
+     * @return     string    The date.
+     */
+    public static function getDate(dcRecord $rs, ?string $format = null): string
     {
         $format === null ? $format = dcCore::app()->blog->settings->system->date_format : $format;
 
         return dt::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
 
-    public static function getTime($rs, $format = null)
+    /**
+     * Gets the time.
+     *
+     * @param      dcRecord     $rs      Invisible parameter
+     * @param      null|string  $format  The format
+     *
+     * @return     string       The time.
+     */
+    public static function getTime(dcRecord $rs, ?string $format = null): string
     {
         $format === null ? $format = dcCore::app()->blog->settings->system->time_format : $format;
 
         return dt::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
 
-    public static function getAuthorCN($rs)
+    /**
+     * Gets the author CN.
+     *
+     * @param      dcRecord  $rs     Invisible parameter
+     *
+     * @return     string    The author CN.
+     */
+    public static function getAuthorCN(dcRecord $rs): string
     {
         return dcUtils::getUserCN($rs->user_id, $rs->user_name, $rs->user_firstname, $rs->user_displayname);
     }
 
-    public static function getAuthorLink($rs)
+    /**
+     * Gets the author link.
+     *
+     * @param      dcRecord  $rs     Invisible parameter
+     *
+     * @return     string    The author link.
+     */
+    public static function getAuthorLink(dcRecord $rs): string
     {
         $res = '%1$s';
         $url = $rs->user_url;
@@ -52,7 +83,14 @@ class RevisionsExtensions
         return sprintf($res, html::escapeHTML($rs->getAuthorCN()), html::escapeHTML($url));
     }
 
-    public static function canPatch($rs)
+    /**
+     * Determines ability to patch.
+     *
+     * @param      dcRecord  $rs     Invisible parameter
+     *
+     * @return     bool      True if able to patch, False otherwise.
+     */
+    public static function canPatch(dcRecord $rs): bool
     {
         # If user is super admin, true
         if (dcCore::app()->auth->isSuperAdmin()) {

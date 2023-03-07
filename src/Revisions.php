@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
+use cursor;
 use dcBlog;
 use dcCore;
 use dcPage;
@@ -24,11 +25,26 @@ use http;
 
 class Revisions
 {
+    // Constants
+
+    /**
+     * Table name
+     *
+     * @var        string
+     */
     public const REVISION_TABLE_NAME = 'revision';
 
-    public function getRevisions($params, $count_only = false)
+    /**
+     * Gets the revisions list.
+     *
+     * @param      array     $params      The parameters
+     * @param      bool      $countOnly   The count only
+     *
+     * @return     dcRecord  The revisions.
+     */
+    public function getRevisions(array $params, bool $countOnly = false): dcRecord
     {
-        if ($count_only) {
+        if ($countOnly) {
             $f = 'COUNT(revision_id)';
         } else {
             $f = 'R.revision_id, R.post_id, R.user_id, R.revision_type, ' .
@@ -91,7 +107,7 @@ class Revisions
             $strReq .= $params['sql'] . ' ';
         }
 
-        if (!$count_only) {
+        if (!$countOnly) {
             if (!empty($params['order'])) {
                 $strReq .= 'ORDER BY ' . dcCore::app()->con->escape($params['order']) . ' ';
             } else {
@@ -99,7 +115,7 @@ class Revisions
             }
         }
 
-        if (!$count_only && !empty($params['limit'])) {
+        if (!$countOnly && !empty($params['limit'])) {
             $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
@@ -109,15 +125,22 @@ class Revisions
         return $rs;
     }
 
-    public function addRevision($pcur, $post_id, $type)
+    /**
+     * Adds a revision.
+     *
+     * @param      cursor  $cur     The pcur
+     * @param      string  $postID  The post identifier
+     * @param      string  $type    The type
+     */
+    public function addRevision(cursor $cur, string $postID, string $type)
     {
         $rs = new dcRecord(dcCore::app()->con->select(
             'SELECT MAX(revision_id) ' .
             'FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME
         ));
-        $revision_id = $rs->f(0) + 1;
+        $revisionID = $rs->f(0) + 1;
 
-        $rs = dcCore::app()->blog->getPosts(['post_id' => $post_id, 'post_type' => $type]);
+        $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
         $old = [
             'post_excerpt'       => $rs->post_excerpt       ?? '',
@@ -126,10 +149,10 @@ class Revisions
             'post_content_xhtml' => $rs->post_content_xhtml ?? '',
         ];
         $new = [
-            'post_excerpt'       => $pcur->post_excerpt       ?? '',
-            'post_excerpt_xhtml' => $pcur->post_excerpt_xhtml ?? '',
-            'post_content'       => $pcur->post_content       ?? '',
-            'post_content_xhtml' => $pcur->post_content_xhtml ?? '',
+            'post_excerpt'       => $cur->post_excerpt       ?? '',
+            'post_excerpt_xhtml' => $cur->post_excerpt_xhtml ?? '',
+            'post_content'       => $cur->post_content       ?? '',
+            'post_content_xhtml' => $cur->post_content_xhtml ?? '',
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -142,26 +165,34 @@ class Revisions
         }
 
         if ($insert) {
-            $rcur                              = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'revision');
-            $rcur->revision_id                 = $revision_id;
-            $rcur->post_id                     = $post_id;
-            $rcur->user_id                     = dcCore::app()->auth->userID();
-            $rcur->blog_id                     = dcCore::app()->blog->id;
-            $rcur->revision_dt                 = date('Y-m-d H:i:s');
-            $rcur->revision_tz                 = dcCore::app()->auth->getInfo('user_tz');
-            $rcur->revision_type               = $type;
-            $rcur->revision_excerpt_diff       = $diff['post_excerpt'];
-            $rcur->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
-            $rcur->revision_content_diff       = $diff['post_content'];
-            $rcur->revision_content_xhtml_diff = $diff['post_content_xhtml'];
+            $revisionCursor                              = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'revision');
+            $revisionCursor->revision_id                 = $revisionID;
+            $revisionCursor->post_id                     = $postID;
+            $revisionCursor->user_id                     = dcCore::app()->auth->userID();
+            $revisionCursor->blog_id                     = dcCore::app()->blog->id;
+            $revisionCursor->revision_dt                 = date('Y-m-d H:i:s');
+            $revisionCursor->revision_tz                 = dcCore::app()->auth->getInfo('user_tz');
+            $revisionCursor->revision_type               = $type;
+            $revisionCursor->revision_excerpt_diff       = $diff['post_excerpt'];
+            $revisionCursor->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
+            $revisionCursor->revision_content_diff       = $diff['post_content'];
+            $revisionCursor->revision_content_xhtml_diff = $diff['post_content_xhtml'];
 
             dcCore::app()->con->writeLock(dcCore::app()->prefix . 'revision');
-            $rcur->insert();
+            $revisionCursor->insert();
             dcCore::app()->con->unlock();
         }
     }
 
-    public function getDiff($n, $o)
+    /**
+     * Gets the difference.
+     *
+     * @param      array  $new      New content
+     * @param      array  $old      Old content
+     *
+     * @return     array  The difference.
+     */
+    public function getDiff(array $new, array $old): array
     {
         $diff = [
             'post_excerpt'       => '',
@@ -172,7 +203,7 @@ class Revisions
 
         try {
             foreach ($diff as $k => $v) {
-                $diff[$k] = Diff::uniDiff($n[$k], $o[$k]);
+                $diff[$k] = Diff::uniDiff($new[$k], $old[$k]);
             }
 
             return $diff;
@@ -181,52 +212,73 @@ class Revisions
         }
     }
 
-    public function purge($pid, $type, $redirect_url = null)
+    /**
+     * Remove entry revisions
+     *
+     * @param      string       $postID       The post id
+     * @param      string       $type         The type
+     * @param      null|string  $redirectURL  The redirect url
+     *
+     * @throws     Exception
+     */
+    public function purge(string $postID, string $type, ?string $redirectURL = null)
     {
-        if (!$this->canPurge($pid, $type)) {
+        if (!$this->canPurge($postID, $type)) {
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
         }
 
         try {
             // Purge all revisions of the entry
             $strReq = 'DELETE FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' ' .
-                "WHERE post_id = '" . dcCore::app()->con->escape($pid) . "' ";
+                "WHERE post_id = '" . dcCore::app()->con->escape($postID) . "' ";
             dcCore::app()->con->execute($strReq);
 
-            if (!dcCore::app()->error->flag() && $redirect_url !== null) {
+            if (!dcCore::app()->error->flag() && $redirectURL !== null) {
                 dcPage::addSuccessNotice(__('All revisions have been deleted.'));
-                http::redirect(sprintf($redirect_url, $pid));
+                http::redirect(sprintf($redirectURL, $postID));
             }
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
     }
 
-    public function setPatch($pid, $rid, $type, $redirect_url, $before_behaviour, $after_behaviour)
+    /**
+     * Sets the patch.
+     *
+     * @param      string     $postID           The post id
+     * @param      string     $revisionID       The revision id
+     * @param      string     $type             The type
+     * @param      string     $redirectURL      The redirect url
+     * @param      string     $beforeBehaviour  The before behaviour
+     * @param      string     $afterBehaviour   The after behaviour
+     *
+     * @throws     Exception
+     */
+    public function setPatch(string $postID, string $revisionID, string $type, string $redirectURL, string $beforeBehaviour, string $afterBehaviour)
     {
-        if (!$this->canPatch($rid)) {
+        if (!$this->canPatch($revisionID)) {
             throw new Exception(__('You are not allowed to patch this entry with this revision'));
         }
 
         try {
-            $patch = $this->getPatch($pid, $rid, $type);
+            $patch = $this->getPatch($postID, $revisionID, $type);
 
-            $p = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+            $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
             $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcBlog::POST_TABLE_NAME);
 
-            $cur->post_title        = $p->post_title;
-            $cur->cat_id            = $p->cat_id ?: null;
-            $cur->post_dt           = $p->post_dt ? date('Y-m-d H:i:00', strtotime($p->post_dt)) : '';
-            $cur->post_format       = $p->post_format;
-            $cur->post_password     = $p->post_password;
-            $cur->post_lang         = $p->post_lang;
-            $cur->post_notes        = $p->post_notes;
-            $cur->post_status       = $p->post_status;
-            $cur->post_selected     = (int) $p->post_selected;
-            $cur->post_open_comment = (int) $p->post_open_comment;
-            $cur->post_open_tb      = (int) $p->post_open_tb;
-            $cur->post_type         = $p->post_type;
+            $cur->post_title        = $rs->post_title;
+            $cur->cat_id            = $rs->cat_id ?: null;
+            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', strtotime($rs->post_dt)) : '';
+            $cur->post_format       = $rs->post_format;
+            $cur->post_password     = $rs->post_password;
+            $cur->post_lang         = $rs->post_lang;
+            $cur->post_notes        = $rs->post_notes;
+            $cur->post_status       = $rs->post_status;
+            $cur->post_selected     = (int) $rs->post_selected;
+            $cur->post_open_comment = (int) $rs->post_open_comment;
+            $cur->post_open_tb      = (int) $rs->post_open_tb;
+            $cur->post_type         = $rs->post_type;
 
             $cur->post_excerpt       = $patch['post_excerpt'];
             $cur->post_excerpt_xhtml = $patch['post_excerpt_xhtml'];
@@ -234,56 +286,62 @@ class Revisions
             $cur->post_content_xhtml = $patch['post_content_xhtml'];
 
             # --BEHAVIOR-- adminBeforeXXXXUpdate
-            dcCore::app()->callBehavior($before_behaviour, $cur, $pid);
+            dcCore::app()->callBehavior($beforeBehaviour, $cur, $postID);
 
-            dcCore::app()->auth->sudo([dcCore::app()->blog, 'updPost'], $pid, $cur);
+            dcCore::app()->auth->sudo([dcCore::app()->blog, 'updPost'], $postID, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
-            dcCore::app()->callBehavior($after_behaviour, $cur, $pid);
+            dcCore::app()->callBehavior($afterBehaviour, $cur, $postID);
 
-            http::redirect(sprintf($redirect_url, $pid));
+            http::redirect(sprintf($redirectURL, $postID));
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
     }
 
-    public function getPatch($pid, $rid, $type)
+    /**
+     * Gets the patch.
+     *
+     * @param      string  $postID      The post id
+     * @param      string  $revisionID  The revision id
+     * @param      string  $type        The type
+     *
+     * @return     array   The patch.
+     */
+    public function getPatch(string $postID, string $revisionID, string $type): array
     {
         $params = [
-            'post_id'   => $pid,
+            'post_id'   => $postID,
             'post_type' => $type,
         ];
 
-        $p = dcCore::app()->blog->getPosts($params);
-        $r = $this->getRevisions($params);
+        $rs        = dcCore::app()->blog->getPosts($params);
+        $revisions = $this->getRevisions($params);
 
         $patch = [
-            'post_excerpt'       => $p->post_excerpt,
-            'post_excerpt_xhtml' => $p->post_excerpt_xhtml,
-            'post_content'       => $p->post_content,
-            'post_content_xhtml' => $p->post_content_xhtml,
+            'post_excerpt'       => $rs->post_excerpt,
+            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
+            'post_content'       => $rs->post_content,
+            'post_content_xhtml' => $rs->post_content_xhtml,
         ];
 
-        $f = '';
-        while ($r->fetch()) {
-            foreach ($patch as $k => $v) {
-                if ($k === 'post_excerpt') {
-                    $f = 'revision_excerpt_diff';
-                }
-                if ($k === 'post_excerpt_xhtml') {
-                    $f = 'revision_excerpt_xhtml_diff';
-                }
-                if ($k === 'post_content') {
-                    $f = 'revision_content_diff';
-                }
-                if ($k === 'post_content_xhtml') {
-                    $f = 'revision_content_xhtml_diff';
-                }
+        $map = [
+            // Entry field => Revision field
+            'post_excerpt'       => 'revision_excerpt_diff',
+            'post_excerpt_xhtml' => 'revision_excerpt_xhtml_diff',
+            'post_content'       => 'revision_content_diff',
+            'post_content_xhtml' => 'revision_content_xhtml_diff',
+        ];
 
-                $patch[$k] = Diff::uniPatch($v, $r->{$f});
+        while ($revisions->fetch()) {
+            foreach ($patch as $field => $value) {
+                $revisionField = $map[$field] ?? null;
+                if ($revisionField) {
+                    $patch[$field] = Diff::uniPatch($value, $revisions->{$revisionField});
+                }
             }
 
-            if ($r->revision_id === $rid) {
+            if ($revisions->revision_id === $revisionID) {
                 break;
             }
         }
@@ -291,17 +349,32 @@ class Revisions
         return $patch;
     }
 
-    protected function canPatch($rid)
+    /**
+     * Determines ability to patch.
+     *
+     * @param      string  $revisionID  The revision id
+     *
+     * @return     bool    True if able to patch, False otherwise.
+     */
+    protected function canPatch(string $revisionID): bool
     {
-        $r = $this->getRevisions(['revision_id' => $rid]);
+        $rs = $this->getRevisions(['revision_id' => $revisionID]);
 
-        return ($r->canPatch());
+        return $rs->canPatch();
     }
 
-    protected function canPurge($pid, $type)
+    /**
+     * Determines ability to purge.
+     *
+     * @param      string  $postID  The post id
+     * @param      string  $type    The type
+     *
+     * @return     bool    True if able to purge, False otherwise.
+     */
+    protected function canPurge(string $postID, string $type): bool
     {
-        $rs = dcCore::app()->blog->getPosts(['post_id' => $pid, 'post_type' => $type]);
+        $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
-        return ($rs->isEditable());
+        return $rs->isEditable();
     }
 }
