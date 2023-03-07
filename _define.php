@@ -14,20 +14,20 @@ $this->registerModule(
     'dcRevisions',
     "Allows entries's versionning",
     'Tomtom, Franck Paul & contributors',
-    '1.0',
+    '2.0',
     [
-        'requires'    => [['core', '2.24']],
+        'requires'    => [['core', '2.25']],
         'permissions' => dcCore::app()->auth->makePermissions([
             dcAuth::PERMISSION_USAGE,
             dcAuth::PERMISSION_CONTENT_ADMIN,
         ]),
-        'type'        => 'plugin',
-        'settings'    => [
+        'type'     => 'plugin',
+        'settings' => [
             'blog' => '#params.dc-revisions',
         ],
 
-        'details'     => 'https://open-time.net/?q=dcRevisions',
-        'support'     => 'https://github.com/franck-paul/dcRevisions',
-        'repository'  => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/master/dcstore.xml',
+        'details'    => 'https://open-time.net/?q=dcRevisions',
+        'support'    => 'https://github.com/franck-paul/dcRevisions',
+        'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/master/dcstore.xml',
     ]
 );
