@@ -50,8 +50,6 @@ table.preview-rev td.center {
 }
 
 table.preview-rev td.col-line {
-  background-color: #f3f3f3;
-  color: #666;
   text-align: center;
 }
 
@@ -66,13 +64,13 @@ table.preview-rev td.skip {
 
 table.preview-rev td.insert {
   background-color: #dfd;
-  color: #666;
+  color: #000;
 }
 
 table.preview-rev td.insert ins {
   text-decoration: none;
   background-color: #9e9;
-  color: #666;
+  color: #000;
   padding: 0.2em 0 0.2em 0;
 }
 
@@ -80,13 +78,13 @@ table.preview-rev td.insert ins {
 
 table.preview-rev td.delete {
   background-color: #fdd;
-  color: #666;
+  color: #000;
 }
 
 table.preview-rev td.delete del {
   text-decoration: none;
   background-color: #e99;
-  color: #666;
+  color: #000;
   padding: 0.2em 0 0.2em 0;
 }
 
