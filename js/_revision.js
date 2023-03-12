@@ -84,20 +84,7 @@ dotclear.viewRevisionRender = (nodes, title) => {
       ol = nl = '&hellip;';
     }
 
-    let tdclass = '';
-
-    if (name == 'skip') {
-      tdclass = ' skip';
-    }
-    if (name == 'context') {
-      tdclass = ' context';
-    }
-    if (name == 'insert') {
-      tdclass = ' insert';
-    }
-    if (name == 'delete') {
-      tdclass = ' delete';
-    }
+    let tdclass = ['skip', 'context', 'insert', 'delete'].includes(name) ? ` ${name}` : '';
 
     if (name != previous && (previous == '' || previous == 'context')) {
       tdclass += ' first';
@@ -110,11 +97,11 @@ dotclear.viewRevisionRender = (nodes, title) => {
     previous = name;
 
     lines += `<tr>
- <td class="minimal col-line">${ol}</td>
- <td class="minimal col-line">${nl}</td>
- <td class="${tdclass}">${content}</td>
-</tr>
-`;
+    <td class="minimal col-line">${ol}</td>
+    <td class="minimal col-line">${nl}</td>
+    <td class="${tdclass}">${content}</td>
+    </tr>
+    `;
   });
 
   if (lines != '') {
