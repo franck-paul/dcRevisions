@@ -205,11 +205,11 @@ class Revisions
             foreach ($diff as $k => $v) {
                 $diff[$k] = Diff::uniDiff($new[$k], $old[$k]);
             }
-
-            return $diff;
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
+
+        return $diff;
     }
 
     /**
