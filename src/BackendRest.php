@@ -17,8 +17,8 @@ namespace Dotclear\Plugin\dcRevisions;
 use dcCore;
 use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Diff\TidyDiff;
+use Dotclear\Helper\Html\XmlTag;
 use Exception;
-use xmlTag;
 
 class BackendRest
 {
@@ -27,9 +27,9 @@ class BackendRest
      *
      * @throws     Exception
      *
-     * @return     xmlTag     The patch.
+     * @return     XmlTag     The patch.
      */
-    public static function getPatch(): xmlTag
+    public static function getPatch(): XmlTag
     {
         $postID     = $_GET['pid']  ?? null;
         $revisionID = $_GET['rid']  ?? null;
@@ -52,7 +52,7 @@ class BackendRest
 
         $new = dcCore::app()->blog->revisions->getPatch($postID, $revisionID, $type);
 
-        $rsp = new xmlTag();
+        $rsp = new XmlTag();
         foreach ($old as $field => $value) {
             $rsp->insertNode(self::buildNode($value, $new[$field], 2, $field));
         }
@@ -68,20 +68,20 @@ class BackendRest
      * @param      int     $ctx    The context
      * @param      string  $root   The root
      *
-     * @return     xmlTag  The node.
+     * @return     XmlTag  The node.
      */
-    public static function buildNode(string $src, string $dst, int $ctx, string $root): xmlTag
+    public static function buildNode(string $src, string $dst, int $ctx, string $root): XmlTag
     {
         $uniDiff  = Diff::uniDiff($src, $dst, $ctx);
         $tidyDiff = new TidyDiff(htmlspecialchars($uniDiff), true);
 
-        $rev = new xmlTag($root);
+        $rev = new XmlTag($root);
 
         foreach ($tidyDiff->getChunks() as $k => $chunk) {
             foreach ($chunk->getLines() as $line) {
                 switch ($line->type) {
                     case 'context':
-                        $node        = new xmlTag('context');
+                        $node        = new XmlTag('context');
                         $node->oline = $line->lines[0];
                         $node->nline = $line->lines[1];
                         $node->insertNode($line->content);
@@ -89,7 +89,7 @@ class BackendRest
 
                         break;
                     case 'delete':
-                        $node        = new xmlTag('delete');
+                        $node        = new XmlTag('delete');
                         $node->oline = $line->lines[0];
                         $content     = str_replace(['\0', '\1'], ['<del>', '</del>'], $line->content);
                         $node->insertNode($content);
@@ -97,7 +97,7 @@ class BackendRest
 
                         break;
                     case 'insert':
-                        $node        = new xmlTag('insert');
+                        $node        = new XmlTag('insert');
                         $node->nline = $line->lines[1];
                         $content     = str_replace(['\0', '\1'], ['<ins>', '</ins>'], $line->content);
                         $node->insertNode($content);
@@ -107,7 +107,7 @@ class BackendRest
                 }
             }
             if ($k < count($tidyDiff->getChunks()) - 1) {
-                $node = new xmlTag('skip');
+                $node = new XmlTag('skip');
                 $rev->insertNode($node);
             }
         }

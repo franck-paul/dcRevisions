@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 discreteCat module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 13:31+0200\n"
+"POT-Creation-Date: 2023-04-02 10:04+0200\n"
 "PO-Revision-Date: 2012-11-05 16:54+0100\n"
 "Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
 "Language-Team: \n"
@@ -18,12 +18,6 @@ msgstr "Permet la gestion des historiques de modification des entrées"
 msgid "dcRevisions"
 msgstr "Révisions"
 
-msgid "No post ID"
-msgstr "Pas d'identifiant d'entrée"
-
-msgid "No revision ID"
-msgstr "Pas d'identifiant de révision"
-
 msgid "Revisions"
 msgstr "Révisions"
 
@@ -32,6 +26,9 @@ msgstr "Active la gestion de l'historique de modification des entrées sur ce bl
 
 msgid "Revisions:"
 msgstr "Historique des modifications :"
+
+msgid "Purge all revisions"
+msgstr "Supprimer toutes les révisions"
 
 msgid "Excerpt"
 msgstr "Extrait"
@@ -48,14 +45,26 @@ msgstr "Modif."
 msgid "Content identical"
 msgstr "Contenu identique"
 
-msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?"
-msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes-vous sûr·e de vouloir appliquer cette transformation sur ce billet ?"
-
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
 msgstr "Attention : Cette opération va remplacer le contenu actuel par le précédent. Êtes-vous sûr·e de vouloir appliquer cette transformation sur cette page ?"
 
 msgid "CAUTION: This operation will delete all the revisions. Are you sure to want to do this?"
 msgstr "Attention : Cette opération va supprimer toutes les révisions. Êtes-vous sûr·e de vouloir les supprimer ?"
+
+msgid "All revisions have been deleted."
+msgstr "Toutes les révisions ont été supprimées."
+
+msgid "No post ID"
+msgstr "Pas d'identifiant d'entrée"
+
+msgid "No revision ID"
+msgstr "Pas d'identifiant de révision"
+
+msgid "You are not allowed to delete revisions of this entry"
+msgstr "Vous n'êtes pas autorisé·e à supprimer cette révision de ce billet"
+
+msgid "You are not allowed to patch this entry with this revision"
+msgstr "Vous n'êtes pas autorisé·e modifier ce billet avec cette révision"
 
 msgid "Id"
 msgstr "Modification"
@@ -75,12 +84,3 @@ msgstr "Retour à cette version interdit"
 
 msgid "Apply patch"
 msgstr "Revenir à cette version"
-
-msgid "Purge all revisions"
-msgstr "Supprimer toutes les révisions"
-
-msgid "You are not allowed to patch this entry with this revision"
-msgstr "Vous n'êtes pas autorisé·e modifier ce billet avec cette révision"
-
-msgid "All revisions have been deleted."
-msgstr "Toutes les révisions ont été supprimées."

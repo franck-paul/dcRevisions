@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 dcRevisions module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-09-24 13:31+0200\n"
+"POT-Creation-Date: 2023-04-02 10:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,93 +16,145 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../hg-plugins/dcRevisions//_admin.php:16
+#: ../git-plugins/dcRevisions/src/Backend.php:27
 msgid "Allows entries's versionning"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//_admin.php:16
+#: ../git-plugins/dcRevisions/src/Backend.php:27
 msgid "dcRevisions"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//_services.php:26
-msgid "No post ID"
-msgstr ""
-
-#: ../hg-plugins/dcRevisions//_services.php:29
-msgid "No revision ID"
-msgstr ""
-
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:21
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:29
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:43
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:214
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:232
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:56
 msgid "Revisions"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:24
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:46
 msgid "Enable entries' versionning on this blog"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:61
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:118
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:89
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:158
 msgid "Revisions:"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:72
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:129
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:90
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:159
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:214
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:232
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:289
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:299
+msgid "Purge all revisions"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:105
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:174
 msgid "Excerpt"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:73
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:130
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:106
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:175
 msgid "Content"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:74
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:131
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:107
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:176
 msgid "Current"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:75
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:108
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:177
 msgid "Rev."
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:76
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:132
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:109
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:178
 msgid "Content identical"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:78
-msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this entry?"
-msgstr ""
-
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.behaviors.php:134
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:110
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:179
 msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:32
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:111
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:180
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:305
+msgid "CAUTION: This operation will delete all the revisions. Are you sure to want to do this?"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:276
+#: ../git-plugins/dcRevisions/src/Revisions.php:237
+msgid "All revisions have been deleted."
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:288
+msgid "Pages"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:298
+msgid "Entries"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:310
+msgid "save"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendRest.php:39
+msgid "No post ID"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendRest.php:42
+msgid "No revision ID"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/Revisions.php:227
+msgid "You are not allowed to delete revisions of this entry"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/Revisions.php:260
+msgid "You are not allowed to patch this entry with this revision"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:59
 msgid "Id"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:45
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:60
+msgid "Author"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:61
+msgid "Date"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:62
+msgid "Status"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:63
+msgid "Actions"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:71
 msgid "No revision"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:62
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:94
 #, php-format
 msgid "Revision #%s"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:74
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:106
 msgid "Revision allowed"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:74
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:106
 msgid "Revision blocked"
 msgstr ""
 
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.list.php:78
+#: ../git-plugins/dcRevisions/src/RevisionsList.php:114
 msgid "Apply patch"
-msgstr ""
-
-#: ../hg-plugins/dcRevisions//inc/class.dc.revisions.php:167
-msgid "You are not allowed to patch this entry with this revision"
 msgstr ""

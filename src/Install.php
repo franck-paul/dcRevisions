@@ -14,10 +14,10 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dbStruct;
 use dcBlog;
 use dcCore;
 use dcNsProcess;
+use Dotclear\Database\Structure;
 use Exception;
 
 class Install extends dcNsProcess
@@ -27,14 +27,14 @@ class Install extends dcNsProcess
         $module = basename(dirname(__DIR__));
         $check  = dcCore::app()->newVersion($module, dcCore::app()->plugins->moduleInfo($module, 'version'));
 
-        self::$init = defined('DC_CONTEXT_ADMIN') && $check;
+        static::$init = defined('DC_CONTEXT_ADMIN') && $check;
 
-        return self::$init;
+        return static::$init;
     }
 
     public static function process(): bool
     {
-        if (!self::$init) {
+        if (!static::$init) {
             return false;
         }
 
@@ -48,7 +48,7 @@ class Install extends dcNsProcess
         );
 
         # --INSTALL AND UPDATE PROCEDURES--
-        $s = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
+        $s = new Structure(dcCore::app()->con, dcCore::app()->prefix);
 
         $s->revision
             ->revision_id('bigint', 0, false)
@@ -71,7 +71,7 @@ class Install extends dcNsProcess
         $s->revision->reference('fk_revision_post', 'post_id', dcBlog::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
         $s->revision->reference('fk_revision_blog', 'blog_id', dcBlog::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
-        $si = new dbStruct(dcCore::app()->con, dcCore::app()->prefix);
+        $si = new Structure(dcCore::app()->con, dcCore::app()->prefix);
 
         try {
             $si->synchronize($s);

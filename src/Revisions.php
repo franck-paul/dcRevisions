@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use cursor;
 use dcBlog;
 use dcCore;
 use dcPage;
-use dcRecord;
+use Dotclear\Database\Cursor;
+use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Diff\Diff;
+use Dotclear\Helper\Network\Http;
 use Exception;
-use http;
 
 class Revisions
 {
@@ -40,9 +40,9 @@ class Revisions
      * @param      array     $params      The parameters
      * @param      bool      $countOnly   The count only
      *
-     * @return     dcRecord  The revisions.
+     * @return     MetaRecord  The revisions.
      */
-    public function getRevisions(array $params, bool $countOnly = false): dcRecord
+    public function getRevisions(array $params, bool $countOnly = false): MetaRecord
     {
         if ($countOnly) {
             $f = 'COUNT(revision_id)';
@@ -119,7 +119,7 @@ class Revisions
             $strReq .= dcCore::app()->con->limit($params['limit']);
         }
 
-        $rs = new dcRecord(dcCore::app()->con->select($strReq));
+        $rs = new MetaRecord(dcCore::app()->con->select($strReq));
         $rs->extend(RevisionsExtensions::class);
 
         return $rs;
@@ -128,13 +128,13 @@ class Revisions
     /**
      * Adds a revision.
      *
-     * @param      cursor  $cur     The pcur
+     * @param      Cursor  $cur     The pcur
      * @param      string  $postID  The post identifier
      * @param      string  $type    The type
      */
-    public function addRevision(cursor $cur, string $postID, string $type)
+    public function addRevision(Cursor $cur, string $postID, string $type)
     {
-        $rs = new dcRecord(dcCore::app()->con->select(
+        $rs = new MetaRecord(dcCore::app()->con->select(
             'SELECT MAX(revision_id) ' .
             'FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME
         ));
@@ -235,7 +235,7 @@ class Revisions
 
             if (!dcCore::app()->error->flag() && $redirectURL !== null) {
                 dcPage::addSuccessNotice(__('All revisions have been deleted.'));
-                http::redirect(sprintf($redirectURL, $postID));
+                Http::redirect(sprintf($redirectURL, $postID));
             }
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
@@ -293,7 +293,7 @@ class Revisions
             # --BEHAVIOR-- adminAfterXXXXUpdate
             dcCore::app()->callBehavior($afterBehaviour, $cur, $postID);
 
-            http::redirect(sprintf($redirectURL, $postID));
+            Http::redirect(sprintf($redirectURL, $postID));
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use dcPage;
-use dcRecord;
+use Dotclear\Database\MetaRecord;
 
 class RevisionsList
 {
@@ -25,9 +25,9 @@ class RevisionsList
     /**
      * Constructs a new instance.
      *
-     * @param      dcRecord  $rs     List of revisions
+     * @param      MetaRecord  $rs     List of revisions
      */
-    public function __construct(dcRecord $rs)
+    public function __construct(MetaRecord $rs)
     {
         $this->rs = $rs;
     }

@@ -15,17 +15,16 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use ArrayObject;
-use cursor;
-use dcAuth;
 use dcCore;
 use dcPage;
 use dcPostsActions;
-use dcRecord;
 use dcSettings;
+use Dotclear\Database\Cursor;
+use Dotclear\Database\MetaRecord;
+use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
 use Exception;
 use form;
-use html;
 
 class BackendBehaviors
 {
@@ -37,7 +36,7 @@ class BackendBehaviors
     public static function adminBlogPreferencesForm(dcSettings $settings)
     {
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+            dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             echo
             '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
@@ -56,7 +55,7 @@ class BackendBehaviors
     public static function adminBeforeBlogSettingsUpdate(dcSettings $settings)
     {
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+            dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             $settings->dcrevisions->put('enable', empty($_POST['dcrevisions_enable']) ? false : true);
         }
@@ -65,9 +64,9 @@ class BackendBehaviors
     /**
      * Add revision form on entry form
      *
-     * @param      dcRecord|null  $post   The post
+     * @param      MetaRecord|null  $post   The post
      */
-    public static function adminPostForm(?dcRecord $post)
+    public static function adminPostForm(?MetaRecord $post)
     {
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url       = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
@@ -79,7 +78,7 @@ class BackendBehaviors
         ];
 
         if (is_null($id)) {
-            $rs = dcRecord::newFromArray([]);
+            $rs = MetaRecord::newFromArray([]);
         } else {
             $rs = dcCore::app()->blog->revisions->getRevisions($params);
         }
@@ -121,7 +120,7 @@ class BackendBehaviors
      * @param      cursor  $cur      The cursor
      * @param      string  $postID   The post identifier
      */
-    public static function adminBeforePostUpdate(cursor $cur, string $postID)
+    public static function adminBeforePostUpdate(Cursor $cur, string $postID)
     {
         try {
             dcCore::app()->blog->revisions->addRevision($cur, $postID, 'post');
@@ -133,9 +132,9 @@ class BackendBehaviors
     /**
      * Add revision form on page form
      *
-     * @param      dcRecord|null  $post   The post
+     * @param      MetaRecord|null  $post   The post
      */
-    public static function adminPageForm(?dcRecord $post)
+    public static function adminPageForm(?MetaRecord $post)
     {
         $base_url  = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page']);
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
@@ -150,7 +149,7 @@ class BackendBehaviors
         $rs = dcCore::app()->blog->revisions->getRevisions($params);
 
         if (is_null($id)) {
-            $rs = dcRecord::newFromArray([]);
+            $rs = MetaRecord::newFromArray([]);
         }
 
         $list = new RevisionsList($rs);
@@ -190,7 +189,7 @@ class BackendBehaviors
      * @param      cursor  $cur      The cursor
      * @param      string  $postID   The post identifier
      */
-    public static function adminBeforePageUpdate(cursor $cur, string $postID)
+    public static function adminBeforePageUpdate(Cursor $cur, string $postID)
     {
         try {
             dcCore::app()->blog->revisions->addRevision($cur, $postID, 'page');
@@ -208,7 +207,7 @@ class BackendBehaviors
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+            dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
@@ -226,7 +225,7 @@ class BackendBehaviors
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcAuth::PERMISSION_CONTENT_ADMIN,
+            dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
@@ -284,7 +283,7 @@ class BackendBehaviors
                 $ap->beginPage(
                     dcPage::breadcrumb(
                         [
-                            html::escapeHTML(dcCore::app()->blog->name) => '',
+                            Html::escapeHTML(dcCore::app()->blog->name) => '',
                             __('Pages')                                 => 'plugin.php?p=pages',
                             __('Purge all revisions')                   => '',
                         ]
@@ -294,7 +293,7 @@ class BackendBehaviors
                 $ap->beginPage(
                     dcPage::breadcrumb(
                         [
-                            html::escapeHTML(dcCore::app()->blog->name) => '',
+                            Html::escapeHTML(dcCore::app()->blog->name) => '',
                             __('Entries')                               => 'posts.php',
                             __('Purge all revisions')                   => '',
                         ]
