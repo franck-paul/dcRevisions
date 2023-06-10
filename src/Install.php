@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use dcBlog;
 use dcCore;
+use dcNamespace;
 use dcNsProcess;
 use Dotclear\Database\Structure;
 use Exception;
@@ -24,10 +25,7 @@ class Install extends dcNsProcess
 {
     public static function init(): bool
     {
-        $module = basename(dirname(__DIR__));
-        $check  = dcCore::app()->newVersion($module, dcCore::app()->plugins->moduleInfo($module, 'version'));
-
-        static::$init = defined('DC_CONTEXT_ADMIN') && $check;
+        static::$init = My::checkContext(My::INSTALL);
 
         return static::$init;
     }
@@ -38,43 +36,49 @@ class Install extends dcNsProcess
             return false;
         }
 
-        dcCore::app()->blog->settings->dcrevisions->put(
-            'enable',
-            false,
-            'boolean',
-            'Enable revisions',
-            false,
-            true
-        );
-
-        # --INSTALL AND UPDATE PROCEDURES--
-        $s = new Structure(dcCore::app()->con, dcCore::app()->prefix);
-
-        $s->revision
-            ->revision_id('bigint', 0, false)
-            ->post_id('bigint', 0, false)
-            ->user_id('varchar', 32, false)
-            ->blog_id('varchar', 32, false)
-            ->revision_dt('timestamp', 0, false, 'now()')
-            ->revision_tz('varchar', 128, false, "'UTC'")
-            ->revision_type('varchar', 50, true, null)
-            ->revision_excerpt_diff('text', 0, true, null)
-            ->revision_excerpt_xhtml_diff('text', 0, true, null)
-            ->revision_content_diff('text', 0, true, null)
-            ->revision_content_xhtml_diff('text', 0, true, null)
-        ;
-
-        $s->revision->primary('pk_revision', 'revision_id');
-
-        $s->revision->index('idx_revision_post_id', 'btree', 'post_id');
-
-        $s->revision->reference('fk_revision_post', 'post_id', dcBlog::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
-        $s->revision->reference('fk_revision_blog', 'blog_id', dcBlog::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
-
-        $si = new Structure(dcCore::app()->con, dcCore::app()->prefix);
-
         try {
-            $si->synchronize($s);
+            // Update
+            $old_version = dcCore::app()->getVersion(My::id());
+            if (version_compare((string) $old_version, '3.0', '<')) {
+                // Rename settings namespace
+                if (dcCore::app()->blog->settings->exists('dcrevisions')) {
+                    dcCore::app()->blog->settings->delNamespace(My::id());
+                    dcCore::app()->blog->settings->renNamespace('dcrevisions', My::id());
+                }
+            }
+
+            $settings = dcCore::app()->blog->settings->get(My::id());
+
+            $settings->put('enable', false, dcNamespace::NS_BOOL, 'Enable revisions', false, true);
+
+            // --INSTALL AND UPDATE PROCEDURES--
+            $new_structure = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+
+            $new_structure->revision
+                ->revision_id('bigint', 0, false)
+                ->post_id('bigint', 0, false)
+                ->user_id('varchar', 32, false)
+                ->blog_id('varchar', 32, false)
+                ->revision_dt('timestamp', 0, false, 'now()')
+                ->revision_tz('varchar', 128, false, "'UTC'")
+                ->revision_type('varchar', 50, true, null)
+                ->revision_excerpt_diff('text', 0, true, null)
+                ->revision_excerpt_xhtml_diff('text', 0, true, null)
+                ->revision_content_diff('text', 0, true, null)
+                ->revision_content_xhtml_diff('text', 0, true, null)
+            ;
+
+            $new_structure->revision->primary('pk_revision', 'revision_id');
+
+            $new_structure->revision->index('idx_revision_post_id', 'btree', 'post_id');
+
+            $new_structure->revision->reference('fk_revision_post', 'post_id', dcBlog::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
+            $new_structure->revision->reference('fk_revision_blog', 'blog_id', dcBlog::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
+
+            $current_structure = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $current_structure->synchronize($new_structure);
+
+            // Init
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }

@@ -79,14 +79,14 @@ class RevisionsList
      *
      * @param      string  $url    The url base for patching
      *
-     * @return     string.
+     * @return     string
      */
     private function getLines(string $url): string
     {
         $res    = '';
         $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" />';
         $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
-        $index  = is_countable($this->rs) ? count($this->rs) : 0;
+        $index  = count($this->rs);
 
         while ($this->rs->fetch()) {
             $res .= '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .

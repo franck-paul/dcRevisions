@@ -21,7 +21,7 @@ class Backend extends dcNsProcess
 {
     public static function init(): bool
     {
-        static::$init = defined('DC_CONTEXT_ADMIN');
+        static::$init = My::checkContext(My::BACKEND);
 
         // dead but useful code, in order to have translations
         __('dcRevisions') . __('Allows entries\'s versionning');
@@ -40,7 +40,8 @@ class Backend extends dcNsProcess
             'adminBeforeBlogSettingsUpdate' => [BackendBehaviors::class, 'adminBeforeBlogSettingsUpdate'],
         ]);
 
-        if (dcCore::app()->blog->settings->dcrevisions->enable) {
+        $settings = dcCore::app()->blog->settings->get(My::id());
+        if ($settings->enable) {
             dcCore::app()->addBehaviors([
                 'adminPostHeaders' => [BackendBehaviors::class, 'adminPostHeaders'],
                 'adminPostForm'    => [BackendBehaviors::class, 'adminPostForm'],
@@ -65,7 +66,7 @@ class Backend extends dcNsProcess
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
-                if (preg_match('/post.php\?id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
+                if (preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
                     // It's a post
                     $redirURL = 'post.php?id=%s';
                     if (isset($_GET['patch'])) {
@@ -76,7 +77,7 @@ class Backend extends dcNsProcess
                         // Purge
                         dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redirURL);
                     }
-                } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
+                } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
                     // It's a page
                     $redirURL = 'plugin.php?p=pages&act=page&id=%s';
                     if (isset($_GET['patch'])) {

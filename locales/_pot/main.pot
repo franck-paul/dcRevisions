@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 dcRevisions module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-02 10:04+0200\n"
+"POT-Creation-Date: 2023-06-10 18:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,81 +24,81 @@ msgstr ""
 msgid "dcRevisions"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:43
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:214
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:232
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:45
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:218
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:236
 #: ../git-plugins/dcRevisions/src/RevisionsList.php:56
 msgid "Revisions"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:46
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:48
 msgid "Enable entries' versionning on this blog"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:89
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:158
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:93
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:162
 msgid "Revisions:"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:90
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:159
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:214
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:232
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:289
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:299
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:94
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:163
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:218
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:236
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:293
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:303
 msgid "Purge all revisions"
-msgstr ""
-
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:105
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:174
-msgid "Excerpt"
-msgstr ""
-
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:106
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:175
-msgid "Content"
-msgstr ""
-
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:107
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:176
-msgid "Current"
-msgstr ""
-
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:108
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:177
-msgid "Rev."
 msgstr ""
 
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:109
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:178
-msgid "Content identical"
+msgid "Excerpt"
 msgstr ""
 
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:110
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:179
-msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
+msgid "Content"
 msgstr ""
 
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:111
 #: ../git-plugins/dcRevisions/src/BackendBehaviors.php:180
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:305
+msgid "Current"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:112
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:181
+msgid "Rev."
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:113
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:182
+msgid "Content identical"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:114
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:183
+msgid "CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?"
+msgstr ""
+
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:115
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:184
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:309
 msgid "CAUTION: This operation will delete all the revisions. Are you sure to want to do this?"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:276
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:280
 #: ../git-plugins/dcRevisions/src/Revisions.php:237
 msgid "All revisions have been deleted."
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:288
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:292
 msgid "Pages"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:298
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:302
 msgid "Entries"
 msgstr ""
 
-#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:310
+#: ../git-plugins/dcRevisions/src/BackendBehaviors.php:314
 msgid "save"
 msgstr ""
 

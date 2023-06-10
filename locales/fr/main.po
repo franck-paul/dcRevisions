@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Dotclear 2 discreteCat module\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-02 10:04+0200\n"
+"POT-Creation-Date: 2023-06-10 18:12+0200\n"
 "PO-Revision-Date: 2012-11-05 16:54+0100\n"
 "Last-Translator: Franck Paul <carnet.franck.paul@gmail.com>\n"
 "Language-Team: \n"
@@ -54,6 +54,15 @@ msgstr "Attention : Cette opération va supprimer toutes les révisions. Êtes-v
 msgid "All revisions have been deleted."
 msgstr "Toutes les révisions ont été supprimées."
 
+msgid "Pages"
+msgstr ""
+
+msgid "Entries"
+msgstr ""
+
+msgid "save"
+msgstr ""
+
 msgid "No post ID"
 msgstr "Pas d'identifiant d'entrée"
 
@@ -68,6 +77,18 @@ msgstr "Vous n'êtes pas autorisé·e modifier ce billet avec cette révision"
 
 msgid "Id"
 msgstr "Modification"
+
+msgid "Author"
+msgstr ""
+
+msgid "Date"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Actions"
+msgstr ""
 
 msgid "No revision"
 msgstr "Pas de modification"

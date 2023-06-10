@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use ArrayObject;
 use dcCore;
+use dcNamespace;
 use dcPage;
 use dcPostsActions;
 use dcSettings;
@@ -33,15 +34,17 @@ class BackendBehaviors
      *
      * @param      dcSettings  $settings  The settings
      */
-    public static function adminBlogPreferencesForm(dcSettings $settings)
+    public static function adminBlogPreferencesForm()
     {
+        $settings = dcCore::app()->blog->settings->get(My::id());
+
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             echo
             '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
             '<p><label class="classic" for="dcrevisions_enable">' .
-            form::checkbox('dcrevisions_enable', 1, $settings->dcrevisions->enable) .
+            form::checkbox('dcrevisions_enable', 1, (bool) $settings->enable) .
             __('Enable entries\' versionning on this blog') . '</label></p>' .
                 '</div>';
         }
@@ -52,12 +55,14 @@ class BackendBehaviors
      *
      * @param      dcSettings  $settings  The settings
      */
-    public static function adminBeforeBlogSettingsUpdate(dcSettings $settings)
+    public static function adminBeforeBlogSettingsUpdate()
     {
+        $settings = dcCore::app()->blog->settings->get(My::id());
+
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
-            $settings->dcrevisions->put('enable', empty($_POST['dcrevisions_enable']) ? false : true);
+            $settings->put('enable', empty($_POST['dcrevisions_enable']) ? false : true, dcNamespace::NS_BOOL);
         }
     }
 
@@ -110,8 +115,8 @@ class BackendBehaviors
                 'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'),
             ],
         ]) .
-        dcPage::jsModuleLoad('dcRevisions/js/_revision.js', dcCore::app()->getVersion('dcrevisions')) . "\n" .
-        dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
+        dcPage::jsModuleLoad(My::id() . '/js/_revision.js', dcCore::app()->getVersion(My::id())) . "\n" .
+        dcPage::cssModuleLoad(My::id() . '/css/style.css', 'screen', dcCore::app()->getVersion(My::id())) . "\n";
     }
 
     /**
@@ -179,8 +184,8 @@ class BackendBehaviors
                 'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'),
             ],
         ]) .
-        dcPage::jsModuleLoad('dcRevisions/js/_revision.js', dcCore::app()->getVersion('dcrevisions')) . "\n" .
-        dcPage::cssModuleLoad('dcRevisions/css/style.css', 'screen', dcCore::app()->getVersion('dcrevisions')) . "\n";
+        dcPage::jsModuleLoad(My::id() . '/js/_revision.js', dcCore::app()->getVersion(My::id())) . "\n" .
+        dcPage::cssModuleLoad(My::id() . '/css/style.css', 'screen', dcCore::app()->getVersion(My::id())) . "\n";
     }
 
     /**

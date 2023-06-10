@@ -61,29 +61,31 @@ table.preview-rev td.skip {
 }
 
 /* Insert line */
+/* Red base color as new/old are swapped */
 
 table.preview-rev td.insert {
-  background-color: #dfd;
+  background-color: #fdd;
   color: #000;
 }
 
 table.preview-rev td.insert ins {
   text-decoration: none;
-  background-color: #9e9;
+  background-color: #e99;
   color: #000;
   padding: 0.2em 0 0.2em 0;
 }
 
 /* Delete line */
+/* Green base color as new/old are swapped */
 
 table.preview-rev td.delete {
-  background-color: #fdd;
+  background-color: #dfd;
   color: #000;
 }
 
 table.preview-rev td.delete del {
   text-decoration: none;
-  background-color: #e99;
+  background-color: #9e9;
   color: #000;
   padding: 0.2em 0 0.2em 0;
 }
