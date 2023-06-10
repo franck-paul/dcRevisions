@@ -12,7 +12,7 @@
  */
 $this->registerModule(
     'dcRevisions',
-    "Allows entries's versionning",
+    'Allows entries versionning',
     'Tomtom, Franck Paul & contributors',
     '3.0',
     [
