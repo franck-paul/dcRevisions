@@ -19,7 +19,6 @@ use dcCore;
 use dcNamespace;
 use dcPage;
 use dcPostsActions;
-use dcSettings;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
@@ -31,8 +30,6 @@ class BackendBehaviors
 {
     /**
      * Display plugin settings
-     *
-     * @param      dcSettings  $settings  The settings
      */
     public static function adminBlogPreferencesForm()
     {
@@ -52,8 +49,6 @@ class BackendBehaviors
 
     /**
      * Register plugin settings
-     *
-     * @param      dcSettings  $settings  The settings
      */
     public static function adminBeforeBlogSettingsUpdate()
     {
