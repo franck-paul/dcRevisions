@@ -1,10 +1,10 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="dcRevisions">
     <name>dcRevisions</name>
-    <version>3.0</version>
+    <version>3.1</version>
     <author>Tomtom, Franck Paul &amp; contributors</author>
     <desc>Allows entries&apos;s versionning</desc>
-    <file>https://github.com/franck-paul/dcRevisions/releases/download/3.0/plugin-dcRevisions-3.0.zip</file>
+    <file>https://github.com/franck-paul/dcRevisions/releases/download/3.1/plugin-dcRevisions-3.1.zip</file>
     <da:dcmin>2.26</da:dcmin>
     <da:details>https://open-time.net/?q=dcRevisions</da:details>
     <da:support>https://github.com/franck-paul/dcRevisions</da:support>
