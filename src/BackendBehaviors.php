@@ -68,9 +68,15 @@ class BackendBehaviors
      */
     public static function adminPostForm(?MetaRecord $post)
     {
-        $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url       = sprintf('post.php?id=%1$s&amp;patch=%2$s', $id, '%s');
-        $purge_url = sprintf('post.php?id=%1$s&amp;revpurge=1', $id);
+        $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
+        $url = sprintf(dcCore::app()->adminurl->get('admin.post', [
+            'id'    => '%1$s',
+            'patch' => '%2$s',
+        ], '&', true), $id, '%s');
+        $purge_url = sprintf(dcCore::app()->adminurl->get('admin.post', [
+            'id'       => '%1$s',
+            'revpurge' => 1,
+        ], '&', true), $id);
 
         $params = [
             'post_id'   => $id,
@@ -284,7 +290,7 @@ class BackendBehaviors
                     dcPage::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Pages')                                 => 'plugin.php?p=pages',
+                            __('Pages')                                 => dcCore::app()->adminurl->get('admin.plugin.pages'),
                             __('Purge all revisions')                   => '',
                         ]
                     )
@@ -294,7 +300,7 @@ class BackendBehaviors
                     dcPage::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Entries')                               => 'posts.php',
+                            __('Entries')                               => dcCore::app()->adminurl->get('admin.posts'),
                             __('Purge all revisions')                   => '',
                         ]
                     )

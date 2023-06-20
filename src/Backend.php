@@ -66,9 +66,9 @@ class Backend extends dcNsProcess
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
-                if (preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+                if ((preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/idnex.php\?process=Post\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a post
-                    $redirURL = 'post.php?id=%s';
+                    $redirURL = dcCore::app()->adminurl->get('admin.post', ['id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
@@ -77,9 +77,9 @@ class Backend extends dcNsProcess
                         // Purge
                         dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redirURL);
                     }
-                } elseif (preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+                } elseif ((preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a page
-                    $redirURL = 'plugin.php?p=pages&act=page&id=%s';
+                    $redirURL = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
