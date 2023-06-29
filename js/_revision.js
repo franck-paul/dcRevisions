@@ -20,16 +20,11 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
     $(tr).toggle();
     $(line).toggleClass('expand');
   } else {
-    $.get(
-      'services.php',
-      {
-        f: 'getPatch',
-        pid: postId,
-        rid: revisionId,
-        type: dotclear.dcrevisions.post_type,
-      },
+    dotclear.servicesGet(
+      'getPatch',
       (data) => {
-        const rsp = $(data).children('rsp')[0];
+        const xml = new DOMParser().parseFromString(data, 'text/xml');
+        const rsp = $(xml).children('rsp')[0];
         if (rsp.attributes[0].value == 'ok') {
           // Patch found
           tr = document.createElement('tr');
@@ -64,6 +59,11 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
           $(line).toggleClass('expand');
           window.alert($(rsp).find('message').text());
         }
+      },
+      {
+        pid: postId,
+        rid: revisionId,
+        type: dotclear.dcrevisions.post_type,
       },
     );
   }
