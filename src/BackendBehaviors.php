@@ -91,9 +91,12 @@ class BackendBehaviors
 
         $list = new RevisionsList($rs);
 
-        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
-            ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
-            '</div>';
+        echo
+        '<details class="area" id="revisions-area" ' . ($list->count() ? 'open' : '') . '>' .
+        '<summary>' . __('Revisions:') . '</summary>' .
+        $list->display($url) .
+        ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
+        '</details>';
     }
 
     /**
