@@ -17,8 +17,9 @@ namespace Dotclear\Plugin\dcRevisions;
 use ArrayObject;
 use dcCore;
 use dcNamespace;
-use dcPage;
-use dcPostsActions;
+use Dotclear\Core\Backend\Action\ActionsPosts;
+use Dotclear\Core\Backend\Notices;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Html;
@@ -69,11 +70,11 @@ class BackendBehaviors
     public static function adminPostForm(?MetaRecord $post)
     {
         $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url = sprintf(dcCore::app()->adminurl->get('admin.post', [
+        $url = sprintf(dcCore::app()->admin->url->get('admin.post', [
             'id'    => '%1$s',
             'patch' => '%2$s',
         ], '&', true), $id, '%s');
-        $purge_url = sprintf(dcCore::app()->adminurl->get('admin.post', [
+        $purge_url = sprintf(dcCore::app()->admin->url->get('admin.post', [
             'id'       => '%1$s',
             'revpurge' => 1,
         ], '&', true), $id);
@@ -107,7 +108,7 @@ class BackendBehaviors
     public static function adminPostHeaders(): string
     {
         return
-        dcPage::jsJson('dcrevisions', [
+        Page::jsJson('dcrevisions', [
             'post_type' => 'post',
             'msg'       => [
                 'excerpt'                => __('Excerpt'),
@@ -119,8 +120,8 @@ class BackendBehaviors
                 'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'),
             ],
         ]) .
-        dcPage::jsModuleLoad(My::id() . '/js/_revision.js', dcCore::app()->getVersion(My::id())) . "\n" .
-        dcPage::cssModuleLoad(My::id() . '/css/style.css', 'screen', dcCore::app()->getVersion(My::id())) . "\n";
+        My::jsLoad('_revision.js') . "\n" .
+        My::cssLoad('style.css') . "\n";
     }
 
     /**
@@ -145,7 +146,7 @@ class BackendBehaviors
      */
     public static function adminPageForm(?MetaRecord $post)
     {
-        $base_url  = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page']);
+        $base_url  = dcCore::app()->admin->url->get('admin.plugin.pages', ['act' => 'page']);
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url       = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
         $purge_url = sprintf($base_url . '&amp;id=%1$s&amp;revpurge=1', $id);
@@ -176,7 +177,7 @@ class BackendBehaviors
     public static function adminPageHeaders(): string
     {
         return
-        dcPage::jsJson('dcrevisions', [
+        Page::jsJson('dcrevisions', [
             'post_type' => 'page',
             'msg'       => [
                 'excerpt'                => __('Excerpt'),
@@ -188,8 +189,8 @@ class BackendBehaviors
                 'confirm_purge_revision' => __('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'),
             ],
         ]) .
-        dcPage::jsModuleLoad(My::id() . '/js/_revision.js', dcCore::app()->getVersion(My::id())) . "\n" .
-        dcPage::cssModuleLoad(My::id() . '/css/style.css', 'screen', dcCore::app()->getVersion(My::id())) . "\n";
+        My::jsLoad('_revision.js') . "\n" .
+        My::cssLoad('style.css') . "\n";
     }
 
     /**
@@ -210,9 +211,9 @@ class BackendBehaviors
     /**
      * Add action for posts
      *
-     * @param      dcPostsActions  $ap     Posts' actions
+     * @param      ActionsPosts  $ap     Posts' actions
      */
-    public static function adminPostsActions(dcPostsActions $ap)
+    public static function adminPostsActions(ActionsPosts $ap)
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
@@ -220,7 +221,7 @@ class BackendBehaviors
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                [BackendBehaviors::class, 'adminPostsDoReplacements']
+                BackendBehaviors::adminPostsDoReplacements(...)
             );
         }
     }
@@ -238,7 +239,7 @@ class BackendBehaviors
         ]), dcCore::app()->blog->id)) {
             $ap->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
-                [BackendBehaviors::class, 'adminPagesDoReplacements']
+                BackendBehaviors::adminPagesDoReplacements(...)
             );
         }
     }
@@ -246,10 +247,10 @@ class BackendBehaviors
     /**
      * Do posts action
      *
-     * @param      dcPostsActions  $ap     Posts' actions
+     * @param      ActionsPosts  $ap     Posts' actions
      * @param      arrayObject     $post   The post
      */
-    public static function adminPostsDoReplacements(dcPostsActions $ap, arrayObject $post)
+    public static function adminPostsDoReplacements(ActionsPosts $ap, arrayObject $post)
     {
         self::adminEntriesDoReplacements($ap, $post, 'post');
     }
@@ -268,7 +269,7 @@ class BackendBehaviors
     /**
      * Do posts/pages action
      *
-     * @param      dcPostsActions|PagesBackendActions   $ap     Posts'/Pages' actions
+     * @param      ActionsPosts|PagesBackendActions   $ap     Posts'/Pages' actions
      * @param      arrayObject                          $post   The post
      */
     public static function adminEntriesDoReplacements($ap, arrayObject $post, string $type = 'post')
@@ -281,7 +282,7 @@ class BackendBehaviors
                     // Purge
                     dcCore::app()->blog->revisions->purge($posts->post_id, $type);
                 }
-                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                Notices::addSuccessNotice(__('All revisions have been deleted.'));
                 $ap->redirect(true);
             } else {
                 $ap->redirect();
@@ -290,27 +291,27 @@ class BackendBehaviors
             // Ask confirmation for replacements
             if ($type == 'page') {
                 $ap->beginPage(
-                    dcPage::breadcrumb(
+                    Page::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Pages')                                 => dcCore::app()->adminurl->get('admin.plugin.pages'),
+                            __('Pages')                                 => dcCore::app()->admin->url->get('admin.plugin.pages'),
                             __('Purge all revisions')                   => '',
                         ]
                     )
                 );
             } else {
                 $ap->beginPage(
-                    dcPage::breadcrumb(
+                    Page::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Entries')                               => dcCore::app()->adminurl->get('admin.posts'),
+                            __('Entries')                               => dcCore::app()->admin->url->get('admin.posts'),
                             __('Purge all revisions')                   => '',
                         ]
                     )
                 );
             }
 
-            dcPage::warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
+            Notices::warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
 
             echo
             '<form action="' . $ap->getURI() . '" method="post">' .

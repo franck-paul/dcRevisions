@@ -15,52 +15,49 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use dcCore;
-use dcNsProcess;
+use Dotclear\Core\Process;
 
-class Backend extends dcNsProcess
+class Backend extends Process
 {
-    protected static $init = false; /** @deprecated since 2.27 */
     public static function init(): bool
     {
-        static::$init = My::checkContext(My::BACKEND);
-
         // dead but useful code, in order to have translations
         __('dcRevisions') . __('Allows entries\'s versionning');
 
-        return static::$init;
+        return self::status(My::checkContext(My::BACKEND));
     }
 
     public static function process(): bool
     {
-        if (!static::$init) {
+        if (!self::status()) {
             return false;
         }
 
         dcCore::app()->addBehaviors([
-            'adminBlogPreferencesFormV2'    => [BackendBehaviors::class, 'adminBlogPreferencesForm'],
-            'adminBeforeBlogSettingsUpdate' => [BackendBehaviors::class, 'adminBeforeBlogSettingsUpdate'],
+            'adminBlogPreferencesFormV2'    => BackendBehaviors::adminBlogPreferencesForm(...),
+            'adminBeforeBlogSettingsUpdate' => BackendBehaviors::adminBeforeBlogSettingsUpdate(...),
         ]);
 
         $settings = dcCore::app()->blog->settings->get(My::id());
         if ($settings->enable) {
             dcCore::app()->addBehaviors([
-                'adminPostHeaders' => [BackendBehaviors::class, 'adminPostHeaders'],
-                'adminPostForm'    => [BackendBehaviors::class, 'adminPostForm'],
+                'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),
+                'adminPostForm'    => BackendBehaviors::adminPostForm(...),
 
-                'adminBeforePostUpdate' => [BackendBehaviors::class, 'adminBeforePostUpdate'],
+                'adminBeforePostUpdate' => BackendBehaviors::adminBeforePostUpdate(...),
 
-                'adminPageHeaders' => [BackendBehaviors::class, 'adminPageHeaders'],
-                'adminPageForm'    => [BackendBehaviors::class, 'adminPageForm'],
+                'adminPageHeaders' => BackendBehaviors::adminPageHeaders(...),
+                'adminPageForm'    => BackendBehaviors::adminPageForm(...),
 
-                'adminBeforePageUpdate' => [BackendBehaviors::class, 'adminBeforePageUpdate'],
+                'adminBeforePageUpdate' => BackendBehaviors::adminBeforePageUpdate(...),
 
                 /* Add behavior callbacks for posts actions */
-                'adminPostsActions' => [BackendBehaviors::class, 'adminPostsActions'],
-                'adminPagesActions' => [BackendBehaviors::class, 'adminPagesActions'],
+                'adminPostsActions' => BackendBehaviors::adminPostsActions(...),
+                'adminPagesActions' => BackendBehaviors::adminPagesActions(...),
             ]);
 
             // REST method
-            dcCore::app()->rest->addFunction('getPatch', [BackendRest::class, 'getPatch']);
+            dcCore::app()->rest->addFunction('getPatch', BackendRest::getPatch(...));
 
             // Init Revision object
             dcCore::app()->blog->revisions = new Revisions();
@@ -69,7 +66,7 @@ class Backend extends dcNsProcess
                 // We have a post or a page ID
                 if ((preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a post
-                    $redirURL = dcCore::app()->adminurl->get('admin.post', ['id' => '%s']);
+                    $redirURL = dcCore::app()->admin->url->get('admin.post', ['id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
@@ -80,7 +77,7 @@ class Backend extends dcNsProcess
                     }
                 } elseif ((preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a page
-                    $redirURL = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s']);
+                    $redirURL = dcCore::app()->admin->url->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';

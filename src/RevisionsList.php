@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcPage;
+use Dotclear\Core\Backend\Page;
 use Dotclear\Database\MetaRecord;
 
 class RevisionsList
@@ -110,7 +110,7 @@ class RevisionsList
             ($this->rs->canPatch() ? sprintf(
                 $p_link,
                 sprintf($url, $this->rs->revision_id),
-                urldecode(dcPage::getPF('dcRevisions/images/apply.png')),
+                urldecode(Page::getPF('dcRevisions/images/apply.png')),
                 __('Apply patch')
             ) : '') .
             "</td>\n" .

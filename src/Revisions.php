@@ -16,7 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use dcBlog;
 use dcCore;
-use dcPage;
+use Dotclear\Core\Backend\Notices;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Diff\Diff;
@@ -234,7 +234,7 @@ class Revisions
             dcCore::app()->con->execute($strReq);
 
             if (!dcCore::app()->error->flag() && $redirectURL !== null) {
-                dcPage::addSuccessNotice(__('All revisions have been deleted.'));
+                Notices::addSuccessNotice(__('All revisions have been deleted.'));
                 Http::redirect(sprintf($redirectURL, $postID));
             }
         } catch (Exception $e) {
