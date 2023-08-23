@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Helper\Date;
 
 class RevisionsList
 {
@@ -88,6 +89,10 @@ class RevisionsList
         $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
         $index  = count($this->rs);
 
+        // Back to UTC timezone in order to get correct revision datetime
+        $current_timezone = Date::getTZ();
+        Date::setTZ('UTC');
+
         while ($this->rs->fetch()) {
             $res .= '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
             '<td class="maximal nowrap rid">' .
@@ -116,6 +121,9 @@ class RevisionsList
             "</td>\n" .
             "</tr>\n";
         }
+
+        // Restore previous timezone
+        Date::setTZ($current_timezone);
 
         return $res;
     }
