@@ -38,7 +38,7 @@ class Backend extends Process
             'adminBeforeBlogSettingsUpdate' => BackendBehaviors::adminBeforeBlogSettingsUpdate(...),
         ]);
 
-        $settings = dcCore::app()->blog->settings->get(My::id());
+        $settings = My::settings();
         if ($settings->enable) {
             dcCore::app()->addBehaviors([
                 'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),

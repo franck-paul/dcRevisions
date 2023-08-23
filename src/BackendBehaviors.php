@@ -34,7 +34,7 @@ class BackendBehaviors
      */
     public static function adminBlogPreferencesForm()
     {
-        $settings = dcCore::app()->blog->settings->get(My::id());
+        $settings = My::settings();
 
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
@@ -44,7 +44,7 @@ class BackendBehaviors
             '<p><label class="classic" for="dcrevisions_enable">' .
             form::checkbox('dcrevisions_enable', 1, (bool) $settings->enable) .
             __('Enable entries\' versionning on this blog') . '</label></p>' .
-                '</div>';
+            '</div>';
         }
     }
 
@@ -53,7 +53,7 @@ class BackendBehaviors
      */
     public static function adminBeforeBlogSettingsUpdate()
     {
-        $settings = dcCore::app()->blog->settings->get(My::id());
+        $settings = My::settings();
 
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
@@ -93,7 +93,7 @@ class BackendBehaviors
         $list = new RevisionsList($rs);
 
         echo
-        '<details class="area" id="revisions-area" ' . ($list->count() ? 'open' : '') . '>' .
+        '<details class="area" id="revisions-area">' .
         '<summary>' . __('Revisions:') . '</summary>' .
         $list->display($url) .
         ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
@@ -317,11 +317,13 @@ class BackendBehaviors
             '<form action="' . $ap->getURI() . '" method="post">' .
             $ap->getCheckboxes() .
             '<p><input type="submit" value="' . __('save') . '" /></p>' .
+            $ap->getHiddenFields() .
+            My::parsedHiddenFields([
+                'dopurge' => 'true',
+                'action'  => 'revpurge',
+            ]) .
+            '</form>';
 
-            dcCore::app()->formNonce() . $ap->getHiddenFields() .
-            form::hidden(['dopurge'], 'true') .
-            form::hidden(['action'], 'revpurge') .
-                '</form>';
             $ap->endPage();
         }
     }

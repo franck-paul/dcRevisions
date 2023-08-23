@@ -45,7 +45,7 @@ class Install extends Process
                 }
             }
 
-            $settings = dcCore::app()->blog->settings->get(My::id());
+            $settings = My::settings();
 
             $settings->put('enable', false, dcNamespace::NS_BOOL, 'Enable revisions', false, true);
 

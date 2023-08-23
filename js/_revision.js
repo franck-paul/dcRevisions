@@ -129,7 +129,7 @@ $(() => {
   $('#edit-entry').on('onetabload', () => {
     $('#revisions-area').toggleWithDetails({
       user_pref: 'dcx_post_revisions',
-      hide: $('#revisions-list tbody').children().length === 0 ? false : true,
+      // hide: $('#revisions-list tbody').children().length === 0 ? false : true,
       fn: dotclear.revisionExpander(),
     });
     $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
