@@ -128,12 +128,12 @@ class BackendBehaviors
      * Add a revision before post update
      *
      * @param      cursor  $cur      The cursor
-     * @param      string  $postID   The post identifier
+     * @param      mixed   $postID   The post identifier    // to be switch to int with 2.28
      */
-    public static function adminBeforePostUpdate(Cursor $cur, string $postID)
+    public static function adminBeforePostUpdate(Cursor $cur, mixed $postID)
     {
         try {
-            dcCore::app()->blog->revisions->addRevision($cur, $postID, 'post');
+            dcCore::app()->blog->revisions->addRevision($cur, (string) $postID, 'post');
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
