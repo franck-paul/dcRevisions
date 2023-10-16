@@ -37,8 +37,8 @@ class Revisions
     /**
      * Gets the revisions list.
      *
-     * @param      array     $params      The parameters
-     * @param      bool      $countOnly   The count only
+     * @param      array<string, mixed>     $params      The parameters
+     * @param      bool                     $countOnly   The count only
      *
      * @return     MetaRecord  The revisions.
      */
@@ -132,7 +132,7 @@ class Revisions
      * @param      string  $postID  The post identifier
      * @param      string  $type    The type
      */
-    public function addRevision(Cursor $cur, string $postID, string $type)
+    public function addRevision(Cursor $cur, string $postID, string $type): void
     {
         $rs = new MetaRecord(dcCore::app()->con->select(
             'SELECT MAX(revision_id) ' .
@@ -187,10 +187,10 @@ class Revisions
     /**
      * Gets the difference.
      *
-     * @param      array  $new      New content
-     * @param      array  $old      Old content
+     * @param      array<string, string>  $new      New content
+     * @param      array<string, string>  $old      Old content
      *
-     * @return     array  The difference.
+     * @return     array<string, string>  The difference.
      */
     public function getDiff(array $new, array $old): array
     {
@@ -221,7 +221,7 @@ class Revisions
      *
      * @throws     Exception
      */
-    public function purge(string $postID, string $type, ?string $redirectURL = null)
+    public function purge(string $postID, string $type, ?string $redirectURL = null): void
     {
         if (!$this->canPurge($postID, $type)) {
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
@@ -254,7 +254,7 @@ class Revisions
      *
      * @throws     Exception
      */
-    public function setPatch(string $postID, string $revisionID, string $type, string $redirectURL, string $beforeBehaviour, string $afterBehaviour)
+    public function setPatch(string $postID, string $revisionID, string $type, string $redirectURL, string $beforeBehaviour, string $afterBehaviour): void
     {
         if (!$this->canPatch($revisionID)) {
             throw new Exception(__('You are not allowed to patch this entry with this revision'));
@@ -306,7 +306,7 @@ class Revisions
      * @param      string  $revisionID  The revision id
      * @param      string  $type        The type
      *
-     * @return     array   The patch.
+     * @return     array<string, string>   The patch.
      */
     public function getPatch(string $postID, string $revisionID, string $type): array
     {

@@ -21,7 +21,7 @@ use Dotclear\Helper\Date;
 class RevisionsList
 {
     // Records
-    protected $rs = null;
+    protected ?MetaRecord $rs = null;
 
     /**
      * Constructs a new instance.

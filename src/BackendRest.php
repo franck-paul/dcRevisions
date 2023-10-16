@@ -70,7 +70,7 @@ class BackendRest
      *
      * @return     XmlTag  The node.
      */
-    public static function buildNode(string $src, string $dst, int $ctx, string $root): XmlTag
+    private static function buildNode(string $src, string $dst, int $ctx, string $root): XmlTag
     {
         $uniDiff  = Diff::uniDiff($src, $dst, $ctx);
         $tidyDiff = new TidyDiff(htmlspecialchars($uniDiff), true);

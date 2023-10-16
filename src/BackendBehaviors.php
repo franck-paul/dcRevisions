@@ -32,34 +32,34 @@ class BackendBehaviors
     /**
      * Display plugin settings
      */
-    public static function adminBlogPreferencesForm()
+    public static function adminBlogPreferencesForm(): string
     {
-        $settings = My::settings();
-
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
             echo
             '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
             '<p><label class="classic" for="dcrevisions_enable">' .
-            form::checkbox('dcrevisions_enable', 1, (bool) $settings->enable) .
+            form::checkbox('dcrevisions_enable', 1, (bool) My::settings()->enable) .
             __('Enable entries\' versionning on this blog') . '</label></p>' .
             '</div>';
         }
+
+        return '';
     }
 
     /**
      * Register plugin settings
      */
-    public static function adminBeforeBlogSettingsUpdate()
+    public static function adminBeforeBlogSettingsUpdate(): string
     {
-        $settings = My::settings();
-
         if (dcCore::app()->auth->isSuperAdmin() || dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
         ]), dcCore::app()->blog->id)) {
-            $settings->put('enable', empty($_POST['dcrevisions_enable']) ? false : true, dcNamespace::NS_BOOL);
+            My::settings()->put('enable', empty($_POST['dcrevisions_enable']) ? false : true, dcNamespace::NS_BOOL);
         }
+
+        return '';
     }
 
     /**
@@ -67,14 +67,14 @@ class BackendBehaviors
      *
      * @param      MetaRecord|null  $post   The post
      */
-    public static function adminPostForm(?MetaRecord $post)
+    public static function adminPostForm(?MetaRecord $post): string
     {
         $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url = sprintf(dcCore::app()->admin->url->get('admin.post', [
+        $url = sprintf(dcCore::app()->adminurl->get('admin.post', [
             'id'    => '%1$s',
             'patch' => '%2$s',
         ], '&', true), $id, '%s');
-        $purge_url = sprintf(dcCore::app()->admin->url->get('admin.post', [
+        $purge_url = sprintf(dcCore::app()->adminurl->get('admin.post', [
             'id'       => '%1$s',
             'revpurge' => 1,
         ], '&', true), $id);
@@ -98,6 +98,8 @@ class BackendBehaviors
         $list->display($url) .
         ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
         '</details>';
+
+        return '';
     }
 
     /**
@@ -130,13 +132,15 @@ class BackendBehaviors
      * @param      cursor  $cur      The cursor
      * @param      mixed   $postID   The post identifier    // to be switch to int with 2.28
      */
-    public static function adminBeforePostUpdate(Cursor $cur, mixed $postID)
+    public static function adminBeforePostUpdate(Cursor $cur, mixed $postID): string
     {
         try {
             dcCore::app()->blog->revisions->addRevision($cur, (string) $postID, 'post');
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
+
+        return '';
     }
 
     /**
@@ -144,9 +148,9 @@ class BackendBehaviors
      *
      * @param      MetaRecord|null  $post   The post
      */
-    public static function adminPageForm(?MetaRecord $post)
+    public static function adminPageForm(?MetaRecord $post): string
     {
-        $base_url  = dcCore::app()->admin->url->get('admin.plugin.pages', ['act' => 'page']);
+        $base_url  = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page']);
         $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
         $url       = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
         $purge_url = sprintf($base_url . '&amp;id=%1$s&amp;revpurge=1', $id);
@@ -167,6 +171,8 @@ class BackendBehaviors
         echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
             ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
             '</div>';
+
+        return '';
     }
 
     /**
@@ -199,13 +205,15 @@ class BackendBehaviors
      * @param      cursor  $cur      The cursor
      * @param      string  $postID   The post identifier
      */
-    public static function adminBeforePageUpdate(Cursor $cur, string $postID)
+    public static function adminBeforePageUpdate(Cursor $cur, string $postID): string
     {
         try {
             dcCore::app()->blog->revisions->addRevision($cur, $postID, 'page');
         } catch (Exception $e) {
             dcCore::app()->error->add($e->getMessage());
         }
+
+        return '';
     }
 
     /**
@@ -213,7 +221,7 @@ class BackendBehaviors
      *
      * @param      ActionsPosts  $ap     Posts' actions
      */
-    public static function adminPostsActions(ActionsPosts $ap)
+    public static function adminPostsActions(ActionsPosts $ap): string
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
@@ -224,6 +232,8 @@ class BackendBehaviors
                 BackendBehaviors::adminPostsDoReplacements(...)
             );
         }
+
+        return '';
     }
 
     /**
@@ -231,7 +241,7 @@ class BackendBehaviors
      *
      * @param      PagesBackendActions  $ap     Pages' actions
      */
-    public static function adminPagesActions(PagesBackendActions $ap)
+    public static function adminPagesActions(PagesBackendActions $ap): string
     {
         // Add menuitem in actions dropdown list
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
@@ -242,15 +252,17 @@ class BackendBehaviors
                 BackendBehaviors::adminPagesDoReplacements(...)
             );
         }
+
+        return '';
     }
 
     /**
      * Do posts action
      *
-     * @param      ActionsPosts  $ap     Posts' actions
-     * @param      arrayObject     $post   The post
+     * @param      ActionsPosts                 $ap     Posts' actions
+     * @param      ArrayObject<string, mixed>   $post   The post
      */
-    public static function adminPostsDoReplacements(ActionsPosts $ap, arrayObject $post)
+    public static function adminPostsDoReplacements(ActionsPosts $ap, arrayObject $post): void
     {
         self::adminEntriesDoReplacements($ap, $post, 'post');
     }
@@ -258,10 +270,10 @@ class BackendBehaviors
     /**
      * Do pages action
      *
-     * @param      PagesBackendActions  $ap     Pages' actions
-     * @param      arrayObject          $post   The post
+     * @param      PagesBackendActions          $ap     Pages' actions
+     * @param      ArrayObject<string, mixed>   $post   The post
      */
-    public static function adminPagesDoReplacements(PagesBackendActions $ap, arrayObject $post)
+    public static function adminPagesDoReplacements(PagesBackendActions $ap, arrayObject $post): void
     {
         self::adminEntriesDoReplacements($ap, $post, 'page');
     }
@@ -269,10 +281,10 @@ class BackendBehaviors
     /**
      * Do posts/pages action
      *
-     * @param      ActionsPosts|PagesBackendActions   $ap     Posts'/Pages' actions
-     * @param      arrayObject                          $post   The post
+     * @param      ActionsPosts|PagesBackendActions     $ap     Posts'/Pages' actions
+     * @param      ArrayObject<string, mixed>           $post   The post
      */
-    public static function adminEntriesDoReplacements($ap, arrayObject $post, string $type = 'post')
+    private static function adminEntriesDoReplacements(ActionsPosts|PagesBackendActions $ap, arrayObject $post, string $type = 'post'): void
     {
         if (!empty($post['dopurge'])) {
             // Do replacements
@@ -294,7 +306,7 @@ class BackendBehaviors
                     Page::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Pages')                                 => dcCore::app()->admin->url->get('admin.plugin.pages'),
+                            __('Pages')                                 => dcCore::app()->adminurl->get('admin.plugin.pages'),
                             __('Purge all revisions')                   => '',
                         ]
                     )
@@ -304,7 +316,7 @@ class BackendBehaviors
                     Page::breadcrumb(
                         [
                             Html::escapeHTML(dcCore::app()->blog->name) => '',
-                            __('Entries')                               => dcCore::app()->admin->url->get('admin.posts'),
+                            __('Entries')                               => dcCore::app()->adminurl->get('admin.posts'),
                             __('Purge all revisions')                   => '',
                         ]
                     )
