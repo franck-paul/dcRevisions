@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use dcBlog;
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
@@ -61,7 +62,7 @@ class Revisions
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escape(dcCore::app()->blog->id) . "' ";
+        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escapeStr(dcCore::app()->blog->id) . "' ";
 
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
@@ -99,7 +100,7 @@ class Revisions
             if (is_array($params['post_type']) && !empty($params['post_type'])) {
                 $strReq .= 'AND R.revision_type ' . dcCore::app()->con->in($params['post_type']);
             } elseif ($params['post_type'] != '') {
-                $strReq .= "AND R.revision_type = '" . dcCore::app()->con->escape($params['post_type']) . "' ";
+                $strReq .= "AND R.revision_type = '" . dcCore::app()->con->escapeStr($params['post_type']) . "' ";
             }
         }
 
@@ -109,7 +110,7 @@ class Revisions
 
         if (!$countOnly) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . dcCore::app()->con->escape($params['order']) . ' ';
+                $strReq .= 'ORDER BY ' . dcCore::app()->con->escapeStr($params['order']) . ' ';
             } else {
                 $strReq .= 'ORDER BY revision_dt DESC ';
             }
@@ -230,7 +231,7 @@ class Revisions
         try {
             // Purge all revisions of the entry
             $strReq = 'DELETE FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' ' .
-                "WHERE post_id = '" . dcCore::app()->con->escape($postID) . "' ";
+                "WHERE post_id = '" . dcCore::app()->con->escapeStr($postID) . "' ";
             dcCore::app()->con->execute($strReq);
 
             if (!dcCore::app()->error->flag() && $redirectURL !== null) {
@@ -288,7 +289,7 @@ class Revisions
             # --BEHAVIOR-- adminBeforeXXXXUpdate
             dcCore::app()->callBehavior($beforeBehaviour, $cur, $postID);
 
-            dcCore::app()->auth->sudo([dcCore::app()->blog, 'updPost'], $postID, $cur);
+            dcCore::app()->auth->sudo(App::blog()->updPost(...), $postID, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
             dcCore::app()->callBehavior($afterBehaviour, $cur, $postID);
