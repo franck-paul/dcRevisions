@@ -16,6 +16,7 @@ namespace Dotclear\Plugin\dcRevisions;
 
 use dcCore;
 use dcUtils;
+use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Html;
@@ -32,7 +33,7 @@ class RevisionsExtensions
      */
     public static function getDate(MetaRecord $rs, ?string $format = null): string
     {
-        $format === null ? $format = dcCore::app()->blog->settings->system->date_format : $format;
+        $format === null ? $format = App::blog()->settings()->system->date_format : $format;
 
         return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
@@ -47,7 +48,7 @@ class RevisionsExtensions
      */
     public static function getTime(MetaRecord $rs, ?string $format = null): string
     {
-        $format === null ? $format = dcCore::app()->blog->settings->system->time_format : $format;
+        $format === null ? $format = App::blog()->settings()->system->time_format : $format;
 
         return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
@@ -99,7 +100,7 @@ class RevisionsExtensions
         # If user is admin or contentadmin, true
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
-        ]), dcCore::app()->blog->id)) {
+        ]), App::blog()->id())) {
             return true;
         }
 
@@ -111,7 +112,7 @@ class RevisionsExtensions
         # If user is usage and owner of the entry
         if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
             dcCore::app()->auth::PERMISSION_USAGE,
-        ]), dcCore::app()->blog->id)
+        ]), App::blog()->id())
             && $rs->user_id == dcCore::app()->auth->userID()) {
             return true;
         }

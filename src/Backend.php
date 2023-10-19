@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use dcCore;
+use Dotclear\App;
 use Dotclear\Core\Process;
 
 class Backend extends Process
@@ -60,7 +61,7 @@ class Backend extends Process
             dcCore::app()->rest->addFunction('getPatch', BackendRest::getPatch(...));
 
             // Init Revision object
-            dcCore::app()->blog->revisions = new Revisions();
+            App::blog()->revisions = new Revisions();
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
@@ -70,10 +71,10 @@ class Backend extends Process
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
-                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redirURL, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
+                        App::blog()->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redirURL, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
                     } else {
                         // Purge
-                        dcCore::app()->blog->revisions->purge($_GET['id'], 'post', $redirURL);
+                        App::blog()->revisions->purge($_GET['id'], 'post', $redirURL);
                     }
                 } elseif ((preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a page
@@ -81,10 +82,10 @@ class Backend extends Process
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
-                        dcCore::app()->blog->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redirURL, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
+                        App::blog()->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redirURL, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
                     } else {
                         // Purge
-                        dcCore::app()->blog->revisions->purge($_GET['id'], 'page', $redirURL);
+                        App::blog()->revisions->purge($_GET['id'], 'page', $redirURL);
                     }
                 }
             }

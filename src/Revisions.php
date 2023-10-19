@@ -62,7 +62,7 @@ class Revisions
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escapeStr(dcCore::app()->blog->id) . "' ";
+        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escapeStr(App::blog()->id()) . "' ";
 
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
@@ -141,7 +141,7 @@ class Revisions
         ));
         $revisionID = $rs->f(0) + 1;
 
-        $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
         $old = [
             'post_excerpt'       => $rs->post_excerpt       ?? '',
@@ -170,7 +170,7 @@ class Revisions
             $revisionCursor->revision_id                 = $revisionID;
             $revisionCursor->post_id                     = $postID;
             $revisionCursor->user_id                     = dcCore::app()->auth->userID();
-            $revisionCursor->blog_id                     = dcCore::app()->blog->id;
+            $revisionCursor->blog_id                     = App::blog()->id();
             $revisionCursor->revision_dt                 = date('Y-m-d H:i:s');
             $revisionCursor->revision_tz                 = dcCore::app()->auth->getInfo('user_tz');
             $revisionCursor->revision_type               = $type;
@@ -264,7 +264,7 @@ class Revisions
         try {
             $patch = $this->getPatch($postID, $revisionID, $type);
 
-            $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
+            $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
             $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcBlog::POST_TABLE_NAME);
 
@@ -316,7 +316,7 @@ class Revisions
             'post_type' => $type,
         ];
 
-        $rs        = dcCore::app()->blog->getPosts($params);
+        $rs        = App::blog()->getPosts($params);
         $revisions = $this->getRevisions($params);
 
         $patch = [
@@ -374,7 +374,7 @@ class Revisions
      */
     protected function canPurge(string $postID, string $type): bool
     {
-        $rs = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
         return $rs->isEditable();
     }

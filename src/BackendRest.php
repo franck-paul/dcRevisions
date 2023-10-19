@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcCore;
+use Dotclear\App;
 use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Diff\TidyDiff;
 use Dotclear\Helper\Html\XmlTag;
@@ -42,7 +42,7 @@ class BackendRest
             throw new Exception(__('No revision ID'));
         }
 
-        $rs  = dcCore::app()->blog->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs  = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
         $old = [
             'post_excerpt'       => $rs->post_excerpt,
             'post_content'       => $rs->post_content,
@@ -50,7 +50,7 @@ class BackendRest
             'post_content_xhtml' => $rs->post_content_xhtml,
         ];
 
-        $new = dcCore::app()->blog->revisions->getPatch($postID, $revisionID, $type);
+        $new = App::blog()->revisions->getPatch($postID, $revisionID, $type);
 
         $rsp = new XmlTag();
         foreach ($old as $field => $value) {

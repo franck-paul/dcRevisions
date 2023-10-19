@@ -40,7 +40,7 @@ class RevisionsList
      */
     public function count(): int
     {
-        return $this->rs->count();
+        return (int) $this->rs?->count();
     }
 
     /**
@@ -53,7 +53,7 @@ class RevisionsList
     public function display(string $url): string
     {
         $res = '';
-        if (!$this->rs->isEmpty()) {
+        if ($this->rs && !$this->rs->isEmpty()) {
             $html_block = '<table id="revisions-list" summary="' . __('Revisions') . '" class="clear maximal">' .
             '<thead>' .
             '<tr>' .
@@ -84,7 +84,11 @@ class RevisionsList
      */
     private function getLines(string $url): string
     {
-        $res    = '';
+        $res = '';
+        if (is_null($this->rs)) {
+            return $res;
+        }
+
         $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" />';
         $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
         $index  = count($this->rs);

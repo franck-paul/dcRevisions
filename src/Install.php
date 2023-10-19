@@ -17,6 +17,7 @@ namespace Dotclear\Plugin\dcRevisions;
 use dcBlog;
 use dcCore;
 use dcNamespace;
+use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
 use Exception;
@@ -39,9 +40,9 @@ class Install extends Process
             $old_version = dcCore::app()->getVersion(My::id());
             if (version_compare((string) $old_version, '3.0', '<')) {
                 // Rename settings namespace
-                if (dcCore::app()->blog->settings->exists('dcrevisions')) {
-                    dcCore::app()->blog->settings->delNamespace(My::id());
-                    dcCore::app()->blog->settings->renNamespace('dcrevisions', My::id());
+                if (App::blog()->settings()->exists('dcrevisions')) {
+                    App::blog()->settings()->delNamespace(My::id());
+                    App::blog()->settings()->renNamespace('dcrevisions', My::id());
                 }
             }
 
