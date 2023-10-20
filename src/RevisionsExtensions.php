@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcCore;
-use dcUtils;
 use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
@@ -62,7 +60,7 @@ class RevisionsExtensions
      */
     public static function getAuthorCN(MetaRecord $rs): string
     {
-        return dcUtils::getUserCN($rs->user_id, $rs->user_name, $rs->user_firstname, $rs->user_displayname);
+        return App::users()->getUserCN($rs->user_id, $rs->user_name, $rs->user_firstname, $rs->user_displayname);
     }
 
     /**
@@ -93,13 +91,13 @@ class RevisionsExtensions
     public static function canPatch(MetaRecord $rs): bool
     {
         # If user is super admin, true
-        if (dcCore::app()->auth->isSuperAdmin()) {
+        if (App::auth()->isSuperAdmin()) {
             return true;
         }
 
         # If user is admin or contentadmin, true
-        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcCore::app()->auth::PERMISSION_CONTENT_ADMIN,
+        if (App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             return true;
         }
@@ -110,10 +108,10 @@ class RevisionsExtensions
         }
 
         # If user is usage and owner of the entry
-        if (dcCore::app()->auth->check(dcCore::app()->auth->makePermissions([
-            dcCore::app()->auth::PERMISSION_USAGE,
+        if (App::auth()->check(App::auth()->makePermissions([
+            App::auth()::PERMISSION_USAGE,
         ]), App::blog()->id())
-            && $rs->user_id == dcCore::app()->auth->userID()) {
+            && $rs->user_id == App::auth()->userID()) {
             return true;
         }
 

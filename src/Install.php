@@ -14,12 +14,10 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcBlog;
-use dcCore;
-use dcNamespace;
 use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
+use Dotclear\Interface\Core\BlogInterface;
 use Exception;
 
 class Install extends Process
@@ -37,21 +35,21 @@ class Install extends Process
 
         try {
             // Update
-            $old_version = dcCore::app()->getVersion(My::id());
+            $old_version = App::version()->getVersion(My::id());
             if (version_compare((string) $old_version, '3.0', '<')) {
                 // Rename settings namespace
                 if (App::blog()->settings()->exists('dcrevisions')) {
-                    App::blog()->settings()->delNamespace(My::id());
-                    App::blog()->settings()->renNamespace('dcrevisions', My::id());
+                    App::blog()->settings()->delWorkspace(My::id());
+                    App::blog()->settings()->renWorkspace('dcrevisions', My::id());
                 }
             }
 
             $settings = My::settings();
 
-            $settings->put('enable', false, dcNamespace::NS_BOOL, 'Enable revisions', false, true);
+            $settings->put('enable', false, App::blogWorkspace()::NS_BOOL, 'Enable revisions', false, true);
 
             // --INSTALL AND UPDATE PROCEDURES--
-            $new_structure = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $new_structure = new Structure(App::con(), App::con()->prefix());
 
             $new_structure->revision
                 ->revision_id('bigint', 0, false)
@@ -71,15 +69,15 @@ class Install extends Process
 
             $new_structure->revision->index('idx_revision_post_id', 'btree', 'post_id');
 
-            $new_structure->revision->reference('fk_revision_post', 'post_id', dcBlog::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
-            $new_structure->revision->reference('fk_revision_blog', 'blog_id', dcBlog::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
+            $new_structure->revision->reference('fk_revision_post', 'post_id', BlogInterface::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
+            $new_structure->revision->reference('fk_revision_blog', 'blog_id', BlogInterface::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
-            $current_structure = new Structure(dcCore::app()->con, dcCore::app()->prefix);
+            $current_structure = new Structure(App::con(), App::con()->prefix());
             $current_structure->synchronize($new_structure);
 
             // Init
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return true;

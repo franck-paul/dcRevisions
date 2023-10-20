@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Process;
 
@@ -34,14 +33,14 @@ class Backend extends Process
             return false;
         }
 
-        dcCore::app()->addBehaviors([
+        App::behavior()->addBehaviors([
             'adminBlogPreferencesFormV2'    => BackendBehaviors::adminBlogPreferencesForm(...),
             'adminBeforeBlogSettingsUpdate' => BackendBehaviors::adminBeforeBlogSettingsUpdate(...),
         ]);
 
         $settings = My::settings();
         if ($settings->enable) {
-            dcCore::app()->addBehaviors([
+            App::behavior()->addBehaviors([
                 'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),
                 'adminPostForm'    => BackendBehaviors::adminPostForm(...),
 
@@ -58,7 +57,7 @@ class Backend extends Process
             ]);
 
             // REST method
-            dcCore::app()->rest->addFunction('getPatch', BackendRest::getPatch(...));
+            App::rest()->addFunction('getPatch', BackendRest::getPatch(...));
 
             // Init Revision object
             App::blog()->revisions = new Revisions();
@@ -67,7 +66,7 @@ class Backend extends Process
                 // We have a post or a page ID
                 if ((preg_match('/post.php\?id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a post
-                    $redirURL = dcCore::app()->adminurl->get('admin.post', ['id' => '%s']);
+                    $redirURL = App::backend()->url()->get('admin.post', ['id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';
@@ -78,7 +77,7 @@ class Backend extends Process
                     }
                 } elseif ((preg_match('/plugin.php\?p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) || (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI']))) {
                     // It's a page
-                    $redirURL = dcCore::app()->adminurl->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s']);
+                    $redirURL = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s']);
                     if (isset($_GET['patch'])) {
                         // Patch
                         $redirURL .= '&upd=1';

@@ -14,14 +14,13 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use dcBlog;
-use dcCore;
 use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Network\Http;
+use Dotclear\Interface\Core\BlogInterface;
 use Exception;
 
 class Revisions
@@ -55,14 +54,14 @@ class Revisions
                 'U.user_firstname, U.user_displayname';
         }
 
-        $strReq = 'SELECT ' . $f . ' FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' R ' .
-        'LEFT JOIN ' . dcCore::app()->prefix . 'user U ON R.user_id = U.user_id ';
+        $strReq = 'SELECT ' . $f . ' FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME . ' R ' .
+        'LEFT JOIN ' . App::con()->prefix() . 'user U ON R.user_id = U.user_id ';
 
         if (!empty($params['from'])) {
             $strReq .= $params['from'] . ' ';
         }
 
-        $strReq .= "WHERE R.blog_id = '" . dcCore::app()->con->escapeStr(App::blog()->id()) . "' ";
+        $strReq .= "WHERE R.blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' ";
 
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
@@ -77,7 +76,7 @@ class Revisions
             } else {
                 $params['post_id'] = [(int) $params['post_id']];
             }
-            $strReq .= 'AND R.post_id ' . dcCore::app()->con->in($params['post_id']);
+            $strReq .= 'AND R.post_id ' . App::con()->in($params['post_id']);
         }
 
         if (!empty($params['revision_id'])) {
@@ -93,14 +92,14 @@ class Revisions
             } else {
                 $params['revision_id'] = [(int) $params['revision_id']];
             }
-            $strReq .= 'AND R.revision_id ' . dcCore::app()->con->in($params['revision_id']);
+            $strReq .= 'AND R.revision_id ' . App::con()->in($params['revision_id']);
         }
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && !empty($params['post_type'])) {
-                $strReq .= 'AND R.revision_type ' . dcCore::app()->con->in($params['post_type']);
+                $strReq .= 'AND R.revision_type ' . App::con()->in($params['post_type']);
             } elseif ($params['post_type'] != '') {
-                $strReq .= "AND R.revision_type = '" . dcCore::app()->con->escapeStr($params['post_type']) . "' ";
+                $strReq .= "AND R.revision_type = '" . App::con()->escapeStr($params['post_type']) . "' ";
             }
         }
 
@@ -110,17 +109,17 @@ class Revisions
 
         if (!$countOnly) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . dcCore::app()->con->escapeStr($params['order']) . ' ';
+                $strReq .= 'ORDER BY ' . App::con()->escapeStr($params['order']) . ' ';
             } else {
                 $strReq .= 'ORDER BY revision_dt DESC ';
             }
         }
 
         if (!$countOnly && !empty($params['limit'])) {
-            $strReq .= dcCore::app()->con->limit($params['limit']);
+            $strReq .= App::con()->limit($params['limit']);
         }
 
-        $rs = new MetaRecord(dcCore::app()->con->select($strReq));
+        $rs = new MetaRecord(App::con()->select($strReq));
         $rs->extend(RevisionsExtensions::class);
 
         return $rs;
@@ -135,9 +134,9 @@ class Revisions
      */
     public function addRevision(Cursor $cur, string $postID, string $type): void
     {
-        $rs = new MetaRecord(dcCore::app()->con->select(
+        $rs = new MetaRecord(App::con()->select(
             'SELECT MAX(revision_id) ' .
-            'FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME
+            'FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME
         ));
         $revisionID = $rs->f(0) + 1;
 
@@ -166,22 +165,22 @@ class Revisions
         }
 
         if ($insert) {
-            $revisionCursor                              = dcCore::app()->con->openCursor(dcCore::app()->prefix . 'revision');
+            $revisionCursor                              = App::con()->openCursor(App::con()->prefix() . 'revision');
             $revisionCursor->revision_id                 = $revisionID;
             $revisionCursor->post_id                     = $postID;
-            $revisionCursor->user_id                     = dcCore::app()->auth->userID();
+            $revisionCursor->user_id                     = App::auth()->userID();
             $revisionCursor->blog_id                     = App::blog()->id();
             $revisionCursor->revision_dt                 = date('Y-m-d H:i:s');
-            $revisionCursor->revision_tz                 = dcCore::app()->auth->getInfo('user_tz');
+            $revisionCursor->revision_tz                 = App::auth()->getInfo('user_tz');
             $revisionCursor->revision_type               = $type;
             $revisionCursor->revision_excerpt_diff       = $diff['post_excerpt'];
             $revisionCursor->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
             $revisionCursor->revision_content_diff       = $diff['post_content'];
             $revisionCursor->revision_content_xhtml_diff = $diff['post_content_xhtml'];
 
-            dcCore::app()->con->writeLock(dcCore::app()->prefix . 'revision');
+            App::con()->writeLock(App::con()->prefix() . 'revision');
             $revisionCursor->insert();
-            dcCore::app()->con->unlock();
+            App::con()->unlock();
         }
     }
 
@@ -207,7 +206,7 @@ class Revisions
                 $diff[$k] = Diff::uniDiff($new[$k], $old[$k]);
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
 
         return $diff;
@@ -230,16 +229,16 @@ class Revisions
 
         try {
             // Purge all revisions of the entry
-            $strReq = 'DELETE FROM ' . dcCore::app()->prefix . self::REVISION_TABLE_NAME . ' ' .
-                "WHERE post_id = '" . dcCore::app()->con->escapeStr($postID) . "' ";
-            dcCore::app()->con->execute($strReq);
+            $strReq = 'DELETE FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME . ' ' .
+                "WHERE post_id = '" . App::con()->escapeStr($postID) . "' ";
+            App::con()->execute($strReq);
 
-            if (!dcCore::app()->error->flag() && $redirectURL !== null) {
+            if (!App::error()->flag() && $redirectURL !== null) {
                 Notices::addSuccessNotice(__('All revisions have been deleted.'));
                 Http::redirect(sprintf($redirectURL, $postID));
             }
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
     }
 
@@ -266,7 +265,7 @@ class Revisions
 
             $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
-            $cur = dcCore::app()->con->openCursor(dcCore::app()->prefix . dcBlog::POST_TABLE_NAME);
+            $cur = App::con()->openCursor(App::con()->prefix() . BlogInterface::POST_TABLE_NAME);
 
             $cur->post_title        = $rs->post_title;
             $cur->cat_id            = $rs->cat_id ?: null;
@@ -287,16 +286,16 @@ class Revisions
             $cur->post_content_xhtml = $patch['post_content_xhtml'];
 
             # --BEHAVIOR-- adminBeforeXXXXUpdate
-            dcCore::app()->callBehavior($beforeBehaviour, $cur, $postID);
+            App::behavior()->callBehavior($beforeBehaviour, $cur, $postID);
 
-            dcCore::app()->auth->sudo(App::blog()->updPost(...), $postID, $cur);
+            App::auth()->sudo(App::blog()->updPost(...), $postID, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
-            dcCore::app()->callBehavior($afterBehaviour, $cur, $postID);
+            App::behavior()->callBehavior($afterBehaviour, $cur, $postID);
 
             Http::redirect(sprintf($redirectURL, $postID));
         } catch (Exception $e) {
-            dcCore::app()->error->add($e->getMessage());
+            App::error()->add($e->getMessage());
         }
     }
 
