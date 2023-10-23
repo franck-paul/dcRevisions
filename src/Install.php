@@ -52,17 +52,17 @@ class Install extends Process
             $new_structure = new Structure(App::con(), App::con()->prefix());
 
             $new_structure->revision
-                ->revision_id('bigint', 0, false)
-                ->post_id('bigint', 0, false)
-                ->user_id('varchar', 32, false)
-                ->blog_id('varchar', 32, false)
-                ->revision_dt('timestamp', 0, false, 'now()')
-                ->revision_tz('varchar', 128, false, "'UTC'")
-                ->revision_type('varchar', 50, true, null)
-                ->revision_excerpt_diff('text', 0, true, null)
-                ->revision_excerpt_xhtml_diff('text', 0, true, null)
-                ->revision_content_diff('text', 0, true, null)
-                ->revision_content_xhtml_diff('text', 0, true, null)
+                ->field('revision_id', 'bigint', 0, false)
+                ->field('post_id', 'bigint', 0, false)
+                ->field('user_id', 'varchar', 32, false)
+                ->field('blog_id', 'varchar', 32, false)
+                ->field('revision_dt', 'timestamp', 0, false, 'now()')
+                ->field('revision_tz', 'varchar', 128, false, "'UTC'")
+                ->field('revision_type', 'varchar', 50, true, null)
+                ->field('revision_excerpt_diff', 'text', 0, true, null)
+                ->field('revision_excerpt_xhtml_diff', 'text', 0, true, null)
+                ->field('revision_content_diff', 'text', 0, true, null)
+                ->field('revision_content_xhtml_diff', 'text', 0, true, null)
             ;
 
             $new_structure->revision->primary('pk_revision', 'revision_id');
