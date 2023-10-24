@@ -20,7 +20,6 @@ use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Network\Http;
-use Dotclear\Interface\Core\BlogInterface;
 use Exception;
 
 class Revisions
@@ -265,7 +264,7 @@ class Revisions
 
             $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
-            $cur = App::con()->openCursor(App::con()->prefix() . BlogInterface::POST_TABLE_NAME);
+            $cur = App::con()->openCursor(App::con()->prefix() . App::blog()::POST_TABLE_NAME);
 
             $cur->post_title        = $rs->post_title;
             $cur->cat_id            = $rs->cat_id ?: null;

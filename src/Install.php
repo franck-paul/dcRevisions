@@ -17,7 +17,6 @@ namespace Dotclear\Plugin\dcRevisions;
 use Dotclear\App;
 use Dotclear\Core\Process;
 use Dotclear\Database\Structure;
-use Dotclear\Interface\Core\BlogInterface;
 use Exception;
 
 class Install extends Process
@@ -69,8 +68,8 @@ class Install extends Process
 
             $new_structure->revision->index('idx_revision_post_id', 'btree', 'post_id');
 
-            $new_structure->revision->reference('fk_revision_post', 'post_id', BlogInterface::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
-            $new_structure->revision->reference('fk_revision_blog', 'blog_id', BlogInterface::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
+            $new_structure->revision->reference('fk_revision_post', 'post_id', App::blog()::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
+            $new_structure->revision->reference('fk_revision_blog', 'blog_id', App::blog()::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
             $current_structure = new Structure(App::con(), App::con()->prefix());
             $current_structure->synchronize($new_structure);
