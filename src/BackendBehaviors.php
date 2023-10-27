@@ -55,7 +55,7 @@ class BackendBehaviors
         if (App::auth()->isSuperAdmin() || App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            My::settings()->put('enable', empty($_POST['dcrevisions_enable']) ? false : true, App::blogWorkspace()::NS_BOOL);
+            My::settings()->put('enable', !empty($_POST['dcrevisions_enable']), App::blogWorkspace()::NS_BOOL);
         }
 
         return '';
@@ -92,10 +92,9 @@ class BackendBehaviors
         $list = new RevisionsList($rs);
 
         echo
-        '<details class="area" id="revisions-area">' .
-        '<summary>' . __('Revisions:') . '</summary>' .
+        '<details class="area" id="revisions-area"><summary>' . __('Revisions:') . '</summary>' .
         $list->display($url) .
-        ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
+        ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
         '</details>';
 
         return '';
@@ -135,8 +134,8 @@ class BackendBehaviors
     {
         try {
             App::blog()->revisions->addRevision($cur, (string) $postID, 'post');
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return '';
@@ -168,7 +167,7 @@ class BackendBehaviors
         $list = new RevisionsList($rs);
 
         echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
-            ($list->count() ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
+            ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
             '</div>';
 
         return '';
@@ -208,8 +207,8 @@ class BackendBehaviors
     {
         try {
             App::blog()->revisions->addRevision($cur, $postID, 'page');
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return '';
@@ -293,6 +292,7 @@ class BackendBehaviors
                     // Purge
                     App::blog()->revisions->purge($posts->post_id, $type);
                 }
+
                 Notices::addSuccessNotice(__('All revisions have been deleted.'));
                 $ap->redirect(true);
             } else {

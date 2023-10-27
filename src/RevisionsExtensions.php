@@ -31,7 +31,9 @@ class RevisionsExtensions
      */
     public static function getDate(MetaRecord $rs, ?string $format = null): string
     {
-        $format === null ? $format = App::blog()->settings()->system->date_format : $format;
+        if ($format === null) {
+            $format = App::blog()->settings()->system->date_format;
+        }
 
         return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
@@ -46,7 +48,9 @@ class RevisionsExtensions
      */
     public static function getTime(MetaRecord $rs, ?string $format = null): string
     {
-        $format === null ? $format = App::blog()->settings()->system->time_format : $format;
+        if ($format === null) {
+            $format = App::blog()->settings()->system->time_format;
+        }
 
         return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
     }
@@ -108,13 +112,9 @@ class RevisionsExtensions
         }
 
         # If user is usage and owner of the entry
-        if (App::auth()->check(App::auth()->makePermissions([
+        return App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_USAGE,
         ]), App::blog()->id())
-            && $rs->user_id == App::auth()->userID()) {
-            return true;
-        }
-
-        return false;
+            && $rs->user_id == App::auth()->userID();
     }
 }

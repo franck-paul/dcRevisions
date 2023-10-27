@@ -98,7 +98,7 @@ class RevisionsList
         Date::setTZ('UTC');
 
         while ($this->rs->fetch()) {
-            $res .= '<tr class="line wide' . (!$this->rs->canPatch() ? ' offline' : '') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
+            $res .= '<tr class="line wide' . ($this->rs->canPatch() ? '' : ' offline') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
             '<td class="maximal nowrap rid">' .
             '<strong>' . sprintf(__('Revision #%s'), $index--) . '</strong>' .
             "</td>\n" .

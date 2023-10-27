@@ -35,12 +35,10 @@ class Install extends Process
         try {
             // Update
             $old_version = App::version()->getVersion(My::id());
-            if (version_compare((string) $old_version, '3.0', '<')) {
-                // Rename settings namespace
-                if (App::blog()->settings()->exists('dcrevisions')) {
-                    App::blog()->settings()->delWorkspace(My::id());
-                    App::blog()->settings()->renWorkspace('dcrevisions', My::id());
-                }
+            // Rename settings namespace
+            if (version_compare((string) $old_version, '3.0', '<') && App::blog()->settings()->exists('dcrevisions')) {
+                App::blog()->settings()->delWorkspace(My::id());
+                App::blog()->settings()->renWorkspace('dcrevisions', My::id());
             }
 
             $settings = My::settings();
@@ -75,8 +73,8 @@ class Install extends Process
             $current_structure->synchronize($new_structure);
 
             // Init
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return true;

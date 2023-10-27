@@ -66,7 +66,7 @@ class Revisions
             if (is_array($params['post_id'])) {
                 array_walk(
                     $params['post_id'],
-                    function (&$v) {
+                    static function (&$v) {
                         if ($v !== null) {
                             $v = (int) $v;
                         }
@@ -75,6 +75,7 @@ class Revisions
             } else {
                 $params['post_id'] = [(int) $params['post_id']];
             }
+
             $strReq .= 'AND R.post_id ' . App::con()->in($params['post_id']);
         }
 
@@ -82,7 +83,7 @@ class Revisions
             if (is_array($params['revision_id'])) {
                 array_walk(
                     $params['revision_id'],
-                    function (&$v) {
+                    static function (&$v) {
                         if ($v !== null) {
                             $v = (int) $v;
                         }
@@ -91,11 +92,12 @@ class Revisions
             } else {
                 $params['revision_id'] = [(int) $params['revision_id']];
             }
+
             $strReq .= 'AND R.revision_id ' . App::con()->in($params['revision_id']);
         }
 
         if (isset($params['post_type'])) {
-            if (is_array($params['post_type']) && !empty($params['post_type'])) {
+            if (is_array($params['post_type']) && $params['post_type'] !== []) {
                 $strReq .= 'AND R.revision_type ' . App::con()->in($params['post_type']);
             } elseif ($params['post_type'] != '') {
                 $strReq .= "AND R.revision_type = '" . App::con()->escapeStr($params['post_type']) . "' ";
@@ -134,8 +136,7 @@ class Revisions
     public function addRevision(Cursor $cur, string $postID, string $type): void
     {
         $rs = new MetaRecord(App::con()->select(
-            'SELECT MAX(revision_id) ' .
-            'FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME
+            'SELECT MAX(revision_id) FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME
         ));
         $revisionID = $rs->f(0) + 1;
 
@@ -201,11 +202,11 @@ class Revisions
         ];
 
         try {
-            foreach ($diff as $k => $v) {
+            foreach (array_keys($diff) as $k) {
                 $diff[$k] = Diff::uniDiff($new[$k], $old[$k]);
             }
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
 
         return $diff;
@@ -236,8 +237,8 @@ class Revisions
                 Notices::addSuccessNotice(__('All revisions have been deleted.'));
                 Http::redirect(sprintf($redirectURL, $postID));
             }
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
     }
 
@@ -293,8 +294,8 @@ class Revisions
             App::behavior()->callBehavior($afterBehaviour, $cur, $postID);
 
             Http::redirect(sprintf($redirectURL, $postID));
-        } catch (Exception $e) {
-            App::error()->add($e->getMessage());
+        } catch (Exception $exception) {
+            App::error()->add($exception->getMessage());
         }
     }
 
@@ -335,7 +336,7 @@ class Revisions
         while ($revisions->fetch()) {
             foreach ($patch as $field => $value) {
                 $revisionField = $map[$field] ?? null;
-                if ($revisionField) {
+                if ($revisionField !== null) {
                     $patch[$field] = Diff::uniPatch($value, $revisions->{$revisionField});
                 }
             }

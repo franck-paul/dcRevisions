@@ -38,6 +38,7 @@ class BackendRest
         if ($postID === null) {
             throw new Exception(__('No post ID'));
         }
+
         if ($revisionID === null) {
             throw new Exception(__('No revision ID'));
         }
@@ -106,6 +107,7 @@ class BackendRest
                         break;
                 }
             }
+
             if ($k < count($tidyDiff->getChunks()) - 1) {
                 $node = new XmlTag('skip');
                 $rev->insertNode($node);
