@@ -18,6 +18,9 @@ use Dotclear\App;
 use Dotclear\Core\Backend\Notices;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Database\Statement\DeleteStatement;
+use Dotclear\Database\Statement\JoinStatement;
+use Dotclear\Database\Statement\SelectStatement;
 use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Network\Http;
 use Exception;
@@ -43,24 +46,43 @@ class Revisions
      */
     public function getRevisions(array $params, bool $countOnly = false): MetaRecord
     {
+        $sql = new SelectStatement();
+
         if ($countOnly) {
-            $f = 'COUNT(revision_id)';
+            $sql->column($sql->count('revision_id'));
         } else {
-            $f = 'R.revision_id, R.post_id, R.user_id, R.revision_type, ' .
-                'R.revision_dt, R.revision_tz, R.revision_excerpt_diff, ' .
-                'R.revision_excerpt_xhtml_diff, R.revision_content_diff, ' .
-                'R.revision_content_xhtml_diff, U.user_url, U.user_name, ' .
-                'U.user_firstname, U.user_displayname';
+            $sql->columns([
+                'R.revision_id',
+                'R.post_id',
+                'R.user_id',
+                'R.revision_type',
+                'R.revision_dt',
+                'R.revision_tz',
+                'R.revision_excerpt_diff',
+                'R.revision_excerpt_xhtml_diff',
+                'R.revision_content_diff',
+                'R.revision_content_xhtml_diff',
+                'U.user_url',
+                'U.user_name',
+                'U.user_firstname',
+                'U.user_displayname',
+            ]);
         }
 
-        $strReq = 'SELECT ' . $f . ' FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME . ' R ' .
-        'LEFT JOIN ' . App::con()->prefix() . 'user U ON R.user_id = U.user_id ';
+        $sql
+            ->from($sql->as(App::con()->prefix() . self::REVISION_TABLE_NAME, 'R'))
+            ->join(
+                (new JoinStatement())
+                    ->from($sql->as(App::con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
+                    ->on('R.user_id = U.user_id')
+                    ->statement()
+            )
+            ->where('R.blog_id = ' . $sql->quote(App::blog()->id()))
+        ;
 
         if (!empty($params['from'])) {
-            $strReq .= $params['from'] . ' ';
+            $sql->from($sql->escape($params['from']));
         }
-
-        $strReq .= "WHERE R.blog_id = '" . App::con()->escapeStr(App::blog()->id()) . "' ";
 
         if (!empty($params['post_id'])) {
             if (is_array($params['post_id'])) {
@@ -76,7 +98,7 @@ class Revisions
                 $params['post_id'] = [(int) $params['post_id']];
             }
 
-            $strReq .= 'AND R.post_id ' . App::con()->in($params['post_id']);
+            $sql->and('R.post_id ' . $sql->in($params['post_id']));
         }
 
         if (!empty($params['revision_id'])) {
@@ -93,35 +115,39 @@ class Revisions
                 $params['revision_id'] = [(int) $params['revision_id']];
             }
 
-            $strReq .= 'AND R.revision_id ' . App::con()->in($params['revision_id']);
+            $sql->and('R.revision_id ' . $sql->in($params['revision_id']));
         }
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && $params['post_type'] !== []) {
-                $strReq .= 'AND R.revision_type ' . App::con()->in($params['post_type']);
+                $sql->and('R.revision_type ' . $sql->in($params['post_type']));
             } elseif ($params['post_type'] != '') {
-                $strReq .= "AND R.revision_type = '" . App::con()->escapeStr($params['post_type']) . "' ";
+                $sql->and('R.revision_type = ' . $sql->quote($params['post_type']));
             }
         }
 
         if (!empty($params['sql'])) {
-            $strReq .= $params['sql'] . ' ';
+            $sql->sql($params['sql']);
         }
 
         if (!$countOnly) {
             if (!empty($params['order'])) {
-                $strReq .= 'ORDER BY ' . App::con()->escapeStr($params['order']) . ' ';
+                $sql->order($sql->escape($params['order']));
             } else {
-                $strReq .= 'ORDER BY revision_dt DESC ';
+                $sql->order('revision_dt DESC');
             }
         }
 
         if (!$countOnly && !empty($params['limit'])) {
-            $strReq .= App::con()->limit($params['limit']);
+            $sql->limit($params['limit']);
         }
 
-        $rs = new MetaRecord(App::con()->select($strReq));
-        $rs->extend(RevisionsExtensions::class);
+        $rs = $sql->select();
+        if ($rs) {
+            $rs->extend(RevisionsExtensions::class);
+        } else {
+            $rs = MetaRecord::newFromArray([]);
+        }
 
         return $rs;
     }
@@ -229,9 +255,12 @@ class Revisions
 
         try {
             // Purge all revisions of the entry
-            $strReq = 'DELETE FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME . ' ' .
-                "WHERE post_id = '" . App::con()->escapeStr($postID) . "' ";
-            App::con()->execute($strReq);
+            $sql = new DeleteStatement();
+            $sql
+                ->from(App::con()->prefix() . self::REVISION_TABLE_NAME)
+                ->where('post_id = ' . $sql->quote($postID))
+            ;
+            $sql->delete();
 
             if (!App::error()->flag() && $redirectURL !== null) {
                 Notices::addSuccessNotice(__('All revisions have been deleted.'));
