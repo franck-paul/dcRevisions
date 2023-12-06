@@ -21,10 +21,17 @@ use Dotclear\Core\Backend\Notices;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
+use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Fieldset;
+use Dotclear\Helper\Html\Form\Form;
+use Dotclear\Helper\Html\Form\Hidden;
+use Dotclear\Helper\Html\Form\Label;
+use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Para;
+use Dotclear\Helper\Html\Form\Submit;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
 use Exception;
-use form;
 
 class BackendBehaviors
 {
@@ -37,11 +44,17 @@ class BackendBehaviors
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
             echo
-            '<div class="fieldset"><h4 id="dc-revisions">' . __('Revisions') . '</h4>' .
-            '<p><label class="classic" for="dcrevisions_enable">' .
-            form::checkbox('dcrevisions_enable', 1, (bool) My::settings()->enable) .
-            __('Enable entries\' versionning on this blog') . '</label></p>' .
-            '</div>';
+            (new Fieldset('dc-revisions'))
+                ->legend((new Legend(__('Revisions'))))
+                ->fields([
+                    (new Para())
+                        ->items([
+                            (new Checkbox('dcrevisions_enable', (bool) My::settings()->enable))
+                                ->value(1)
+                                ->label((new Label(__('Enable entries\' versionning on this blog'), Label::INSIDE_TEXT_AFTER))),
+                        ]),
+                ])
+            ->render();
         }
 
         return '';
@@ -92,10 +105,10 @@ class BackendBehaviors
         $list = new RevisionsList($rs);
 
         echo
-        '<details class="area" id="revisions-area"><summary>' . __('Revisions:') . '</summary>' .
+        '<div id="revisions-area" class="area"><details id="revisions-details"><summary>' . __('Revisions:') . '</summary>' .
         $list->display($url) .
         ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
-        '</details>';
+        '</details></div>';
 
         return '';
     }
@@ -324,16 +337,21 @@ class BackendBehaviors
 
             Notices::warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
 
-            echo
-            '<form action="' . $ap->getURI() . '" method="post">' .
-            $ap->getCheckboxes() .
-            '<p><input type="submit" value="' . __('save') . '" /></p>' .
-            $ap->getHiddenFields() .
-            My::parsedHiddenFields([
-                'dopurge' => 'true',
-                'action'  => 'revpurge',
-            ]) .
-            '</form>';
+            echo (new Form('frm_rem_series'))
+                ->action($ap->getURI())
+                ->method('post')
+                ->items([
+                    $ap->checkboxes(),
+                    (new Para())
+                        ->items([
+                            ...$ap->hiddenFields(),
+                            App::nonce()->formNonce(),
+                            (new Hidden('action', 'revpurge')),
+                            (new Hidden('dopurge', 'true')),
+                            (new Submit(['rem_revisions'], __('save'))),
+                        ]),
+                ])
+            ->render();
 
             $ap->endPage();
         }

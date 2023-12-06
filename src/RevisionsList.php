@@ -20,17 +20,14 @@ use Dotclear\Helper\Date;
 
 class RevisionsList
 {
-    // Records
-    protected ?MetaRecord $rs = null;
-
     /**
      * Constructs a new instance.
      *
-     * @param      MetaRecord  $rs     List of revisions
+     * @param      null|MetaRecord  $rs     List of revisions
      */
-    public function __construct(MetaRecord $rs)
-    {
-        $this->rs = $rs;
+    public function __construct(
+        protected ?MetaRecord $rs
+    ) {
     }
 
     /**
@@ -89,8 +86,8 @@ class RevisionsList
             return $res;
         }
 
-        $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" />';
-        $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s" /></a>';
+        $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s">';
+        $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s"></a>';
         $index  = count($this->rs);
 
         // Back to UTC timezone in order to get correct revision datetime

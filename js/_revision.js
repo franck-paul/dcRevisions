@@ -127,7 +127,7 @@ dotclear.viewRevisionRender = (nodes, title) => {
 $(() => {
   dotclear.dcrevisions = dotclear.getData('dcrevisions');
   $('#edit-entry').on('onetabload', () => {
-    $('#revisions-area').toggleWithDetails({
+    $('#revisions-details').toggleWithDetails({
       user_pref: 'dcx_post_revisions',
       // hide: $('#revisions-list tbody').children().length === 0 ? false : true,
       fn: dotclear.revisionExpander(),
