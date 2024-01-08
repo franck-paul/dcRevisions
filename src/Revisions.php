@@ -156,10 +156,10 @@ class Revisions
      * Adds a revision.
      *
      * @param      Cursor  $cur     The pcur
-     * @param      string  $postID  The post identifier
+     * @param      int     $postID  The post identifier
      * @param      string  $type    The type
      */
-    public function addRevision(Cursor $cur, string $postID, string $type): void
+    public function addRevision(Cursor $cur, int $postID, string $type): void
     {
         $rs = new MetaRecord(App::con()->select(
             'SELECT MAX(revision_id) FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME

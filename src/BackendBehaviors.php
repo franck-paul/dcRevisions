@@ -141,12 +141,12 @@ class BackendBehaviors
      * Add a revision before post update
      *
      * @param      cursor  $cur      The cursor
-     * @param      mixed   $postID   The post identifier    // to be switch to int with 2.28
+     * @param      int     $postID   The post identifier
      */
-    public static function adminBeforePostUpdate(Cursor $cur, mixed $postID): string
+    public static function adminBeforePostUpdate(Cursor $cur, int $postID): string
     {
         try {
-            App::blog()->revisions->addRevision($cur, (string) $postID, 'post');
+            App::blog()->revisions->addRevision($cur, $postID, 'post');
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -179,9 +179,11 @@ class BackendBehaviors
 
         $list = new RevisionsList($rs);
 
-        echo '<div class="area" id="revisions-area"><label>' . __('Revisions:') . '</label>' . $list->display($url) .
-            ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
-            '</div>';
+        echo
+        '<div class="area" id="revisions-area"><details id="revisions-details"><summary>' . __('Revisions:') . '</summary>' .
+        $list->display($url) .
+        ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
+        '</details></div>';
 
         return '';
     }
@@ -214,9 +216,9 @@ class BackendBehaviors
      * Add a revision before page update
      *
      * @param      cursor  $cur      The cursor
-     * @param      string  $postID   The post identifier
+     * @param      int     $postID   The post identifier
      */
-    public static function adminBeforePageUpdate(Cursor $cur, string $postID): string
+    public static function adminBeforePageUpdate(Cursor $cur, int $postID): string
     {
         try {
             App::blog()->revisions->addRevision($cur, $postID, 'page');
