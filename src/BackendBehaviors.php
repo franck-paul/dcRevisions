@@ -140,13 +140,13 @@ class BackendBehaviors
     /**
      * Add a revision before post update
      *
-     * @param      cursor  $cur      The cursor
-     * @param      int     $postID   The post identifier
+     * @param      cursor       $cur      The cursor
+     * @param      string|int   $postID   The post identifier
      */
-    public static function adminBeforePostUpdate(Cursor $cur, int $postID): string
+    public static function adminBeforePostUpdate(Cursor $cur, string|int $postID): string
     {
         try {
-            App::blog()->revisions->addRevision($cur, $postID, 'post');
+            App::blog()->revisions->addRevision($cur, (int) $postID, 'post');
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -215,13 +215,13 @@ class BackendBehaviors
     /**
      * Add a revision before page update
      *
-     * @param      cursor  $cur      The cursor
-     * @param      int     $postID   The post identifier
+     * @param      cursor       $cur      The cursor
+     * @param      string|int   $postID   The post identifier
      */
-    public static function adminBeforePageUpdate(Cursor $cur, int $postID): string
+    public static function adminBeforePageUpdate(Cursor $cur, string|int $postID): string
     {
         try {
-            App::blog()->revisions->addRevision($cur, $postID, 'page');
+            App::blog()->revisions->addRevision($cur, (int) $postID, 'page');
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
