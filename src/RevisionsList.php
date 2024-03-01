@@ -86,7 +86,7 @@ class RevisionsList
             return $res;
         }
 
-        $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s">';
+        $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" class="mark mark-%3$s">';
         $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s"></a>';
         $index  = count($this->rs);
 
@@ -108,8 +108,9 @@ class RevisionsList
             '<td class="minimal nowrap status">' .
             sprintf(
                 $p_img,
-                ('images/' . ($this->rs->canPatch() ? 'check-on.png' : 'locker.png')),
-                ($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked'))
+                ('images/' . ($this->rs->canPatch() ? 'check-on.png' : 'locker.svg')),
+                ($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked')),
+                ($this->rs->canPatch() ? 'published' : 'locked')
             ) .
             "</td>\n" .
             '<td class="minimal nowrap status">' .
