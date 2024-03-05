@@ -108,7 +108,7 @@ class RevisionsList
             '<td class="minimal nowrap status">' .
             sprintf(
                 $p_img,
-                ('images/' . ($this->rs->canPatch() ? 'check-on.png' : 'locker.svg')),
+                ('images/' . ($this->rs->canPatch() ? 'check-on.svg' : 'locker.svg')),
                 ($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked')),
                 ($this->rs->canPatch() ? 'published' : 'locked')
             ) .
