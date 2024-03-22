@@ -13,7 +13,7 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
     return;
   }
 
-  const revisionId = $(line).attr('id').substr(1);
+  const revisionId = $(line).attr('id').substring(1);
   const postId = $('#id').val();
   let tr = document.getElementById(`re${revisionId}`);
   if (tr) {
@@ -55,10 +55,10 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
           }
           $(line).addClass('expand');
           line.parentNode.insertBefore(tr, line.nextSibling);
-        } else {
-          $(line).toggleClass('expand');
-          window.alert($(rsp).find('message').text());
+          return;
         }
+        $(line).toggleClass('expand');
+        window.alert($(rsp).find('message').text());
       },
       {
         pid: postId,
