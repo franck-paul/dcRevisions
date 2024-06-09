@@ -14,7 +14,7 @@ $this->registerModule(
     'dcRevisions',
     'Allows entries versionning',
     'Tomtom, Franck Paul & contributors',
-    '5.4',
+    '5.4.1',
     [
         'requires'    => [['core', '2.30']],
         'permissions' => 'My',
