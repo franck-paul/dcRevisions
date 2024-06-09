@@ -364,10 +364,8 @@ class Revisions
 
         while ($revisions->fetch()) {
             foreach ($patch as $field => $value) {
-                $revisionField = $map[$field] ?? null;
-                if ($revisionField !== null) {
-                    $patch[$field] = Diff::uniPatch($value, $revisions->{$revisionField});
-                }
+                $revisionField = $map[$field];
+                $patch[$field] = Diff::uniPatch($value, $revisions->{$revisionField});
             }
 
             if ($revisions->revision_id === $revisionID) {
