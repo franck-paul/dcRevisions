@@ -204,9 +204,14 @@ class Revisions
             $revisionCursor->revision_content_diff       = $diff['post_content'];
             $revisionCursor->revision_content_xhtml_diff = $diff['post_content_xhtml'];
 
-            App::con()->writeLock(App::con()->prefix() . 'revision');
-            $revisionCursor->insert();
-            App::con()->unlock();
+            try {
+                App::con()->writeLock(App::con()->prefix() . 'revision');
+                $revisionCursor->insert();
+                App::con()->unlock();
+            } catch (Exception $exception) {
+                App::error()->add($exception->getMessage());
+                App::con()->unlock();
+            }
         }
     }
 
