@@ -40,7 +40,7 @@ class Uninstall extends Process
         // $var   = My::id(); // Var sub-folder
 
         // Database table name
-        // $table = App::con()->prefix() . 'dcRevisions';
+        // $table = App::con()->prefix() . Revisions::REVISION_TABLE_NAME;
 
         $user_actions = [
 
