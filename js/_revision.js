@@ -9,7 +9,7 @@ dotclear.revisionExpander = () => {
 };
 
 dotclear.viewRevisionContent = (line, action = 'toggle') => {
-  if ($(line).attr('id') == undefined) {
+  if ($(line).attr('id') === undefined) {
     return;
   }
 
@@ -25,7 +25,7 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
       (data) => {
         const xml = new DOMParser().parseFromString(data, 'text/xml');
         const rsp = $(xml).children('rsp')[0];
-        if (rsp.attributes[0].value == 'ok') {
+        if (rsp.attributes[0].value === 'ok') {
           // Patch found
           tr = document.createElement('tr');
           tr.id = `re${revisionId}`;
@@ -37,14 +37,14 @@ dotclear.viewRevisionContent = (line, action = 'toggle') => {
           const editor_mode = $('#post_format').get(0).value;
           let excerpt_nodes;
           let content_nodes;
-          if (editor_mode == 'xhtml') {
+          if (editor_mode === 'xhtml') {
             excerpt_nodes = $(rsp).find('post_excerpt_xhtml').children();
             content_nodes = $(rsp).find('post_content_xhtml').children();
           } else {
             excerpt_nodes = $(rsp).find('post_excerpt').children();
             content_nodes = $(rsp).find('post_content').children();
           }
-          if (excerpt_nodes.length == 0 && content_nodes.length == 0) {
+          if (excerpt_nodes.length === 0 && content_nodes.length === 0) {
             $(td).append(`<strong>${dotclear.dcrevisions.msg.content_identical}</strong>`);
           } else {
             let table = '<table class="preview-rev">';
@@ -80,17 +80,17 @@ dotclear.viewRevisionRender = (nodes, title) => {
     let ol = $(this).attr('oline') ?? '';
     let nl = $(this).attr('nline') ?? '';
 
-    if (name == 'skip') {
+    if (name === 'skip') {
       ol = nl = '&hellip;';
     }
 
     let tdclass = ['skip', 'context', 'insert', 'delete'].includes(name) ? ` ${name}` : '';
 
-    if (name != previous && (previous == '' || previous == 'context')) {
+    if (name !== previous && (previous === '' || previous === 'context')) {
       tdclass += ' first';
     }
     const next = nodes.length > k + 1 ? nodes.get(k + 1).nodeName : '';
-    if (name != next && next != 'insert' && next != 'delete') {
+    if (name !== next && next !== 'insert' && next !== 'delete') {
       tdclass += ' last';
     }
 
@@ -104,7 +104,7 @@ dotclear.viewRevisionRender = (nodes, title) => {
     `;
   });
 
-  if (lines != '') {
+  if (lines !== '') {
     return `<thead>
       <tr class="rev-header">
        <th colspan="3">${title}</th>
@@ -124,12 +124,11 @@ dotclear.viewRevisionRender = (nodes, title) => {
   return '';
 };
 
-$(() => {
+dotclear.ready(() => {
   dotclear.dcrevisions = dotclear.getData('dcrevisions');
   $('#edit-entry').on('onetabload', () => {
     $('#revisions-details').toggleWithDetails({
       user_pref: 'dcx_post_revisions',
-      // hide: $('#revisions-list tbody').children().length === 0 ? false : true,
       fn: dotclear.revisionExpander(),
     });
     $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
