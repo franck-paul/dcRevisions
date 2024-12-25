@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -64,7 +65,7 @@ class Backend extends Process
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
-                if (preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+                if (preg_match('/index.php\?process=Post\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
                     // It's a post
                     $redirURL = App::backend()->url()->get('admin.post', ['id' => '%s'], '&', true);
                     if (isset($_GET['patch'])) {
@@ -75,7 +76,7 @@ class Backend extends Process
                         // Purge
                         App::blog()->revisions->purge($_GET['id'], 'post', $redirURL);
                     }
-                } elseif (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $_SERVER['REQUEST_URI'])) {
+                } elseif (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
                     // It's a page
                     $redirURL = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s'], '&', true);
                     if (isset($_GET['patch'])) {
