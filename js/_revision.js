@@ -126,12 +126,10 @@ dotclear.viewRevisionRender = (nodes, title) => {
 
 dotclear.ready(() => {
   dotclear.dcrevisions = dotclear.getData('dcrevisions');
-  $('#edit-entry').on('onetabload', () => {
-    $('#revisions-details').toggleWithDetails({
-      user_pref: 'dcx_post_revisions',
-      fn: dotclear.revisionExpander(),
-    });
-    $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
-    $('#revpurge').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision));
+  dotclear.toggleWithDetails(document.getElementById('revisions-details'), {
+    user_pref: 'dcx_post_revisions',
+    fn: dotclear.revisionExpander(),
   });
+  $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
+  $('#revpurge').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision));
 });

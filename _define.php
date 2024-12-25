@@ -16,7 +16,7 @@ $this->registerModule(
     'Tomtom, Franck Paul & contributors',
     '5.7',
     [
-        'requires'    => [['core', '2.30']],
+        'requires'    => [['core', '2.33']],
         'permissions' => 'My',
         'type'        => 'plugin',
         'settings'    => [
