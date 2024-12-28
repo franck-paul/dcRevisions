@@ -23,7 +23,8 @@ class Backend extends Process
     public static function init(): bool
     {
         // dead but useful code, in order to have translations
-        __('dcRevisions') . __('Allows entries\'s versionning');
+        __('dcRevisions');
+        __('Allows entries\'s versionning');
 
         return self::status(My::checkContext(My::BACKEND));
     }

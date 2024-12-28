@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -32,8 +33,6 @@ class RevisionsList
 
     /**
      * Return number of revisions in record
-     *
-     * @return     int
      */
     public function count(): int
     {
@@ -44,13 +43,11 @@ class RevisionsList
      * Return HTML code to display the revisions list.
      *
      * @param      string  $url    The url base for patching
-     *
-     * @return     string
      */
     public function display(string $url): string
     {
         $res = '';
-        if ($this->rs && !$this->rs->isEmpty()) {
+        if ($this->rs instanceof MetaRecord && !$this->rs->isEmpty()) {
             $html_block = '<table id="revisions-list" summary="' . __('Revisions') . '" class="clear maximal">' .
             '<thead>' .
             '<tr>' .
@@ -76,8 +73,6 @@ class RevisionsList
      * Gets the HTML code to display revisions lines.
      *
      * @param      string  $url    The url base for patching
-     *
-     * @return     string
      */
     private function getLines(string $url): string
     {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -115,8 +116,6 @@ class BackendBehaviors
 
     /**
      * Return HTML plugin specific header on post form
-     *
-     * @return     string
      */
     public static function adminPostHeaders(): string
     {
@@ -190,8 +189,6 @@ class BackendBehaviors
 
     /**
      * Return HTML plugin specific header on page form
-     *
-     * @return     string
      */
     public static function adminPageHeaders(): string
     {
@@ -315,7 +312,7 @@ class BackendBehaviors
             }
         } else {
             // Ask confirmation for replacements
-            if ($type == 'page') {
+            if ($type === 'page') {
                 $ap->beginPage(
                     Page::breadcrumb(
                         [

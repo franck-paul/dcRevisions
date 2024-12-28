@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -88,7 +89,7 @@ class Revisions
             if (is_array($params['post_id'])) {
                 array_walk(
                     $params['post_id'],
-                    static function (&$v) {
+                    static function (&$v): void {
                         if ($v !== null) {
                             $v = (int) $v;
                         }
@@ -105,7 +106,7 @@ class Revisions
             if (is_array($params['revision_id'])) {
                 array_walk(
                     $params['revision_id'],
-                    static function (&$v) {
+                    static function (&$v): void {
                         if ($v !== null) {
                             $v = (int) $v;
                         }
