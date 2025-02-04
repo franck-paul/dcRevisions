@@ -42,7 +42,7 @@ table.preview-rev thead tr.rev-number th {
 }
 
 table.preview-rev td {
-  font: 100% 'Andale Mono', AndaleMono, Consolas, Monaco, 'Courier New', monospace;
+  font: 100% var(--monospace);
 }
 
 table.preview-rev td.center {
