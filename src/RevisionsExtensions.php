@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -17,6 +18,7 @@ namespace Dotclear\Plugin\dcRevisions;
 use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
+use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Html;
 
 class RevisionsExtensions
@@ -79,7 +81,10 @@ class RevisionsExtensions
         $res = '%1$s';
         $url = $rs->user_url;
         if ($url) {
-            $res = '<a href="%2$s">%1$s</a>';
+            $res = (new Link())
+                ->href('%2$s')
+                ->text('%1$s')
+            ->render();
         }
 
         return sprintf($res, Html::escapeHTML($rs->getAuthorCN()), Html::escapeHTML($url));

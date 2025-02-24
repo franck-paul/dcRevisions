@@ -18,6 +18,17 @@ namespace Dotclear\Plugin\dcRevisions;
 use Dotclear\Core\Backend\Page;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
+use Dotclear\Helper\Html\Form\Img;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\None;
+use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Table;
+use Dotclear\Helper\Html\Form\Tbody;
+use Dotclear\Helper\Html\Form\Td;
+use Dotclear\Helper\Html\Form\Text;
+use Dotclear\Helper\Html\Form\Th;
+use Dotclear\Helper\Html\Form\Thead;
+use Dotclear\Helper\Html\Form\Tr;
 
 class RevisionsList
 {
@@ -46,82 +57,103 @@ class RevisionsList
      */
     public function display(string $url): string
     {
-        $res = '';
         if ($this->rs instanceof MetaRecord && !$this->rs->isEmpty()) {
-            $html_block = '<table id="revisions-list" summary="' . __('Revisions') . '" class="clear maximal">' .
-            '<thead>' .
-            '<tr>' .
-            '<th>' . __('Id') . '</th>' .
-            '<th class="nowrap">' . __('Author') . '</th>' .
-            '<th class="nowrap">' . __('Date') . '</th>' .
-            '<th class="nowrap">' . __('Status') . '</th>' .
-            '<th class="nowrap">' . __('Actions') . '</th>' .
-            '</tr>' .
-            '</thead>' .
-            '<tbody>%s</tbody>' .
-            '</table>';
-
-            $res .= sprintf($html_block, $this->getLines($url));
-        } else {
-            $res .= '<p class="clear form-note">' . __('No revision') . '</p>';
+            return (new Table('revisions-list'))
+                ->class(['clear', 'maximal'])
+                ->thead((new Thead())
+                    ->rows([
+                        (new Tr())
+                            ->cols([
+                                (new Th())
+                                    ->text(__('Id')),
+                                (new Th())
+                                    ->class('nowrap')
+                                    ->text(__('Author')),
+                                (new Th())
+                                    ->class('nowrap')
+                                    ->text(__('Date')),
+                                (new Th())
+                                    ->class('nowrap')
+                                    ->text(__('Status')),
+                                (new Th())
+                                    ->class('nowrap')
+                                    ->text(__('Actions')),
+                            ]),
+                    ]))
+                ->tbody((new Tbody())
+                    ->rows($this->getLines($url)))
+            ->render();
         }
 
-        return $res;
+        return (new Note())
+            ->class(['clear', 'form-note'])
+            ->text(__('No revision'))
+        ->render();
     }
 
     /**
      * Gets the HTML code to display revisions lines.
      *
      * @param      string  $url    The url base for patching
+     *
+     * @return  array<int, Tr>
      */
-    private function getLines(string $url): string
+    private function getLines(string $url): array
     {
-        $res = '';
+        $lines = [];
         if (is_null($this->rs)) {
-            return $res;
+            return $lines;
         }
 
-        $p_img  = '<img src="%1$s" alt="%2$s" title="%2$s" class="mark mark-%3$s">';
-        $p_link = '<a href="%1$s" title="%3$s" class="patch"><img src="%2$s" alt="%3$s"></a>';
-        $index  = count($this->rs);
+        $index = count($this->rs);
 
         // Back to UTC timezone in order to get correct revision datetime
         $current_timezone = Date::getTZ();
         Date::setTZ('UTC');
 
         while ($this->rs->fetch()) {
-            $res .= '<tr class="line wide' . ($this->rs->canPatch() ? '' : ' offline') . '" id="r' . $this->rs->revision_id . '">' . "\n" .
-            '<td class="maximal nowrap rid">' .
-            '<strong>' . sprintf(__('Revision #%s'), $index--) . '</strong>' .
-            "</td>\n" .
-            '<td class="minimal nowrap">' .
-            $this->rs->getAuthorLink() .
-            "</td>\n" .
-            '<td class="minimal nowrap">' .
-            $this->rs->getDate() . ' - ' . $this->rs->getTime() .
-            "</td>\n" .
-            '<td class="minimal nowrap status">' .
-            sprintf(
-                $p_img,
-                ('images/' . ($this->rs->canPatch() ? 'check-on.svg' : 'locker.svg')),
-                ($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked')),
-                ($this->rs->canPatch() ? 'published' : 'locked')
-            ) .
-            "</td>\n" .
-            '<td class="minimal nowrap status">' .
-            ($this->rs->canPatch() ? sprintf(
-                $p_link,
-                sprintf($url, $this->rs->revision_id),
-                urldecode(Page::getPF('dcRevisions/images/apply.png')),
-                __('Apply patch')
-            ) : '') .
-            "</td>\n" .
-            "</tr>\n";
+            $lines[] = (new Tr('r' . $this->rs->revision_id))
+                ->class(['line', 'wide', $this->rs->canPatch() ? '' : 'offline'])
+                ->cols([
+                    (new Td())
+                        ->class(['maximal', 'nowrap', 'rid'])
+                        ->items([
+                            (new Text('strong', sprintf(__('Revision #%s'), $index--))),
+                        ]),
+                    (new Td())
+                        ->class(['minimal', 'nowrap'])
+                        ->text($this->rs->getAuthorLink()),
+                    (new Td())
+                        ->class(['minimal', 'nowrap'])
+                        ->text($this->rs->getDate() . ' - ' . $this->rs->getTime()),
+                    (new Td())
+                        ->class(['minimal', 'nowrap', 'status'])
+                        ->items([
+                            (new Img('images/' . ($this->rs->canPatch() ? 'check-on.svg' : 'locker.svg')))
+                                ->alt(($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked')))
+                                ->title(($this->rs->canPatch() ? __('Revision allowed') : __('Revision blocked')))
+                                ->class(['mark', 'mark-' . ($this->rs->canPatch() ? 'published' : 'locked')]),
+                        ]),
+                    (new Td())
+                        ->class(['minimal', 'nowrap', 'status'])
+                        ->items([
+                            $this->rs->canPatch() ?
+                            (new Link())
+                                ->href(sprintf($url, $this->rs->revision_id))
+                                ->title(__('Apply patch'))
+                                ->class('patch')
+                                ->items([
+                                    (new Img(urldecode(Page::getPF('dcRevisions/images/apply.png'))))
+                                        ->alt(__('Apply patch')),
+                                ]) :
+                            (new None()),
+                        ]),
+                ]);
         }
 
         // Restore previous timezone
         Date::setTZ($current_timezone);
 
-        return $res;
+        return $lines;
     }
 }

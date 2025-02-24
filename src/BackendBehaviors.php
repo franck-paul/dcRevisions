@@ -23,13 +23,19 @@ use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Checkbox;
+use Dotclear\Helper\Html\Form\Details;
+use Dotclear\Helper\Html\Form\Div;
 use Dotclear\Helper\Html\Form\Fieldset;
 use Dotclear\Helper\Html\Form\Form;
 use Dotclear\Helper\Html\Form\Hidden;
 use Dotclear\Helper\Html\Form\Label;
 use Dotclear\Helper\Html\Form\Legend;
+use Dotclear\Helper\Html\Form\Link;
+use Dotclear\Helper\Html\Form\None;
 use Dotclear\Helper\Html\Form\Para;
 use Dotclear\Helper\Html\Form\Submit;
+use Dotclear\Helper\Html\Form\Summary;
+use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
 use Exception;
@@ -108,11 +114,22 @@ class BackendBehaviors
 
         $list = new RevisionsList($rs);
 
-        echo
-        '<div id="revisions-area" class="area"><details id="revisions-details"><summary>' . __('Revisions:') . '</summary>' .
-        $list->display($url) .
-        ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
-        '</details></div>';
+        echo (new Div('revisions-area'))
+            ->class('area')
+            ->items([
+                (new Details('revisions-details'))
+                    ->summary(new Summary(__('Revisions:')))
+                    ->items([
+                        (new Text(null, $list->display($url))),
+                        $list->count() > 0 ?
+                        (new Link('revpurge'))
+                            ->href($purge_url)
+                            ->class(['button', 'delete'])
+                            ->text(__('Purge all revisions')) :
+                        (new None()),
+                    ]),
+            ])
+        ->render();
 
         return '';
     }
@@ -181,11 +198,22 @@ class BackendBehaviors
 
         $list = new RevisionsList($rs);
 
-        echo
-        '<div class="area" id="revisions-area"><details id="revisions-details"><summary>' . __('Revisions:') . '</summary>' .
-        $list->display($url) .
-        ($list->count() !== 0 ? '<a href="' . $purge_url . '" class="button delete" id="revpurge">' . __('Purge all revisions') . '</a>' : '') .
-        '</details></div>';
+        echo (new Div('revisions-area'))
+            ->class('area')
+            ->items([
+                (new Details('revisions-details'))
+                    ->summary(new Summary(__('Revisions:')))
+                    ->items([
+                        (new Text(null, $list->display($url))),
+                        $list->count() > 0 ?
+                        (new Link('revpurge'))
+                            ->href($purge_url)
+                            ->class(['button', 'delete'])
+                            ->text(__('Purge all revisions')) :
+                        (new None()),
+                    ]),
+            ])
+        ->render();
 
         return '';
     }

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @brief dcRevisions, a plugin for Dotclear 2
  *
@@ -40,7 +41,7 @@ class Uninstall extends Process
         // $var   = My::id(); // Var sub-folder
 
         // Database table name
-        // $table = App::con()->prefix() . Revisions::REVISION_TABLE_NAME;
+        $table = App::con()->prefix() . Revisions::REVISION_TABLE_NAME;
 
         $user_actions = [
 
@@ -81,8 +82,8 @@ class Uninstall extends Process
 
             // Table (database)
             'tables' => [
-                // ['empty', $table],      // Empty table
-                // ['delete', $table],     // Delete table
+                ['empty', $table],      // Empty table
+                ['delete', $table],     // Delete table
             ],
 
             // Plugin or Theme
