@@ -40,9 +40,6 @@ use Dotclear\Helper\Html\Html;
 use Dotclear\Plugin\pages\BackendActions as PagesBackendActions;
 use Exception;
 
-/**
- * @todo switch Helper/Html/Form/...
- */
 class BackendBehaviors
 {
     /**
