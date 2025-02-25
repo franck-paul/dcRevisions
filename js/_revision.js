@@ -132,4 +132,5 @@ dotclear.ready(() => {
   });
   $('#revisions-list tr.line a.patch').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_apply_patch));
   $('#revpurge').on('click', () => window.confirm(dotclear.dcrevisions.msg.confirm_purge_revision));
+  dotclear.responsiveCellHeaders(document.querySelector('#revisions-list'), '#revisions-list', 1, true);
 });

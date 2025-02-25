@@ -121,10 +121,10 @@ class RevisionsList
                             (new Text('strong', sprintf(__('Revision #%s'), $index--))),
                         ]),
                     (new Td())
-                        ->class(['minimal', 'nowrap'])
+                        ->class('nowrap')
                         ->text($this->rs->getAuthorLink()),
                     (new Td())
-                        ->class(['minimal', 'nowrap'])
+                        ->class('nowrap')
                         ->text($this->rs->getDate() . ' - ' . $this->rs->getTime()),
                     (new Td())
                         ->class(['minimal', 'nowrap', 'status'])
