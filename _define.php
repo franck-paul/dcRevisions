@@ -18,7 +18,7 @@ $this->registerModule(
     '5.11',
     [
         'date'        => '2025-02-26T16:08:57+0100',
-        'requires'    => [['core', '2.33']],
+        'requires'    => [['core', '2.34']],
         'permissions' => 'My',
         'type'        => 'plugin',
         'settings'    => [
@@ -28,5 +28,6 @@ $this->registerModule(
         'details'    => 'https://open-time.net/?q=dcRevisions',
         'support'    => 'https://github.com/franck-paul/dcRevisions',
         'repository' => 'https://raw.githubusercontent.com/franck-paul/dcRevisions/main/dcstore.xml',
+        'license'    => 'gpl2',
     ]
 );
