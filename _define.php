@@ -15,9 +15,9 @@ $this->registerModule(
     'dcRevisions',
     'Allows entries versionning',
     'Tomtom, Franck Paul & contributors',
-    '6.0',
+    '6.1',
     [
-        'date'        => '2025-05-03T05:48:28+0200',
+        'date'        => '2025-05-05T09:49:23+0200',
         'requires'    => [['core', '2.34']],
         'permissions' => 'My',
         'type'        => 'plugin',
