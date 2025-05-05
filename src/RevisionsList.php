@@ -22,10 +22,10 @@ use Dotclear\Helper\Html\Form\Img;
 use Dotclear\Helper\Html\Form\Link;
 use Dotclear\Helper\Html\Form\None;
 use Dotclear\Helper\Html\Form\Note;
+use Dotclear\Helper\Html\Form\Strong;
 use Dotclear\Helper\Html\Form\Table;
 use Dotclear\Helper\Html\Form\Tbody;
 use Dotclear\Helper\Html\Form\Td;
-use Dotclear\Helper\Html\Form\Text;
 use Dotclear\Helper\Html\Form\Th;
 use Dotclear\Helper\Html\Form\Thead;
 use Dotclear\Helper\Html\Form\Tr;
@@ -118,7 +118,7 @@ class RevisionsList
                     (new Td())
                         ->class(['maximal', 'nowrap', 'rid'])
                         ->items([
-                            (new Text('strong', sprintf(__('Revision #%s'), $index--))),
+                            (new Strong(sprintf(__('Revision #%s'), $index--))),
                         ]),
                     (new Td())
                         ->class('nowrap')
