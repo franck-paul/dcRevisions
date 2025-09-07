@@ -71,10 +71,10 @@ class Revisions
         }
 
         $sql
-            ->from($sql->as(App::con()->prefix() . self::REVISION_TABLE_NAME, 'R'))
+            ->from($sql->as(App::db()->con()->prefix() . self::REVISION_TABLE_NAME, 'R'))
             ->join(
                 (new JoinStatement())
-                    ->from($sql->as(App::con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
+                    ->from($sql->as(App::db()->con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
                     ->on('R.user_id = U.user_id')
                     ->statement()
             )
@@ -162,8 +162,8 @@ class Revisions
      */
     public function addRevision(Cursor $cur, int $postID, string $type): void
     {
-        $rs = new MetaRecord(App::con()->select(
-            'SELECT MAX(revision_id) FROM ' . App::con()->prefix() . self::REVISION_TABLE_NAME
+        $rs = new MetaRecord(App::db()->con()->select(
+            'SELECT MAX(revision_id) FROM ' . App::db()->con()->prefix() . self::REVISION_TABLE_NAME
         ));
         $revisionID = $rs->f(0) + 1;
 
@@ -192,7 +192,7 @@ class Revisions
         }
 
         if ($insert) {
-            $revisionCursor                              = App::con()->openCursor(App::con()->prefix() . 'revision');
+            $revisionCursor                              = App::db()->con()->openCursor(App::db()->con()->prefix() . 'revision');
             $revisionCursor->revision_id                 = $revisionID;
             $revisionCursor->post_id                     = $postID;
             $revisionCursor->user_id                     = App::auth()->userID();
@@ -206,12 +206,12 @@ class Revisions
             $revisionCursor->revision_content_xhtml_diff = $diff['post_content_xhtml'];
 
             try {
-                App::con()->writeLock(App::con()->prefix() . 'revision');
+                App::db()->con()->writeLock(App::db()->con()->prefix() . 'revision');
                 $revisionCursor->insert();
-                App::con()->unlock();
+                App::db()->con()->unlock();
             } catch (Exception $exception) {
                 App::error()->add($exception->getMessage());
-                App::con()->unlock();
+                App::db()->con()->unlock();
             }
         }
     }
@@ -263,7 +263,7 @@ class Revisions
             // Purge all revisions of the entry
             $sql = new DeleteStatement();
             $sql
-                ->from(App::con()->prefix() . self::REVISION_TABLE_NAME)
+                ->from(App::db()->con()->prefix() . self::REVISION_TABLE_NAME)
                 ->where('post_id = ' . $sql->quote($postID))
             ;
             $sql->delete();
@@ -300,7 +300,7 @@ class Revisions
 
             $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
 
-            $cur = App::con()->openCursor(App::con()->prefix() . App::blog()::POST_TABLE_NAME);
+            $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME);
 
             $cur->post_title        = $rs->post_title;
             $cur->cat_id            = $rs->cat_id ?: null;

@@ -16,12 +16,13 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use Dotclear\App;
-use Dotclear\Core\Process;
-use Dotclear\Database\Structure;
+use Dotclear\Helper\Process\TraitProcess;
 use Exception;
 
-class Install extends Process
+class Install
 {
+    use TraitProcess;
+
     public static function init(): bool
     {
         return self::status(My::checkContext(My::INSTALL));
@@ -47,7 +48,7 @@ class Install extends Process
             $settings->put('enable', false, App::blogWorkspace()::NS_BOOL, 'Enable revisions', false, true);
 
             // --INSTALL AND UPDATE PROCEDURES--
-            $new_structure = new Structure(App::con(), App::con()->prefix());
+            $new_structure = App::db()->structure();
 
             $new_structure->revision
                 ->field('revision_id', 'bigint', 0, false)
@@ -70,7 +71,7 @@ class Install extends Process
             $new_structure->revision->reference('fk_revision_post', 'post_id', App::blog()::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
             $new_structure->revision->reference('fk_revision_blog', 'blog_id', App::blog()::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
-            $current_structure = new Structure(App::con(), App::con()->prefix());
+            $current_structure = App::db()->structure();
             $current_structure->synchronize($new_structure);
 
             // Init
