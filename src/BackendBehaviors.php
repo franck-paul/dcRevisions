@@ -18,8 +18,6 @@ namespace Dotclear\Plugin\dcRevisions;
 use ArrayObject;
 use Dotclear\App;
 use Dotclear\Core\Backend\Action\ActionsPosts;
-use Dotclear\Core\Backend\Notices;
-use Dotclear\Core\Backend\Page;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Html\Form\Checkbox;
@@ -137,7 +135,7 @@ class BackendBehaviors
     public static function adminPostHeaders(): string
     {
         return
-        Page::jsJson('dcrevisions', [
+        App::backend()->page()->jsJson('dcrevisions', [
             'post_type' => 'post',
             'msg'       => [
                 'excerpt'                => __('Excerpt'),
@@ -221,7 +219,7 @@ class BackendBehaviors
     public static function adminPageHeaders(): string
     {
         return
-        Page::jsJson('dcrevisions', [
+        App::backend()->page()->jsJson('dcrevisions', [
             'post_type' => 'page',
             'msg'       => [
                 'excerpt'                => __('Excerpt'),
@@ -333,7 +331,7 @@ class BackendBehaviors
                     App::blog()->revisions->purge($posts->post_id, $type);
                 }
 
-                Notices::addSuccessNotice(__('All revisions have been deleted.'));
+                App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));
                 $ap->redirect(true);
             } else {
                 $ap->redirect();
@@ -342,7 +340,7 @@ class BackendBehaviors
             // Ask confirmation for replacements
             if ($type === 'page') {
                 $ap->beginPage(
-                    Page::breadcrumb(
+                    App::backend()->page()->breadcrumb(
                         [
                             Html::escapeHTML(App::blog()->name()) => '',
                             __('Pages')                           => App::backend()->url()->get('admin.plugin.pages'),
@@ -352,7 +350,7 @@ class BackendBehaviors
                 );
             } else {
                 $ap->beginPage(
-                    Page::breadcrumb(
+                    App::backend()->page()->breadcrumb(
                         [
                             Html::escapeHTML(App::blog()->name()) => '',
                             __('Entries')                         => App::backend()->url()->get('admin.posts'),
@@ -362,7 +360,7 @@ class BackendBehaviors
                 );
             }
 
-            Notices::warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
+            App::backend()->notices()->warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
 
             echo (new Form('frm_rem_series'))
                 ->action($ap->getURI())

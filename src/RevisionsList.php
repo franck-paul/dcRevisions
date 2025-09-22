@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Dotclear\Plugin\dcRevisions;
 
-use Dotclear\Core\Backend\Page;
+use Dotclear\App;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Helper\Date;
 use Dotclear\Helper\Html\Form\Img;
@@ -143,7 +143,7 @@ class RevisionsList
                                 ->title(__('Apply patch'))
                                 ->class('patch')
                                 ->items([
-                                    (new Img(urldecode(Page::getPF('dcRevisions/images/apply.png'))))
+                                    (new Img(urldecode((string) App::backend()->page()->getPF('dcRevisions/images/apply.png'))))
                                         ->alt(__('Apply patch')),
                                 ]) :
                             (new None()),

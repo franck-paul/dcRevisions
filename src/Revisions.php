@@ -16,7 +16,6 @@ declare(strict_types=1);
 namespace Dotclear\Plugin\dcRevisions;
 
 use Dotclear\App;
-use Dotclear\Core\Backend\Notices;
 use Dotclear\Database\Cursor;
 use Dotclear\Database\MetaRecord;
 use Dotclear\Database\Statement\DeleteStatement;
@@ -269,7 +268,7 @@ class Revisions
             $sql->delete();
 
             if (!App::error()->flag() && $redirectURL !== null) {
-                Notices::addSuccessNotice(__('All revisions have been deleted.'));
+                App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));
                 Http::redirect(sprintf($redirectURL, $postID));
             }
         } catch (Exception $exception) {
