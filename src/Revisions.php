@@ -25,6 +25,9 @@ use Dotclear\Helper\Diff\Diff;
 use Dotclear\Helper\Network\Http;
 use Exception;
 
+/**
+ * @todo switch to SqlStatement
+ */
 class Revisions
 {
     // Constants

@@ -298,7 +298,7 @@ class BackendBehaviors
      * @param      ActionsPosts                 $ap     Posts' actions
      * @param      ArrayObject<string, mixed>   $post   The post
      */
-    public static function adminPostsDoReplacements(ActionsPosts $ap, arrayObject $post): void
+    public static function adminPostsDoReplacements(ActionsPosts $ap, ArrayObject $post): void
     {
         self::adminEntriesDoReplacements($ap, $post, 'post');
     }
@@ -309,7 +309,7 @@ class BackendBehaviors
      * @param      PagesBackendActions          $ap     Pages' actions
      * @param      ArrayObject<string, mixed>   $post   The post
      */
-    public static function adminPagesDoReplacements(PagesBackendActions $ap, arrayObject $post): void
+    public static function adminPagesDoReplacements(PagesBackendActions $ap, ArrayObject $post): void
     {
         self::adminEntriesDoReplacements($ap, $post, 'page');
     }
@@ -320,7 +320,7 @@ class BackendBehaviors
      * @param      ActionsPosts|PagesBackendActions     $ap     Posts'/Pages' actions
      * @param      ArrayObject<string, mixed>           $post   The post
      */
-    private static function adminEntriesDoReplacements(ActionsPosts|PagesBackendActions $ap, arrayObject $post, string $type = 'post'): void
+    private static function adminEntriesDoReplacements(ActionsPosts|PagesBackendActions $ap, ArrayObject $post, string $type = 'post'): void
     {
         if (!empty($post['dopurge'])) {
             // Do replacements
