@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright TomTom, Franck Paul carnet.franck.paul@gmail.com
+ * @copyright TomTom, Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 $this->registerModule(

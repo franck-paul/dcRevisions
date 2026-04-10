@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -86,11 +86,13 @@ class BackendBehaviors
      */
     public static function adminPostForm(?MetaRecord $post): string
     {
-        $id  = isset($post) && !$post->isEmpty() ? $post->post_id : null;
+        $id = isset($post) && !$post->isEmpty() && is_numeric($id = $post->post_id) ? (int) $id : 0;
+
         $url = sprintf(App::backend()->url()->get('admin.post', [
             'id'    => '%1$s',
             'patch' => '%2$s',
         ], '&', true), $id, '%s');
+
         $purge_url = sprintf(App::backend()->url()->get('admin.post', [
             'id'       => '%1$s',
             'revpurge' => 1,
@@ -101,10 +103,10 @@ class BackendBehaviors
             'post_type' => 'post',
         ];
 
-        if (is_null($id)) {
+        if ($id === 0 || !App::backend()->revisions instanceof Revisions) {
             $rs = MetaRecord::newFromArray([]);
         } else {
-            $rs = App::blog()->revisions->getRevisions($params);
+            $rs = App::backend()->revisions->getRevisions($params);
         }
 
         $list = new RevisionsList($rs);
@@ -154,13 +156,17 @@ class BackendBehaviors
     /**
      * Add a revision before post update
      *
-     * @param      cursor       $cur      The cursor
-     * @param      string|int   $postID   The post identifier
+     * @param      cursor       $cur       The cursor
+     * @param      string|int   $post_id   The post identifier
      */
-    public static function adminBeforePostUpdate(Cursor $cur, string|int $postID): string
+    public static function adminBeforePostUpdate(Cursor $cur, string|int $post_id): string
     {
         try {
-            App::blog()->revisions->addRevision($cur, (int) $postID, 'post');
+            if (App::backend()->revisions instanceof Revisions) {
+                App::backend()->revisions->addRevision($cur, (int) $post_id, 'post');
+            } else {
+                throw new Exception(__('Revisions not initialized'));
+            }
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -175,9 +181,12 @@ class BackendBehaviors
      */
     public static function adminPageForm(?MetaRecord $post): string
     {
-        $base_url  = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page']);
-        $id        = isset($post) && !$post->isEmpty() ? $post->post_id : null;
-        $url       = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
+        $base_url = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page']);
+
+        $id = isset($post) && !$post->isEmpty() && is_numeric($id = $post->post_id) ? $id : 0;
+
+        $url = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
+
         $purge_url = sprintf($base_url . '&amp;id=%1$s&amp;revpurge=1', $id);
 
         $params = [
@@ -185,9 +194,13 @@ class BackendBehaviors
             'post_type' => 'page',
         ];
 
-        $rs = App::blog()->revisions->getRevisions($params);
+        if (App::backend()->revisions instanceof Revisions) {
+            $rs = App::backend()->revisions->getRevisions($params);
+        } else {
+            throw new Exception(__('Revisions not initialized'));
+        }
 
-        if (is_null($id)) {
+        if ($id === 0) {
             $rs = MetaRecord::newFromArray([]);
         }
 
@@ -238,13 +251,17 @@ class BackendBehaviors
     /**
      * Add a revision before page update
      *
-     * @param      cursor       $cur      The cursor
-     * @param      string|int   $postID   The post identifier
+     * @param      cursor       $cur       The cursor
+     * @param      string|int   $post_id   The post identifier
      */
-    public static function adminBeforePageUpdate(Cursor $cur, string|int $postID): string
+    public static function adminBeforePageUpdate(Cursor $cur, string|int $post_id): string
     {
         try {
-            App::blog()->revisions->addRevision($cur, (int) $postID, 'page');
+            if (App::backend()->revisions instanceof Revisions) {
+                App::backend()->revisions->addRevision($cur, (int) $post_id, 'page');
+            } else {
+                throw new Exception(__('Revisions not initialized'));
+            }
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -328,7 +345,14 @@ class BackendBehaviors
             if ($posts->rows()) {
                 while ($posts->fetch()) {
                     // Purge
-                    App::blog()->revisions->purge($posts->post_id, $type);
+                    if (App::backend()->revisions instanceof Revisions) {
+                        $post_id = is_numeric($post_id = $posts->post_id) ? (int) $post_id : 0;
+                        if ($post_id > 0) {
+                            App::backend()->revisions->purge($post_id, $type);
+                        }
+                    } else {
+                        throw new Exception(__('Revisions not initialized'));
+                    }
                 }
 
                 App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));

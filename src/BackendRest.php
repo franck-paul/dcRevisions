@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -32,27 +32,34 @@ class BackendRest
      */
     public static function getPatch(): XmlTag
     {
-        $postID     = $_GET['pid']  ?? null;
-        $revisionID = $_GET['rid']  ?? null;
-        $type       = $_GET['type'] ?? 'post';
+        // Get data helpers
+        $_Int = fn (string $name, int $default = 0): int => isset($_GET[$name]) && is_numeric($val = $_GET[$name]) ? (int) $val : $default;
+        $_Str = fn (string $name, string $default = ''): string => isset($_GET[$name]) && is_string($val = $_GET[$name]) ? $val : $default;
 
-        if ($postID === null) {
+        $post_id     = $_Int('pid');
+        $revision_id = $_Int('rid');
+        $type        = $_Str('type', 'post');
+
+        if ($post_id === 0) {
             throw new Exception(__('No post ID'));
         }
 
-        if ($revisionID === null) {
+        if ($revision_id === 0) {
             throw new Exception(__('No revision ID'));
         }
 
-        $rs  = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs  = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
         $old = [
-            'post_excerpt'       => $rs->post_excerpt,
-            'post_content'       => $rs->post_content,
-            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
-            'post_content_xhtml' => $rs->post_content_xhtml,
+            'post_excerpt'       => is_string($rs->post_excerpt) ? $rs->post_excerpt : '',
+            'post_excerpt_xhtml' => is_string($rs->post_excerpt_xhtml) ? $rs->post_excerpt_xhtml : '',
+            'post_content'       => is_string($rs->post_content) ? $rs->post_content : '',
+            'post_content_xhtml' => is_string($rs->post_content_xhtml) ? $rs->post_content_xhtml : '',
         ];
 
-        $new = App::blog()->revisions->getPatch($postID, $revisionID, $type);
+        if (!App::backend()->revisions instanceof Revisions) {
+            throw new Exception(__('Revisions not initialized'));
+        }
+        $new = App::backend()->revisions->getPatch($post_id, $revision_id, $type);
 
         $rsp = new XmlTag();
         foreach ($old as $field => $value) {

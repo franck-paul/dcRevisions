@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -43,6 +43,7 @@ class Backend
         ]);
 
         $settings = My::settings();
+
         if ($settings->enable) {
             App::behavior()->addBehaviors([
                 'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),
@@ -64,31 +65,37 @@ class Backend
             App::rest()->addFunction('getPatch', BackendRest::getPatch(...));
 
             // Init Revision object
-            App::blog()->revisions = new Revisions();
+            App::backend()->revisions = new Revisions();
 
             if (isset($_GET['id']) && (isset($_GET['patch']) || isset($_GET['revpurge']))) {
                 // We have a post or a page ID
-                if (preg_match('/index.php\?process=Post\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
-                    // It's a post
-                    $redirURL = App::backend()->url()->get('admin.post', ['id' => '%s'], '&', true);
-                    if (isset($_GET['patch'])) {
-                        // Patch
-                        $redirURL .= '&upd=1';
-                        App::blog()->revisions->setPatch($_GET['id'], $_GET['patch'], 'post', $redirURL, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
-                    } else {
-                        // Purge
-                        App::blog()->revisions->purge($_GET['id'], 'post', $redirURL);
-                    }
-                } elseif (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', (string) $_SERVER['REQUEST_URI'])) {
-                    // It's a page
-                    $redirURL = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s'], '&', true);
-                    if (isset($_GET['patch'])) {
-                        // Patch
-                        $redirURL .= '&upd=1';
-                        App::blog()->revisions->setPatch($_GET['id'], $_GET['patch'], 'page', $redirURL, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
-                    } else {
-                        // Purge
-                        App::blog()->revisions->purge($_GET['id'], 'page', $redirURL);
+                $id = is_numeric($id = $_GET['id']) ? (int) $id : 0;
+                if ($id > 0) {
+                    $request_uri = isset($_SERVER['REQUEST_URI']) && is_string($request_uri = $_SERVER['REQUEST_URI']) ? $request_uri : '';
+                    if ($request_uri !== '' && preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $request_uri)) {
+                        // It's a post
+                        $redir_url = App::backend()->url()->get('admin.post', ['id' => '%s'], '&', true);
+                        if (isset($_GET['patch'])) {
+                            // Patch
+                            $patch = is_numeric($patch = $_GET['patch']) ? (int) $patch : 0;
+                            $redir_url .= '&upd=1';
+                            App::backend()->revisions->setPatch($id, $patch, 'post', $redir_url, 'adminBeforePostUpdate', 'adminAfterPostUpdate');
+                        } else {
+                            // Purge
+                            App::backend()->revisions->purge($id, 'post', $redir_url);
+                        }
+                    } elseif (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $request_uri)) {
+                        // It's a page
+                        $redir_url = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s'], '&', true);
+                        if (isset($_GET['patch'])) {
+                            // Patch
+                            $patch = is_numeric($patch = $_GET['patch']) ? (int) $patch : 0;
+                            $redir_url .= '&upd=1';
+                            App::backend()->revisions->setPatch($id, $patch, 'page', $redir_url, 'adminBeforePageUpdate', 'adminAfterPageUpdate');
+                        } else {
+                            // Purge
+                            App::backend()->revisions->purge($id, 'page', $redir_url);
+                        }
                     }
                 }
             }

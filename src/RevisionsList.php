@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -112,7 +112,12 @@ class RevisionsList
         Date::setTZ('UTC');
 
         while ($this->rs->fetch()) {
-            $lines[] = (new Tr('r' . $this->rs->revision_id))
+            $revision_id = is_numeric($revision_id = $this->rs->revision_id) ? (int) $revision_id : 0;
+            $author_link = is_string($author_link = $this->rs->getAuthorLink()) ? $author_link : '';
+            $date        = is_string($date = $this->rs->getDate()) ? $date : '';
+            $time        = is_string($time = $this->rs->getTime()) ? $time : '';
+
+            $lines[] = (new Tr('r' . $revision_id))
                 ->class(['line', 'wide', $this->rs->canPatch() ? '' : 'offline'])
                 ->cols([
                     (new Td())
@@ -122,10 +127,10 @@ class RevisionsList
                         ]),
                     (new Td())
                         ->class('nowrap')
-                        ->text($this->rs->getAuthorLink()),
+                        ->text($author_link),
                     (new Td())
                         ->class('nowrap')
-                        ->text($this->rs->getDate() . ' - ' . $this->rs->getTime()),
+                        ->text($date . ' - ' . $time),
                     (new Td())
                         ->class(['minimal', 'nowrap', 'status'])
                         ->items([
@@ -139,7 +144,7 @@ class RevisionsList
                         ->items([
                             $this->rs->canPatch() ?
                             (new Link())
-                                ->href(sprintf($url, $this->rs->revision_id))
+                                ->href(sprintf($url, $revision_id))
                                 ->title(__('Apply patch'))
                                 ->class('patch')
                                 ->items([

@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -42,16 +42,16 @@ class Revisions
     /**
      * Gets the revisions list.
      *
-     * @param      array<string, mixed>     $params      The parameters
-     * @param      bool                     $countOnly   The count only
+     * @param      array<string, mixed>     $params       The parameters
+     * @param      bool                     $count_only   The count only
      *
      * @return     MetaRecord  The revisions.
      */
-    public function getRevisions(array $params, bool $countOnly = false): MetaRecord
+    public function getRevisions(array $params, bool $count_only = false): MetaRecord
     {
         $sql = new SelectStatement();
 
-        if ($countOnly) {
+        if ($count_only) {
             $sql->column($sql->count('revision_id'));
         } else {
             $sql->columns([
@@ -83,66 +83,79 @@ class Revisions
             ->where('R.blog_id = ' . $sql->quote(App::blog()->id()))
         ;
 
-        if (!empty($params['from'])) {
+        if (!empty($params['from']) && is_string($params['from'])) {
             $sql->from($sql->escape($params['from']));
         }
 
         if (!empty($params['post_id'])) {
+            $post_ids = [];
             if (is_array($params['post_id'])) {
-                array_walk(
-                    $params['post_id'],
-                    static function (&$v): void {
-                        if ($v !== null) {
-                            $v = (int) $v;
-                        }
-                    }
-                );
+                $post_ids = array_filter(array_map(fn ($item): int => is_numeric($item) ? (int) $item : 0, $params['post_id']));
             } else {
-                $params['post_id'] = [(int) $params['post_id']];
+                $post_id = is_numeric($post_id = $params['post_id']) ? (int) $post_id : 0;
+                if ($post_id > 0) {
+                    $post_ids[] = $post_id;
+                }
             }
-
-            $sql->and('R.post_id ' . $sql->in($params['post_id']));
+            if ($post_ids !== []) {
+                $sql->and('R.post_id ' . $sql->in($post_ids));
+            }
         }
 
         if (!empty($params['revision_id'])) {
+            $revision_ids = [];
             if (is_array($params['revision_id'])) {
-                array_walk(
-                    $params['revision_id'],
-                    static function (&$v): void {
-                        if ($v !== null) {
-                            $v = (int) $v;
-                        }
-                    }
-                );
+                $revision_ids = array_filter(array_map(fn ($item): int => is_numeric($item) ? (int) $item : 0, $params['revision_id']));
             } else {
-                $params['revision_id'] = [(int) $params['revision_id']];
+                $revision_id = is_numeric($revision_id = $params['revision_id']) ? (int) $revision_id : 0;
+                if ($revision_id > 0) {
+                    $revision_ids[] = $revision_id;
+                }
             }
-
-            $sql->and('R.revision_id ' . $sql->in($params['revision_id']));
+            if ($revision_ids !== []) {
+                $sql->and('R.revision_id ' . $sql->in($revision_ids));
+            }
         }
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && $params['post_type'] !== []) {
-                $sql->and('R.revision_type ' . $sql->in($params['post_type']));
-            } elseif ($params['post_type'] != '') {
+                $post_types = array_filter(array_map(fn ($item): string => is_string($item) ? $item : '', $params['post_type']));
+                $sql->and('R.revision_type ' . $sql->in($post_types));
+            } elseif (is_string($params['post_type']) && $params['post_type'] !== '') {
                 $sql->and('R.revision_type = ' . $sql->quote($params['post_type']));
             }
         }
 
-        if (!empty($params['sql'])) {
+        if (!empty($params['sql']) && is_string($params['sql'])) {
             $sql->sql($params['sql']);
         }
 
-        if (!$countOnly) {
-            if (!empty($params['order'])) {
+        if (!$count_only) {
+            if (!empty($params['order']) && is_string($params['order'])) {
                 $sql->order($sql->escape($params['order']));
             } else {
                 $sql->order('revision_dt DESC');
             }
         }
 
-        if (!$countOnly && !empty($params['limit'])) {
-            $sql->limit($params['limit']);
+        if (!$count_only && isset($params['limit'])) {
+            /**
+             * @var list<string|int|null>   $values
+             */
+            $values = is_array($params['limit']) ? array_values($params['limit']) : [$params['limit']];
+            // Make $values an array of integer values
+            $values = array_map(fn (int|string|null $v): int => (int) $v, $values);
+
+            /**
+             * @var array{0: int, 1?: int}  $limit
+             */
+            $limit = [
+                $values[0],
+            ];
+            if (isset($values[1])) {
+                $limit[1] = $values[1];
+            }
+            $sql->limit($limit);
         }
 
         $rs = $sql->select();
@@ -159,29 +172,30 @@ class Revisions
      * Adds a revision.
      *
      * @param      Cursor  $cur     The pcur
-     * @param      int     $postID  The post identifier
+     * @param      int     $post_id  The post identifier
      * @param      string  $type    The type
      */
-    public function addRevision(Cursor $cur, int $postID, string $type): void
+    public function addRevision(Cursor $cur, int $post_id, string $type): void
     {
         $rs = new MetaRecord(App::db()->con()->select(
             'SELECT MAX(revision_id) FROM ' . App::db()->con()->prefix() . self::REVISION_TABLE_NAME
         ));
-        $revisionID = $rs->f(0) + 1;
+        $revision_id = is_numeric($revision_id = $rs->f(0)) ? $revision_id : 0;
+        $revision_id++;
 
-        $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
         $old = [
-            'post_excerpt'       => $rs->post_excerpt       ?? '',
-            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml ?? '',
-            'post_content'       => $rs->post_content       ?? '',
-            'post_content_xhtml' => $rs->post_content_xhtml ?? '',
+            'post_excerpt'       => is_string($rs->post_excerpt) ? $rs->post_excerpt : '',
+            'post_excerpt_xhtml' => is_string($rs->post_excerpt_xhtml) ? $rs->post_excerpt_xhtml : '',
+            'post_content'       => is_string($rs->post_content) ? $rs->post_content : '',
+            'post_content_xhtml' => is_string($rs->post_content_xhtml) ? $rs->post_content_xhtml : '',
         ];
         $new = [
-            'post_excerpt'       => $cur->post_excerpt       ?? '',
-            'post_excerpt_xhtml' => $cur->post_excerpt_xhtml ?? '',
-            'post_content'       => $cur->post_content       ?? '',
-            'post_content_xhtml' => $cur->post_content_xhtml ?? '',
+            'post_excerpt'       => is_string($cur->post_excerpt) ? $cur->post_excerpt : '',
+            'post_excerpt_xhtml' => is_string($cur->post_excerpt_xhtml) ? $cur->post_excerpt_xhtml : '',
+            'post_content'       => is_string($cur->post_content) ? $cur->post_content : '',
+            'post_content_xhtml' => is_string($cur->post_content_xhtml) ? $cur->post_content_xhtml : '',
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -195,8 +209,8 @@ class Revisions
 
         if ($insert) {
             $revisionCursor                              = App::db()->con()->openCursor(App::db()->con()->prefix() . 'revision');
-            $revisionCursor->revision_id                 = $revisionID;
-            $revisionCursor->post_id                     = $postID;
+            $revisionCursor->revision_id                 = $revision_id;
+            $revisionCursor->post_id                     = $post_id;
             $revisionCursor->user_id                     = App::auth()->userID();
             $revisionCursor->blog_id                     = App::blog()->id();
             $revisionCursor->revision_dt                 = date('Y-m-d H:i:s');
@@ -249,15 +263,15 @@ class Revisions
     /**
      * Remove entry revisions
      *
-     * @param      string       $postID       The post id
-     * @param      string       $type         The type
-     * @param      null|string  $redirectURL  The redirect url
+     * @param      int          $post_id       The post id
+     * @param      string       $type          The type
+     * @param      null|string  $redirect_url  The redirect url
      *
      * @throws     Exception
      */
-    public function purge(string $postID, string $type, ?string $redirectURL = null): void
+    public function purge(int $post_id, string $type, ?string $redirect_url = null): void
     {
-        if (!$this->canPurge($postID, $type)) {
+        if (!$this->canPurge($post_id, $type)) {
             throw new Exception(__('You are not allowed to delete revisions of this entry'));
         }
 
@@ -266,13 +280,13 @@ class Revisions
             $sql = new DeleteStatement();
             $sql
                 ->from(App::db()->con()->prefix() . self::REVISION_TABLE_NAME)
-                ->where('post_id = ' . $sql->quote($postID))
+                ->where('post_id = ' . $sql->quote((string) $post_id))
             ;
             $sql->delete();
 
-            if (!App::error()->flag() && $redirectURL !== null) {
+            if (!App::error()->flag() && $redirect_url !== null) {
                 App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));
-                Http::redirect(sprintf($redirectURL, $postID));
+                Http::redirect(sprintf($redirect_url, $post_id));
             }
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
@@ -282,39 +296,44 @@ class Revisions
     /**
      * Sets the patch.
      *
-     * @param      string     $postID           The post id
-     * @param      string     $revisionID       The revision id
-     * @param      string     $type             The type
-     * @param      string     $redirectURL      The redirect url
-     * @param      string     $beforeBehaviour  The before behaviour
-     * @param      string     $afterBehaviour   The after behaviour
+     * @param      int        $post_id           The post id
+     * @param      int        $revision_id       The revision id
+     * @param      string     $type              The type
+     * @param      string     $redirect_url      The redirect url
+     * @param      string     $before_behaviour  The before behaviour
+     * @param      string     $after_behaviour   The after behaviour
      *
      * @throws     Exception
      */
-    public function setPatch(string $postID, string $revisionID, string $type, string $redirectURL, string $beforeBehaviour, string $afterBehaviour): void
+    public function setPatch(int $post_id, int $revision_id, string $type, string $redirect_url, string $before_behaviour, string $after_behaviour): void
     {
-        if (!$this->canPatch($revisionID)) {
+        if (!$this->canPatch($revision_id)) {
             throw new Exception(__('You are not allowed to patch this entry with this revision'));
         }
 
         try {
-            $patch = $this->getPatch($postID, $revisionID, $type);
+            $patch = $this->getPatch($post_id, $revision_id, $type);
 
-            $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
+            $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
+
+            $post_dt           = is_string($post_dt = $rs->post_dt) ? $post_dt : '';
+            $post_selected     = is_numeric($post_selected = $rs->post_selected) ? (int) $post_selected : 0;
+            $post_open_comment = is_numeric($post_open_comment = $rs->post_open_comment) ? (int) $post_open_comment : 0;
+            $post_open_tb      = is_numeric($post_open_tb = $rs->post_open_tb) ? (int) $post_open_tb : 0;
 
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME);
 
             $cur->post_title        = $rs->post_title;
             $cur->cat_id            = $rs->cat_id ?: null;
-            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', (int) strtotime((string) $rs->post_dt)) : '';
+            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', (int) strtotime($post_dt)) : '';
             $cur->post_format       = $rs->post_format;
             $cur->post_password     = $rs->post_password;
             $cur->post_lang         = $rs->post_lang;
             $cur->post_notes        = $rs->post_notes;
             $cur->post_status       = $rs->post_status;
-            $cur->post_selected     = (int) $rs->post_selected;
-            $cur->post_open_comment = (int) $rs->post_open_comment;
-            $cur->post_open_tb      = (int) $rs->post_open_tb;
+            $cur->post_selected     = $post_selected;
+            $cur->post_open_comment = $post_open_comment;
+            $cur->post_open_tb      = $post_open_tb;
             $cur->post_type         = $rs->post_type;
 
             $cur->post_excerpt       = $patch['post_excerpt'];
@@ -323,14 +342,14 @@ class Revisions
             $cur->post_content_xhtml = $patch['post_content_xhtml'];
 
             # --BEHAVIOR-- adminBeforeXXXXUpdate
-            App::behavior()->callBehavior($beforeBehaviour, $cur, $postID);
+            App::behavior()->callBehavior($before_behaviour, $cur, $post_id);
 
-            App::auth()->sudo(App::blog()->updPost(...), $postID, $cur);
+            App::auth()->sudo(App::blog()->updPost(...), $post_id, $cur);
 
             # --BEHAVIOR-- adminAfterXXXXUpdate
-            App::behavior()->callBehavior($afterBehaviour, $cur, $postID);
+            App::behavior()->callBehavior($after_behaviour, $cur, $post_id);
 
-            Http::redirect(sprintf($redirectURL, $postID));
+            Http::redirect(sprintf($redirect_url, $post_id));
         } catch (Exception $exception) {
             App::error()->add($exception->getMessage());
         }
@@ -339,16 +358,21 @@ class Revisions
     /**
      * Gets the patch.
      *
-     * @param      string  $postID      The post id
-     * @param      string  $revisionID  The revision id
-     * @param      string  $type        The type
+     * @param      int     $post_id      The post id
+     * @param      int     $revision_id  The revision id
+     * @param      string  $type         The type
      *
-     * @return     array<string, string>   The patch.
+     * @return     array{
+     *                 post_excerpt: string,
+     *                 post_excerpt_xhtml: string,
+     *                 post_content: string,
+     *                 post_content_xhtml: string
+     *             }   The patch.
      */
-    public function getPatch(string $postID, string $revisionID, string $type): array
+    public function getPatch(int $post_id, int $revision_id, string $type): array
     {
         $params = [
-            'post_id'   => $postID,
+            'post_id'   => $post_id,
             'post_type' => $type,
         ];
 
@@ -356,10 +380,10 @@ class Revisions
         $revisions = $this->getRevisions($params);
 
         $patch = [
-            'post_excerpt'       => $rs->post_excerpt,
-            'post_excerpt_xhtml' => $rs->post_excerpt_xhtml,
-            'post_content'       => $rs->post_content,
-            'post_content_xhtml' => $rs->post_content_xhtml,
+            'post_excerpt'       => is_string($rs->post_excerpt) ? $rs->post_excerpt : '',
+            'post_excerpt_xhtml' => is_string($rs->post_excerpt_xhtml) ? $rs->post_excerpt_xhtml : '',
+            'post_content'       => is_string($rs->post_content) ? $rs->post_content : '',
+            'post_content_xhtml' => is_string($rs->post_content_xhtml) ? $rs->post_content_xhtml : '',
         ];
 
         $map = [
@@ -371,12 +395,24 @@ class Revisions
         ];
 
         while ($revisions->fetch()) {
-            foreach ($patch as $field => $value) {
-                $revisionField = $map[$field];
-                $patch[$field] = Diff::uniPatch($value, $revisions->{$revisionField});
+            $id = is_numeric($id = $revisions->revision_id) ? (int) $id : 0;
+            if ($id === 0) {
+                break;
             }
 
-            if ($revisions->revision_id === $revisionID) {
+            $revision = [
+                'revision_excerpt_diff'       => is_string($revisions->revision_excerpt_diff) ? $revisions->revision_excerpt_diff : '',
+                'revision_excerpt_xhtml_diff' => is_string($revisions->revision_excerpt_xhtml_diff) ? $revisions->revision_excerpt_xhtml_diff : '',
+                'revision_content_diff'       => is_string($revisions->revision_content_diff) ? $revisions->revision_content_diff : '',
+                'revision_content_xhtml_diff' => is_string($revisions->revision_content_xhtml_diff) ? $revisions->revision_content_xhtml_diff : '',
+            ];
+
+            foreach ($patch as $field => $value) {
+                $revisionField = $map[$field];
+                $patch[$field] = Diff::uniPatch($value, $revision[$revisionField]);
+            }
+
+            if ($id === $revision_id) {
                 break;
             }
         }
@@ -387,29 +423,29 @@ class Revisions
     /**
      * Determines ability to patch.
      *
-     * @param      string  $revisionID  The revision id
+     * @param      int     $revision_id  The revision id
      *
      * @return     bool    True if able to patch, False otherwise.
      */
-    protected function canPatch(string $revisionID): bool
+    protected function canPatch(int $revision_id): bool
     {
-        $rs = $this->getRevisions(['revision_id' => $revisionID]);
+        $rs = $this->getRevisions(['revision_id' => $revision_id]);
 
-        return $rs->canPatch();
+        return (bool) $rs->canPatch();
     }
 
     /**
      * Determines ability to purge.
      *
-     * @param      string  $postID  The post id
-     * @param      string  $type    The type
+     * @param      int     $post_id  The post id
+     * @param      string  $type     The type
      *
      * @return     bool    True if able to purge, False otherwise.
      */
-    protected function canPurge(string $postID, string $type): bool
+    protected function canPurge(int $post_id, string $type): bool
     {
-        $rs = App::blog()->getPosts(['post_id' => $postID, 'post_type' => $type]);
+        $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
-        return $rs->isEditable();
+        return (bool) $rs->isEditable();
     }
 }

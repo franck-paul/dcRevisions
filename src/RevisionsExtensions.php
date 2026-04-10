@@ -8,7 +8,7 @@
  *
  * @author TomTom, Franck Paul and contributors
  *
- * @copyright Franck Paul carnet.franck.paul@gmail.com
+ * @copyright Franck Paul contact@open-time.net
  * @copyright GPL-2.0 https://www.gnu.org/licenses/gpl-2.0.html
  */
 declare(strict_types=1);
@@ -34,10 +34,13 @@ class RevisionsExtensions
     public static function getDate(MetaRecord $rs, ?string $format = null): string
     {
         if ($format === null) {
-            $format = App::blog()->settings()->system->date_format;
+            $format = is_string($format = App::blog()->settings()->system->date_format) ? $format : '%F';
         }
 
-        return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
+        $revision_dt = is_string($revision_dt = $rs->revision_dt) ? $revision_dt : 'now';
+        $revision_tz = is_string($revision_tz = $rs->revision_tz) ? $revision_tz : null;
+
+        return Date::dt2str($format, $revision_dt, $revision_tz);
     }
 
     /**
@@ -51,10 +54,13 @@ class RevisionsExtensions
     public static function getTime(MetaRecord $rs, ?string $format = null): string
     {
         if ($format === null) {
-            $format = App::blog()->settings()->system->time_format;
+            $format = is_string($format = App::blog()->settings()->system->time_format) ? $format : '%T';
         }
 
-        return Date::dt2str($format, $rs->revision_dt, $rs->revision_tz);
+        $revision_dt = is_string($revision_dt = $rs->revision_dt) ? $revision_dt : 'now';
+        $revision_tz = is_string($revision_tz = $rs->revision_tz) ? $revision_tz : null;
+
+        return Date::dt2str($format, $revision_dt, $revision_tz);
     }
 
     /**
@@ -66,7 +72,12 @@ class RevisionsExtensions
      */
     public static function getAuthorCN(MetaRecord $rs): string
     {
-        return App::users()->getUserCN($rs->user_id, $rs->user_name, $rs->user_firstname, $rs->user_displayname);
+        $user_id          = is_string($user_id = $rs->user_id) ? $user_id : '';
+        $user_name        = is_string($user_name = $rs->user_name) ? $user_name : '';
+        $user_firstname   = is_string($user_firstname = $rs->user_firstname) ? $user_firstname : '';
+        $user_displayname = is_string($user_displayname = $rs->user_displayname) ? $user_displayname : '';
+
+        return App::users()->getUserCN($user_id, $user_name, $user_firstname, $user_displayname);
     }
 
     /**
@@ -79,15 +90,17 @@ class RevisionsExtensions
     public static function getAuthorLink(MetaRecord $rs): string
     {
         $res = '%1$s';
-        $url = $rs->user_url;
-        if ($url) {
+        $url = is_string($url = $rs->user_url) ? $url : '';
+        if ($url !== '') {
             $res = (new Link())
                 ->href('%2$s')
                 ->text('%1$s')
             ->render();
         }
 
-        return sprintf($res, Html::escapeHTML($rs->getAuthorCN()), Html::escapeHTML($url));
+        $author_cn = is_string($author_cn = $rs->getAuthorCN()) ? $author_cn : '';
+
+        return sprintf($res, Html::escapeHTML($author_cn), Html::escapeHTML($url));
     }
 
     /**
