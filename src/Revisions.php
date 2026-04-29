@@ -180,8 +180,7 @@ class Revisions
         $rs = new MetaRecord(App::db()->con()->select(
             'SELECT MAX(revision_id) FROM ' . App::db()->con()->prefix() . self::REVISION_TABLE_NAME
         ));
-        $revision_id = is_numeric($revision_id = $rs->f(0)) ? $revision_id : 0;
-        $revision_id++;
+        $revision_id = $rs->cardinal() + 1;
 
         $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
