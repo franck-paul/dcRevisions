@@ -59,6 +59,7 @@ class BackendRest
         if (!App::backend()->revisions instanceof Revisions) {
             throw new Exception(__('Revisions not initialized'));
         }
+
         $new = App::backend()->revisions->getPatch($post_id, $revision_id, $type);
 
         $rsp = new XmlTag();

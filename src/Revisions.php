@@ -97,6 +97,7 @@ class Revisions
                     $post_ids[] = $post_id;
                 }
             }
+
             if ($post_ids !== []) {
                 $sql->and('R.post_id ' . $sql->in($post_ids));
             }
@@ -112,6 +113,7 @@ class Revisions
                     $revision_ids[] = $revision_id;
                 }
             }
+
             if ($revision_ids !== []) {
                 $sql->and('R.revision_id ' . $sql->in($revision_ids));
             }
@@ -155,6 +157,7 @@ class Revisions
             if (isset($values[1])) {
                 $limit[1] = $values[1];
             }
+
             $sql->limit($limit);
         }
 
