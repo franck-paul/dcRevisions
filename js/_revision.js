@@ -80,8 +80,8 @@ dotclear.ready(() => {
               td.append(...dotclear.htmlToNodes(`<strong>${dotclear.dcRevisions.msg.content_identical}</strong>`));
             } else {
               let table = '<table class="preview-rev">';
-              table += renderRevision(excerpt_nodes, dotclear.dcRevisions.msg.excerpt, revisionId);
-              table += renderRevision(content_nodes, dotclear.dcRevisions.msg.content, revisionId);
+              table += renderRevision(excerpt_nodes, dotclear.dcRevisions.msg.excerpt);
+              table += renderRevision(content_nodes, dotclear.dcRevisions.msg.content);
               table += '</table>';
               td.append(...dotclear.htmlToNodes(table));
             }
