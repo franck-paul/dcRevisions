@@ -1,11 +1,11 @@
 <modules xmlns:da="http://dotaddict.org/da/">
   <module id="dcRevisions">
     <name>dcRevisions</name>
-    <version>8.0</version>
+    <version>8.1</version>
     <author>Tomtom, Franck Paul &amp; contributors</author>
     <desc>Allows entries&apos;s versionning</desc>
-    <date>2026-04-29T14:23:12+0200</date>
-    <file>https://github.com/franck-paul/dcRevisions/releases/download/8.0/plugin-dcRevisions-8.0.zip</file>
+    <date>2026-05-06T17:31:26+0200</date>
+    <file>https://github.com/franck-paul/dcRevisions/releases/download/8.1/plugin-dcRevisions-8.1.zip</file>
     <da:dcmin>2.38</da:dcmin>
     <da:details>https://dotclear.org/plugin/detail/dcRevisions</da:details>
     <da:support>https://github.com/franck-paul/dcRevisions</da:support>
