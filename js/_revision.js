@@ -90,7 +90,7 @@ dotclear.ready(() => {
             return;
           }
           line.classList.toggle('expand');
-          window.alert(xml.querySelector('message')?.textContent);
+          globalThis.alert(xml.querySelector('message')?.textContent);
         },
         {
           pid: postId,
