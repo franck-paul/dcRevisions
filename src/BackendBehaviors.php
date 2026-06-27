@@ -342,7 +342,7 @@ class BackendBehaviors
         if (!empty($post['dopurge'])) {
             // Do replacements
             $posts = $ap->getRS();
-            if ($posts->rows()) {
+            if ($posts->rows() !== []) {
                 while ($posts->fetch()) {
                     // Purge
                     if (App::backend()->revisions instanceof Revisions) {

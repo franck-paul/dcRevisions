@@ -88,32 +88,14 @@ class Revisions
         }
 
         if (!empty($params['post_id'])) {
-            $post_ids = [];
-            if (is_array($params['post_id'])) {
-                $post_ids = array_filter(array_map(fn ($item): int => is_numeric($item) ? (int) $item : 0, $params['post_id']));
-            } else {
-                $post_id = is_numeric($post_id = $params['post_id']) ? (int) $post_id : 0;
-                if ($post_id > 0) {
-                    $post_ids[] = $post_id;
-                }
-            }
-
+            $post_ids = $sql->sanitizeIn($params['post_id'], 'int', false);
             if ($post_ids !== []) {
                 $sql->and('R.post_id ' . $sql->in($post_ids));
             }
         }
 
         if (!empty($params['revision_id'])) {
-            $revision_ids = [];
-            if (is_array($params['revision_id'])) {
-                $revision_ids = array_filter(array_map(fn ($item): int => is_numeric($item) ? (int) $item : 0, $params['revision_id']));
-            } else {
-                $revision_id = is_numeric($revision_id = $params['revision_id']) ? (int) $revision_id : 0;
-                if ($revision_id > 0) {
-                    $revision_ids[] = $revision_id;
-                }
-            }
-
+            $revision_ids = $sql->sanitizeIn($params['revision_id'], 'int', false);
             if ($revision_ids !== []) {
                 $sql->and('R.revision_id ' . $sql->in($revision_ids));
             }
@@ -121,8 +103,10 @@ class Revisions
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && $params['post_type'] !== []) {
-                $post_types = array_filter(array_map(fn ($item): string => is_string($item) ? $item : '', $params['post_type']));
-                $sql->and('R.revision_type ' . $sql->in($post_types));
+                $post_types = $sql->sanitizeIn($params['post_type'], 'string', false);
+                if ($post_types !== []) {
+                    $sql->and('R.revision_type ' . $sql->in($post_types));
+                }
             } elseif (is_string($params['post_type']) && $params['post_type'] !== '') {
                 $sql->and('R.revision_type = ' . $sql->quote($params['post_type']));
             }

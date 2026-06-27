@@ -48,9 +48,9 @@ class Install
             $settings->put('enable', false, App::blogWorkspace()::NS_BOOL, 'Enable revisions', false, true);
 
             // --INSTALL AND UPDATE PROCEDURES--
-            $new_structure = App::db()->structure();
+            $struct = App::db()->structure();
 
-            $new_structure->revision
+            $struct->table(Revisions::REVISION_TABLE_NAME)
                 ->field('revision_id', 'bigint', 0, false)
                 ->field('post_id', 'bigint', 0, false)
                 ->field('user_id', 'varchar', 32, false)
@@ -62,17 +62,19 @@ class Install
                 ->field('revision_excerpt_xhtml_diff', 'text', 0, true, null)
                 ->field('revision_content_diff', 'text', 0, true, null)
                 ->field('revision_content_xhtml_diff', 'text', 0, true, null)
-            ;
 
-            $new_structure->revision->primary('pk_revision', 'revision_id');
+                ->primary('pk_revision', 'revision_id')
 
-            $new_structure->revision->index('idx_revision_post_id', 'btree', 'post_id');
+                ->index('idx_revision_post_id', 'btree', 'post_id');
 
-            $new_structure->revision->reference('fk_revision_post', 'post_id', App::blog()::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
-            $new_structure->revision->reference('fk_revision_blog', 'blog_id', App::blog()::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
+            $struct->table(Revisions::REVISION_TABLE_NAME)
+                ->reference('fk_revision_post', 'post_id', App::blog()::POST_TABLE_NAME, 'post_id', 'cascade', 'cascade');
+
+            $struct->table(Revisions::REVISION_TABLE_NAME)
+                ->reference('fk_revision_blog', 'blog_id', App::blog()::BLOG_TABLE_NAME, 'blog_id', 'cascade', 'cascade');
 
             $current_structure = App::db()->structure();
-            $current_structure->synchronize($new_structure);
+            $current_structure->synchronize($struct);
 
             // Init
         } catch (Exception $exception) {
