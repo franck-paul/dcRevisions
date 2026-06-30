@@ -303,10 +303,10 @@ class Revisions
 
             $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
-            $post_dt           = is_string($post_dt = $rs->post_dt) ? $post_dt : '';
-            $post_selected     = is_numeric($post_selected = $rs->post_selected) ? (int) $post_selected : 0;
-            $post_open_comment = is_numeric($post_open_comment = $rs->post_open_comment) ? (int) $post_open_comment : 0;
-            $post_open_tb      = is_numeric($post_open_tb = $rs->post_open_tb) ? (int) $post_open_tb : 0;
+            $post_dt           = $rs->strField('post_dt');
+            $post_selected     = $rs->intField('post_selected');
+            $post_open_comment = $rs->intField('post_open_comment');
+            $post_open_tb      = $rs->intField('post_open_tb');
 
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME);
 
@@ -367,10 +367,10 @@ class Revisions
         $revisions = $this->getRevisions($params);
 
         $patch = [
-            'post_excerpt'       => is_string($rs->post_excerpt) ? $rs->post_excerpt : '',
-            'post_excerpt_xhtml' => is_string($rs->post_excerpt_xhtml) ? $rs->post_excerpt_xhtml : '',
-            'post_content'       => is_string($rs->post_content) ? $rs->post_content : '',
-            'post_content_xhtml' => is_string($rs->post_content_xhtml) ? $rs->post_content_xhtml : '',
+            'post_excerpt'       => $rs->strField('post_excerpt'),
+            'post_excerpt_xhtml' => $rs->strField('post_excerpt_xhtml'),
+            'post_content'       => $rs->strField('post_content'),
+            'post_content_xhtml' => $rs->strField('post_content_xhtml'),
         ];
 
         $map = [
@@ -382,16 +382,16 @@ class Revisions
         ];
 
         while ($revisions->fetch()) {
-            $id = is_numeric($id = $revisions->revision_id) ? (int) $id : 0;
+            $id = $revisions->intField('revision_id');
             if ($id === 0) {
                 break;
             }
 
             $revision = [
-                'revision_excerpt_diff'       => is_string($revisions->revision_excerpt_diff) ? $revisions->revision_excerpt_diff : '',
-                'revision_excerpt_xhtml_diff' => is_string($revisions->revision_excerpt_xhtml_diff) ? $revisions->revision_excerpt_xhtml_diff : '',
-                'revision_content_diff'       => is_string($revisions->revision_content_diff) ? $revisions->revision_content_diff : '',
-                'revision_content_xhtml_diff' => is_string($revisions->revision_content_xhtml_diff) ? $revisions->revision_content_xhtml_diff : '',
+                'revision_excerpt_diff'       => $revisions->strField('revision_excerpt_diff'),
+                'revision_excerpt_xhtml_diff' => $revisions->strField('revision_excerpt_xhtml_diff'),
+                'revision_content_diff'       => $revisions->strField('revision_content_diff'),
+                'revision_content_xhtml_diff' => $revisions->strField('revision_content_xhtml_diff'),
             ];
 
             foreach ($patch as $field => $value) {
