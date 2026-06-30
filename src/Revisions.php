@@ -172,11 +172,12 @@ class Revisions
         $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
         $old = [
-            'post_excerpt'       => is_string($rs->post_excerpt) ? $rs->post_excerpt : '',
-            'post_excerpt_xhtml' => is_string($rs->post_excerpt_xhtml) ? $rs->post_excerpt_xhtml : '',
-            'post_content'       => is_string($rs->post_content) ? $rs->post_content : '',
-            'post_content_xhtml' => is_string($rs->post_content_xhtml) ? $rs->post_content_xhtml : '',
+            'post_excerpt'       => $rs->strField('post_excerpt'),
+            'post_excerpt_xhtml' => $rs->strField('post_excerpt_xhtml'),
+            'post_content'       => $rs->strField('post_content'),
+            'post_content_xhtml' => $rs->strField('post_content_xhtml'),
         ];
+
         $new = [
             'post_excerpt'       => is_string($cur->post_excerpt) ? $cur->post_excerpt : '',
             'post_excerpt_xhtml' => is_string($cur->post_excerpt_xhtml) ? $cur->post_excerpt_xhtml : '',

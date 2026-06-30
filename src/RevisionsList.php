@@ -112,7 +112,7 @@ class RevisionsList
         Date::setTZ('UTC');
 
         while ($this->rs->fetch()) {
-            $revision_id = is_numeric($revision_id = $this->rs->revision_id) ? (int) $revision_id : 0;
+            $revision_id = $this->rs->intField('revision_id');
             $author_link = is_string($author_link = $this->rs->getAuthorLink()) ? $author_link : '';
             $date        = is_string($date = $this->rs->getDate()) ? $date : '';
             $time        = is_string($time = $this->rs->getTime()) ? $time : '';

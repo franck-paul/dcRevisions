@@ -37,8 +37,10 @@ class RevisionsExtensions
             $format = is_string($format = App::blog()->settings()->system->date_format) ? $format : '%F';
         }
 
-        $revision_dt = is_string($revision_dt = $rs->revision_dt) ? $revision_dt : 'now';
-        $revision_tz = is_string($revision_tz = $rs->revision_tz) ? $revision_tz : null;
+        $revision_dt = $rs->strField('revision_dt');
+        $revision_dt = $rs->strField('revision_dt') ?: 'now';
+
+        $revision_tz = $rs->strField('revision_tz', true);
 
         return Date::dt2str($format, $revision_dt, $revision_tz);
     }
@@ -57,8 +59,8 @@ class RevisionsExtensions
             $format = is_string($format = App::blog()->settings()->system->time_format) ? $format : '%T';
         }
 
-        $revision_dt = is_string($revision_dt = $rs->revision_dt) ? $revision_dt : 'now';
-        $revision_tz = is_string($revision_tz = $rs->revision_tz) ? $revision_tz : null;
+        $revision_dt = $rs->strField('revision_dt') ?: 'now';
+        $revision_tz = $rs->strField('revision_tz', true);
 
         return Date::dt2str($format, $revision_dt, $revision_tz);
     }
@@ -72,12 +74,12 @@ class RevisionsExtensions
      */
     public static function getAuthorCN(MetaRecord $rs): string
     {
-        $user_id          = is_string($user_id = $rs->user_id) ? $user_id : '';
-        $user_name        = is_string($user_name = $rs->user_name) ? $user_name : '';
-        $user_firstname   = is_string($user_firstname = $rs->user_firstname) ? $user_firstname : '';
-        $user_displayname = is_string($user_displayname = $rs->user_displayname) ? $user_displayname : '';
-
-        return App::users()->getUserCN($user_id, $user_name, $user_firstname, $user_displayname);
+        return App::users()->getUserCN(
+            $rs->strField('user_id'),
+            $rs->strField('user_name'),
+            $rs->strField('user_firstname'),
+            $rs->strField('user_displayname')
+        );
     }
 
     /**
@@ -90,7 +92,7 @@ class RevisionsExtensions
     public static function getAuthorLink(MetaRecord $rs): string
     {
         $res = '%1$s';
-        $url = is_string($url = $rs->user_url) ? $url : '';
+        $url = $rs->strField('user_url');
         if ($url !== '') {
             $res = (new Link())
                 ->href('%2$s')
@@ -133,6 +135,6 @@ class RevisionsExtensions
         return App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_USAGE,
         ]), App::blog()->id())
-            && $rs->user_id == App::auth()->userID();
+            && $rs->strField('user_id') === App::auth()->userID();
     }
 }

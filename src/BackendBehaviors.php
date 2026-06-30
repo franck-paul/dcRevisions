@@ -86,7 +86,7 @@ class BackendBehaviors
      */
     public static function adminPostForm(?MetaRecord $post): string
     {
-        $id = isset($post) && !$post->isEmpty() && is_numeric($id = $post->post_id) ? (int) $id : 0;
+        $id = isset($post) && !$post->isEmpty() ? $post->intField('post_id') : 0;
 
         $url = sprintf(App::backend()->url()->get('admin.post', [
             'id'    => '%1$s',
@@ -183,7 +183,7 @@ class BackendBehaviors
     {
         $base_url = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page']);
 
-        $id = isset($post) && !$post->isEmpty() && is_numeric($id = $post->post_id) ? $id : 0;
+        $id = isset($post) && !$post->isEmpty() ? $post->intField('post_id') : 0;
 
         $url = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
 
@@ -346,7 +346,7 @@ class BackendBehaviors
                 while ($posts->fetch()) {
                     // Purge
                     if (App::backend()->revisions instanceof Revisions) {
-                        $post_id = is_numeric($post_id = $posts->post_id) ? (int) $post_id : 0;
+                        $post_id = $posts->intField('post_id');
                         if ($post_id > 0) {
                             App::backend()->revisions->purge($post_id, $type);
                         }
