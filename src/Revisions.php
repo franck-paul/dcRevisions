@@ -312,7 +312,7 @@ class Revisions
 
             $cur->post_title        = $rs->post_title;
             $cur->cat_id            = $rs->cat_id ?: null;
-            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', (int) strtotime($post_dt)) : '';
+            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', (int) strtotime((string) $post_dt)) : '';
             $cur->post_format       = $rs->post_format;
             $cur->post_password     = $rs->post_password;
             $cur->post_lang         = $rs->post_lang;
