@@ -34,7 +34,7 @@ class RevisionsExtensions
     public static function getDate(MetaRecord $rs, ?string $format = null): string
     {
         if ($format === null) {
-            $format = is_string($format = App::blog()->settings()->system->date_format) ? $format : '%F';
+            $format = App::blog()->settings()->get('system')->getStr('date_format', false) ?: '%F';
         }
 
         $revision_dt = $rs->strField('revision_dt');
@@ -56,7 +56,7 @@ class RevisionsExtensions
     public static function getTime(MetaRecord $rs, ?string $format = null): string
     {
         if ($format === null) {
-            $format = is_string($format = App::blog()->settings()->system->time_format) ? $format : '%T';
+            $format = App::blog()->settings()->get('system')->getStr('time_format', false) ?: '%T';
         }
 
         $revision_dt = $rs->strField('revision_dt') ?: 'now';

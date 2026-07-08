@@ -54,7 +54,7 @@ class BackendBehaviors
                 ->fields([
                     (new Para())
                         ->items([
-                            (new Checkbox('dcrevisions_enable', (bool) My::settings()->enable))
+                            (new Checkbox('dcrevisions_enable', My::settings()->getBool('enable', false)))
                                 ->value(1)
                                 ->label((new Label(__('Enable entries\' versionning on this blog'), Label::INSIDE_TEXT_AFTER))),
                         ]),

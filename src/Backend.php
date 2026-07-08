@@ -44,7 +44,7 @@ class Backend
 
         $settings = My::settings();
 
-        if ($settings->enable) {
+        if ($settings->getBool('enable')) {
             App::behavior()->addBehaviors([
                 'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),
                 'adminPostForm'    => BackendBehaviors::adminPostForm(...),
