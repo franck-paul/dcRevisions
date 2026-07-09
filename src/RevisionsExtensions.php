@@ -100,7 +100,7 @@ class RevisionsExtensions
             ->render();
         }
 
-        $author_cn = is_string($author_cn = $rs->getAuthorCN()) ? $author_cn : '';
+        $author_cn = $rs->getAuthorCN();
 
         return sprintf($res, Html::escapeHTML($author_cn), Html::escapeHTML($url));
     }

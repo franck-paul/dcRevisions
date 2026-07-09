@@ -113,9 +113,9 @@ class RevisionsList
 
         while ($this->rs->fetch()) {
             $revision_id = $this->rs->intField('revision_id');
-            $author_link = is_string($author_link = $this->rs->getAuthorLink()) ? $author_link : '';
-            $date        = is_string($date = $this->rs->getDate()) ? $date : '';
-            $time        = is_string($time = $this->rs->getTime()) ? $time : '';
+            $author_link = $this->rs->getAuthorLink();
+            $date        = $this->rs->getDate();
+            $time        = $this->rs->getTime();
 
             $lines[] = (new Tr('r' . $revision_id))
                 ->class(['line', 'wide', $this->rs->canPatch() ? '' : 'offline'])
