@@ -303,25 +303,20 @@ class Revisions
 
             $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
-            $post_dt           = $rs->strField('post_dt');
-            $post_selected     = $rs->intField('post_selected');
-            $post_open_comment = $rs->intField('post_open_comment');
-            $post_open_tb      = $rs->intField('post_open_tb');
-
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME);
 
-            $cur->post_title        = $rs->post_title;
-            $cur->cat_id            = $rs->cat_id ?: null;
-            $cur->post_dt           = $rs->post_dt ? date('Y-m-d H:i:00', (int) strtotime((string) $post_dt)) : '';
-            $cur->post_format       = $rs->post_format;
-            $cur->post_password     = $rs->post_password;
-            $cur->post_lang         = $rs->post_lang;
-            $cur->post_notes        = $rs->post_notes;
-            $cur->post_status       = $rs->post_status;
-            $cur->post_selected     = $post_selected;
-            $cur->post_open_comment = $post_open_comment;
-            $cur->post_open_tb      = $post_open_tb;
-            $cur->post_type         = $rs->post_type;
+            $cur->post_title        = $rs->strField('post_title', true);
+            $cur->cat_id            = $rs->intField('cat_id', true);
+            $cur->post_dt           = $rs->strField('post_dt', true);
+            $cur->post_format       = $rs->strField('post_format', true);
+            $cur->post_password     = $rs->strField('post_password', true);
+            $cur->post_lang         = $rs->strField('post_lang', true);
+            $cur->post_notes        = $rs->strField('post_notes', true);
+            $cur->post_status       = $rs->intField('post_status', true);
+            $cur->post_selected     = $rs->boolField('post_selected', true);
+            $cur->post_open_comment = $rs->boolField('post_open_comment', true);
+            $cur->post_open_tb      = $rs->boolField('post_open_tb', true);
+            $cur->post_type         = $rs->strField('post_type', true);
 
             $cur->post_excerpt       = $patch['post_excerpt'];
             $cur->post_excerpt_xhtml = $patch['post_excerpt_xhtml'];
