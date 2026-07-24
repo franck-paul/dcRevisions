@@ -12,8 +12,8 @@ declare(strict_types=1);
 
 use Dotclear\Helper\L10n;
 
-L10n::$locales['Allows entries\'s versionning'] = '';
 L10n::$locales['dcRevisions'] = '';
+L10n::$locales['Allows entries\'s versionning'] = '';
 L10n::$locales['Revisions'] = '';
 L10n::$locales['Enable entries\' versionning on this blog'] = '';
 L10n::$locales['Revisions:'] = '';
@@ -25,6 +25,7 @@ L10n::$locales['Rev.'] = '';
 L10n::$locales['Content identical'] = '';
 L10n::$locales['CAUTION: This operation will replace all the content by the previous one. Are you sure to want apply this patch on this page?'] = '';
 L10n::$locales['CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'] = '';
+L10n::$locales['Revisions not initialized'] = '';
 L10n::$locales['All revisions have been deleted.'] = '';
 L10n::$locales['Pages'] = '';
 L10n::$locales['Entries'] = '';
