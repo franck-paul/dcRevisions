@@ -99,7 +99,7 @@ msgid "Id"
 msgstr "Modification"
 
 msgid "Author"
-msgstr "Autrice ou auteur"
+msgstr "Auteur·ice"
 
 msgid "Date"
 msgstr "Date"
