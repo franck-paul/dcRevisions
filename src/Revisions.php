@@ -158,9 +158,9 @@ class Revisions
     /**
      * Adds a revision.
      *
-     * @param      Cursor  $cur     The pcur
-     * @param      int     $post_id  The post identifier
-     * @param      string  $type    The type
+     * @param      Cursor  $cur         Current cursor
+     * @param      int     $post_id     Post id
+     * @param      string  $type        Post type
      */
     public function addRevision(Cursor $cur, int $post_id, string $type): void
     {
@@ -179,10 +179,10 @@ class Revisions
         ];
 
         $new = [
-            'post_excerpt'       => is_string($cur->post_excerpt) ? $cur->post_excerpt : '',
-            'post_excerpt_xhtml' => is_string($cur->post_excerpt_xhtml) ? $cur->post_excerpt_xhtml : '',
-            'post_content'       => is_string($cur->post_content) ? $cur->post_content : '',
-            'post_content_xhtml' => is_string($cur->post_content_xhtml) ? $cur->post_content_xhtml : '',
+            'post_excerpt'       => $cur->strField('post_excerpt'),
+            'post_excerpt_xhtml' => $cur->strField('post_excerpt_xhtml'),
+            'post_content'       => $cur->strField('post_content'),
+            'post_content_xhtml' => $cur->strField('post_content_xhtml'),
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -195,22 +195,24 @@ class Revisions
         }
 
         if ($insert) {
-            $revisionCursor                              = App::db()->con()->openCursor(App::db()->con()->prefix() . 'revision');
-            $revisionCursor->revision_id                 = $revision_id;
-            $revisionCursor->post_id                     = $post_id;
-            $revisionCursor->user_id                     = App::auth()->userID();
-            $revisionCursor->blog_id                     = App::blog()->id();
-            $revisionCursor->revision_dt                 = date('Y-m-d H:i:s');
-            $revisionCursor->revision_tz                 = App::auth()->getInfo('user_tz');
-            $revisionCursor->revision_type               = $type;
-            $revisionCursor->revision_excerpt_diff       = $diff['post_excerpt'];
-            $revisionCursor->revision_excerpt_xhtml_diff = $diff['post_excerpt_xhtml'];
-            $revisionCursor->revision_content_diff       = $diff['post_content'];
-            $revisionCursor->revision_content_xhtml_diff = $diff['post_content_xhtml'];
+            $user_tz = is_string($user_tz = App::auth()->getInfo('user_tz')) ? $user_tz : 'UTC';
+
+            $cur_rev = App::db()->con()->openCursor(App::db()->con()->prefix() . 'revision');
+            $cur_rev->setIntField('revision_id', $revision_id);
+            $cur_rev->setIntField('post_id', $post_id);
+            $cur_rev->setStrField('user_id', App::auth()->userID());
+            $cur_rev->setStrField('blog_id', App::blog()->id());
+            $cur_rev->setStrField('revision_dt', date('Y-m-d H:i:s'));
+            $cur_rev->setStrField('revision_tz', $user_tz);
+            $cur_rev->setStrField('revision_type', $type);
+            $cur_rev->setStrField('revision_excerpt_diff', $diff['post_excerpt']);
+            $cur_rev->setStrField('revision_excerpt_xhtml_diff', $diff['post_excerpt_xhtml']);
+            $cur_rev->setStrField('revision_content_diff', $diff['post_content']);
+            $cur_rev->setStrField('revision_content_xhtml_diff', $diff['post_content_xhtml']);
 
             try {
                 App::db()->con()->writeLock(App::db()->con()->prefix() . 'revision');
-                $revisionCursor->insert();
+                $cur_rev->insert();
                 App::db()->con()->unlock();
             } catch (Exception $exception) {
                 App::error()->add($exception->getMessage());
@@ -305,23 +307,23 @@ class Revisions
 
             $cur = App::db()->con()->openCursor(App::db()->con()->prefix() . App::blog()::POST_TABLE_NAME);
 
-            $cur->post_title        = $rs->strField('post_title', true);
-            $cur->cat_id            = $rs->intField('cat_id', true);
-            $cur->post_dt           = $rs->strField('post_dt', true);
-            $cur->post_format       = $rs->strField('post_format', true);
-            $cur->post_password     = $rs->strField('post_password', true);
-            $cur->post_lang         = $rs->strField('post_lang', true);
-            $cur->post_notes        = $rs->strField('post_notes', true);
-            $cur->post_status       = $rs->intField('post_status', true);
-            $cur->post_selected     = $rs->boolField('post_selected', true);
-            $cur->post_open_comment = $rs->boolField('post_open_comment', true);
-            $cur->post_open_tb      = $rs->boolField('post_open_tb', true);
-            $cur->post_type         = $rs->strField('post_type', true);
+            $cur->setStrField('post_title', $rs->strField('post_title', true));
+            $cur->setIntField('cat_id', $rs->intField('cat_id', true));
+            $cur->setStrField('post_dt', $rs->strField('post_dt', true));
+            $cur->setStrField('post_format', $rs->strField('post_format', true));
+            $cur->setStrField('post_password', $rs->strField('post_password', true));
+            $cur->setStrField('post_lang', $rs->strField('post_lang', true));
+            $cur->setStrField('post_notes', $rs->strField('post_notes', true));
+            $cur->setIntField('post_status', $rs->intField('post_status', true));
+            $cur->setBoolField('post_selected', $rs->boolField('post_selected', true));
+            $cur->setBoolField('post_open_comment', $rs->boolField('post_open_comment', true));
+            $cur->setBoolField('post_open_tb', $rs->boolField('post_open_tb', true));
+            $cur->setStrField('post_type', $rs->strField('post_type', true));
 
-            $cur->post_excerpt       = $patch['post_excerpt'];
-            $cur->post_excerpt_xhtml = $patch['post_excerpt_xhtml'];
-            $cur->post_content       = $patch['post_content'];
-            $cur->post_content_xhtml = $patch['post_content_xhtml'];
+            $cur->setStrField('post_excerpt', $patch['post_excerpt']);
+            $cur->setStrField('post_excerpt_xhtml', $patch['post_excerpt_xhtml']);
+            $cur->setStrField('post_content', $patch['post_content']);
+            $cur->setStrField('post_content_xhtml', $patch['post_content_xhtml']);
 
             # --BEHAVIOR-- adminBeforeXXXXUpdate
             App::behavior()->callBehavior($before_behaviour, $cur, $post_id);
