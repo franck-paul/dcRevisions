@@ -26,19 +26,19 @@ class RevisionsExtensions
     /**
      * Gets the date.
      *
-     * @param      MetaRecord     $rs         Invisible parameter
-     * @param      null|string  $format     The format
+     * @param      MetaRecord       $metaRecord     Invisible parameter
+     * @param      null|string      $format         The format
      *
      * @return     string    The date.
      */
-    public static function getDate(MetaRecord $rs, ?string $format = null): string
+    public static function getDate(MetaRecord $metaRecord, ?string $format = null): string
     {
         $format ??= App::blog()->settings()->get('system')->getStr('date_format', false) ?: '%F';
 
-        $revision_dt = $rs->strField('revision_dt');
-        $revision_dt = $rs->strField('revision_dt') ?: 'now';
+        $revision_dt = $metaRecord->strField('revision_dt');
+        $revision_dt = $metaRecord->strField('revision_dt') ?: 'now';
 
-        $revision_tz = $rs->strField('revision_tz', true);
+        $revision_tz = $metaRecord->strField('revision_tz', true);
 
         return Date::dt2str($format, $revision_dt, $revision_tz);
     }
@@ -46,17 +46,17 @@ class RevisionsExtensions
     /**
      * Gets the time.
      *
-     * @param      MetaRecord     $rs      Invisible parameter
+     * @param      MetaRecord     $metaRecord      Invisible parameter
      * @param      null|string  $format  The format
      *
      * @return     string       The time.
      */
-    public static function getTime(MetaRecord $rs, ?string $format = null): string
+    public static function getTime(MetaRecord $metaRecord, ?string $format = null): string
     {
         $format ??= App::blog()->settings()->get('system')->getStr('time_format', false) ?: '%T';
 
-        $revision_dt = $rs->strField('revision_dt') ?: 'now';
-        $revision_tz = $rs->strField('revision_tz', true);
+        $revision_dt = $metaRecord->strField('revision_dt') ?: 'now';
+        $revision_tz = $metaRecord->strField('revision_tz', true);
 
         return Date::dt2str($format, $revision_dt, $revision_tz);
     }
@@ -64,31 +64,31 @@ class RevisionsExtensions
     /**
      * Gets the author CN.
      *
-     * @param      MetaRecord  $rs     Invisible parameter
+     * @param      MetaRecord  $metaRecord     Invisible parameter
      *
      * @return     string    The author CN.
      */
-    public static function getAuthorCN(MetaRecord $rs): string
+    public static function getAuthorCN(MetaRecord $metaRecord): string
     {
         return App::users()->getUserCN(
-            $rs->strField('user_id'),
-            $rs->strField('user_name'),
-            $rs->strField('user_firstname'),
-            $rs->strField('user_displayname')
+            $metaRecord->strField('user_id'),
+            $metaRecord->strField('user_name'),
+            $metaRecord->strField('user_firstname'),
+            $metaRecord->strField('user_displayname')
         );
     }
 
     /**
      * Gets the author link.
      *
-     * @param      MetaRecord  $rs     Invisible parameter
+     * @param      MetaRecord  $metaRecord     Invisible parameter
      *
      * @return     string    The author link.
      */
-    public static function getAuthorLink(MetaRecord $rs): string
+    public static function getAuthorLink(MetaRecord $metaRecord): string
     {
         $res = '%1$s';
-        $url = $rs->strField('user_url');
+        $url = $metaRecord->strField('user_url');
         if ($url !== '') {
             $res = (new Link())
                 ->href('%2$s')
@@ -96,7 +96,7 @@ class RevisionsExtensions
             ->render();
         }
 
-        $author_cn = $rs->getAuthorCN();
+        $author_cn = $metaRecord->getAuthorCN();
 
         return sprintf($res, Html::escapeHTML($author_cn), Html::escapeHTML($url));
     }
@@ -104,11 +104,11 @@ class RevisionsExtensions
     /**
      * Determines ability to patch.
      *
-     * @param      MetaRecord  $rs     Invisible parameter
+     * @param      MetaRecord  $metaRecord     Invisible parameter
      *
      * @return     bool      True if able to patch, False otherwise.
      */
-    public static function canPatch(MetaRecord $rs): bool
+    public static function canPatch(MetaRecord $metaRecord): bool
     {
         # If user is super admin, true
         if (App::auth()->isSuperAdmin()) {
@@ -123,7 +123,7 @@ class RevisionsExtensions
         }
 
         # No user id in result ? false
-        if (!$rs->exists('user_id')) {
+        if (!$metaRecord->exists('user_id')) {
             return false;
         }
 
@@ -131,6 +131,6 @@ class RevisionsExtensions
         return App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_USAGE,
         ]), App::blog()->id())
-            && $rs->strField('user_id') === App::auth()->userID();
+            && $metaRecord->strField('user_id') === App::auth()->userID();
     }
 }

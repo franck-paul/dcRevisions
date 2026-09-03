@@ -82,11 +82,11 @@ class BackendBehaviors
     /**
      * Add revision form on entry form
      *
-     * @param      MetaRecord|null  $post   The post
+     * @param      MetaRecord|null  $metaRecord   The post
      */
-    public static function adminPostForm(?MetaRecord $post): string
+    public static function adminPostForm(?MetaRecord $metaRecord): string
     {
-        $id = isset($post) && !$post->isEmpty() ? $post->intField('post_id') : 0;
+        $id = isset($metaRecord) && !$metaRecord->isEmpty() ? $metaRecord->intField('post_id') : 0;
 
         $url = sprintf(App::backend()->url()->get('admin.post', [
             'id'    => '%1$s',
@@ -109,7 +109,7 @@ class BackendBehaviors
             $rs = App::backend()->revisions->getRevisions($params);
         }
 
-        $list = new RevisionsList($rs);
+        $revisionsList = new RevisionsList($rs);
 
         echo (new Div('revisions-area'))
             ->class('area')
@@ -117,8 +117,8 @@ class BackendBehaviors
                 (new Details('revisions-details'))
                     ->summary(new Summary(__('Revisions:')))
                     ->items([
-                        (new Text(null, $list->display($url))),
-                        $list->count() > 0 ?
+                        (new Text(null, $revisionsList->display($url))),
+                        $revisionsList->count() > 0 ?
                         (new Link('revpurge'))
                             ->href($purge_url)
                             ->class(['button', 'delete'])
@@ -156,14 +156,14 @@ class BackendBehaviors
     /**
      * Add a revision before post update
      *
-     * @param      cursor       $cur       The cursor
+     * @param      cursor       $cursor       The cursor
      * @param      string|int   $post_id   The post identifier
      */
-    public static function adminBeforePostUpdate(Cursor $cur, string|int $post_id): string
+    public static function adminBeforePostUpdate(Cursor $cursor, string|int $post_id): string
     {
         try {
             if (App::backend()->revisions instanceof Revisions) {
-                App::backend()->revisions->addRevision($cur, (int) $post_id, 'post');
+                App::backend()->revisions->addRevision($cursor, (int) $post_id, 'post');
             } else {
                 throw new Exception(__('Revisions not initialized'));
             }
@@ -177,13 +177,13 @@ class BackendBehaviors
     /**
      * Add revision form on page form
      *
-     * @param      MetaRecord|null  $post   The post
+     * @param      MetaRecord|null  $metaRecord   The post
      */
-    public static function adminPageForm(?MetaRecord $post): string
+    public static function adminPageForm(?MetaRecord $metaRecord): string
     {
         $base_url = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page']);
 
-        $id = isset($post) && !$post->isEmpty() ? $post->intField('post_id') : 0;
+        $id = isset($metaRecord) && !$metaRecord->isEmpty() ? $metaRecord->intField('post_id') : 0;
 
         $url = sprintf($base_url . '&amp;id=%1$s&amp;patch=%2$s', $id, '%s');
 
@@ -204,7 +204,7 @@ class BackendBehaviors
             $rs = MetaRecord::newFromArray([]);
         }
 
-        $list = new RevisionsList($rs);
+        $revisionsList = new RevisionsList($rs);
 
         echo (new Div('revisions-area'))
             ->class('area')
@@ -212,8 +212,8 @@ class BackendBehaviors
                 (new Details('revisions-details'))
                     ->summary(new Summary(__('Revisions:')))
                     ->items([
-                        (new Text(null, $list->display($url))),
-                        $list->count() > 0 ?
+                        (new Text(null, $revisionsList->display($url))),
+                        $revisionsList->count() > 0 ?
                         (new Link('revpurge'))
                             ->href($purge_url)
                             ->class(['button', 'delete'])
@@ -251,14 +251,14 @@ class BackendBehaviors
     /**
      * Add a revision before page update
      *
-     * @param      cursor       $cur       The cursor
+     * @param      cursor       $cursor       The cursor
      * @param      string|int   $post_id   The post identifier
      */
-    public static function adminBeforePageUpdate(Cursor $cur, string|int $post_id): string
+    public static function adminBeforePageUpdate(Cursor $cursor, string|int $post_id): string
     {
         try {
             if (App::backend()->revisions instanceof Revisions) {
-                App::backend()->revisions->addRevision($cur, (int) $post_id, 'page');
+                App::backend()->revisions->addRevision($cursor, (int) $post_id, 'page');
             } else {
                 throw new Exception(__('Revisions not initialized'));
             }
@@ -272,15 +272,15 @@ class BackendBehaviors
     /**
      * Add action for posts
      *
-     * @param      ActionsPosts  $ap     Posts' actions
+     * @param      ActionsPosts  $actionsPosts     Posts' actions
      */
-    public static function adminPostsActions(ActionsPosts $ap): string
+    public static function adminPostsActions(ActionsPosts $actionsPosts): string
     {
         // Add menuitem in actions dropdown list
         if (App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $ap->addAction(
+            $actionsPosts->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
                 BackendBehaviors::adminPostsDoReplacements(...)
             );
@@ -292,15 +292,15 @@ class BackendBehaviors
     /**
      * Add action for pages
      *
-     * @param      PagesBackendActions  $ap     Pages' actions
+     * @param      PagesBackendActions  $pagesBackendActions     Pages' actions
      */
-    public static function adminPagesActions(PagesBackendActions $ap): string
+    public static function adminPagesActions(PagesBackendActions $pagesBackendActions): string
     {
         // Add menuitem in actions dropdown list
         if (App::auth()->check(App::auth()->makePermissions([
             App::auth()::PERMISSION_CONTENT_ADMIN,
         ]), App::blog()->id())) {
-            $ap->addAction(
+            $pagesBackendActions->addAction(
                 [__('Revisions') => [__('Purge all revisions') => 'revpurge']],
                 BackendBehaviors::adminPagesDoReplacements(...)
             );
@@ -312,36 +312,39 @@ class BackendBehaviors
     /**
      * Do posts action
      *
-     * @param      ActionsPosts                 $ap     Posts' actions
-     * @param      ArrayObject<string, mixed>   $post   The post
+     * @param      ActionsPosts                 $actionsPosts     Posts' actions
+     * @param      ArrayObject<string, mixed>   $arrayObject   The post
      */
-    public static function adminPostsDoReplacements(ActionsPosts $ap, ArrayObject $post): void
+    public static function adminPostsDoReplacements(ActionsPosts $actionsPosts, ArrayObject $arrayObject): void
     {
-        self::adminEntriesDoReplacements($ap, $post, 'post');
+        self::adminEntriesDoReplacements($actionsPosts, $arrayObject, 'post');
     }
 
     /**
      * Do pages action
      *
-     * @param      PagesBackendActions          $ap     Pages' actions
-     * @param      ArrayObject<string, mixed>   $post   The post
+     * @param      PagesBackendActions          $pagesBackendActions     Pages' actions
+     * @param      ArrayObject<string, mixed>   $arrayObject   The post
      */
-    public static function adminPagesDoReplacements(PagesBackendActions $ap, ArrayObject $post): void
+    public static function adminPagesDoReplacements(PagesBackendActions $pagesBackendActions, ArrayObject $arrayObject): void
     {
-        self::adminEntriesDoReplacements($ap, $post, 'page');
+        self::adminEntriesDoReplacements($pagesBackendActions, $arrayObject, 'page');
     }
 
     /**
      * Do posts/pages action
      *
-     * @param      ActionsPosts|PagesBackendActions     $ap     Posts'/Pages' actions
-     * @param      ArrayObject<string, mixed>           $post   The post
+     * @param      ActionsPosts|PagesBackendActions     $actionsPostsPages     Posts'/Pages' actions
+     * @param      ArrayObject<string, mixed>           $arrayObject   The post
      */
-    private static function adminEntriesDoReplacements(ActionsPosts|PagesBackendActions $ap, ArrayObject $post, string $type = 'post'): void
-    {
-        if (!empty($post['dopurge'])) {
+    private static function adminEntriesDoReplacements(
+        ActionsPosts|PagesBackendActions $actionsPostsPages,
+        ArrayObject $arrayObject,
+        string $type = 'post'
+    ): void {
+        if (!empty($arrayObject['dopurge'])) {
             // Do replacements
-            $posts = $ap->getRS();
+            $posts = $actionsPostsPages->getRS();
             if ($posts->rows() !== []) {
                 while ($posts->fetch()) {
                     // Purge
@@ -356,14 +359,14 @@ class BackendBehaviors
                 }
 
                 App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));
-                $ap->redirect(true);
+                $actionsPostsPages->redirect(true);
             } else {
-                $ap->redirect();
+                $actionsPostsPages->redirect();
             }
         } else {
             // Ask confirmation for replacements
             if ($type === 'page') {
-                $ap->beginPage(
+                $actionsPostsPages->beginPage(
                     App::backend()->page()->breadcrumb(
                         [
                             Html::escapeHTML(App::blog()->name()) => '',
@@ -373,7 +376,7 @@ class BackendBehaviors
                     )
                 );
             } else {
-                $ap->beginPage(
+                $actionsPostsPages->beginPage(
                     App::backend()->page()->breadcrumb(
                         [
                             Html::escapeHTML(App::blog()->name()) => '',
@@ -387,13 +390,13 @@ class BackendBehaviors
             App::backend()->notices()->warning(__('CAUTION: This operation will delete all the revisions. Are you sure to want to do this?'), false, false);
 
             echo (new Form('frm_rem_series'))
-                ->action($ap->getURI())
+                ->action($actionsPostsPages->getURI())
                 ->method('post')
                 ->items([
-                    $ap->checkboxes(),
+                    $actionsPostsPages->checkboxes(),
                     (new Para())
                         ->items([
-                            ...$ap->hiddenFields(),
+                            ...$actionsPostsPages->hiddenFields(),
                             App::nonce()->formNonce(),
                             (new Hidden('action', 'revpurge')),
                             (new Hidden('dopurge', 'true')),
@@ -402,7 +405,7 @@ class BackendBehaviors
                 ])
             ->render();
 
-            $ap->endPage();
+            $actionsPostsPages->endPage();
         }
     }
 }

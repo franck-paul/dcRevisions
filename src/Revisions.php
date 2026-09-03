@@ -49,12 +49,12 @@ class Revisions
      */
     public function getRevisions(array $params, bool $count_only = false): MetaRecord
     {
-        $sql = new SelectStatement();
+        $selectStatement = new SelectStatement();
 
         if ($count_only) {
-            $sql->column($sql->count('revision_id'));
+            $selectStatement->column($selectStatement->count('revision_id'));
         } else {
-            $sql->columns([
+            $selectStatement->columns([
                 'R.revision_id',
                 'R.post_id',
                 'R.user_id',
@@ -72,55 +72,55 @@ class Revisions
             ]);
         }
 
-        $sql
-            ->from($sql->as(App::db()->con()->prefix() . self::REVISION_TABLE_NAME, 'R'))
+        $selectStatement
+            ->from($selectStatement->as(App::db()->con()->prefix() . self::REVISION_TABLE_NAME, 'R'))
             ->join(
                 (new JoinStatement())
-                    ->from($sql->as(App::db()->con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
+                    ->from($selectStatement->as(App::db()->con()->prefix() . App::auth()::USER_TABLE_NAME, 'U'))
                     ->on('R.user_id = U.user_id')
                     ->statement()
             )
-            ->where('R.blog_id = ' . $sql->quote(App::blog()->id()))
+            ->where('R.blog_id = ' . $selectStatement->quote(App::blog()->id()))
         ;
 
         if (!empty($params['from']) && is_string($params['from'])) {
-            $sql->from($sql->escape($params['from']));
+            $selectStatement->from($selectStatement->escape($params['from']));
         }
 
         if (!empty($params['post_id'])) {
-            $post_ids = $sql->sanitizeIn($params['post_id'], 'int', false);
+            $post_ids = $selectStatement->sanitizeIn($params['post_id'], 'int', false);
             if ($post_ids !== []) {
-                $sql->and('R.post_id ' . $sql->in($post_ids));
+                $selectStatement->and('R.post_id ' . $selectStatement->in($post_ids));
             }
         }
 
         if (!empty($params['revision_id'])) {
-            $revision_ids = $sql->sanitizeIn($params['revision_id'], 'int', false);
+            $revision_ids = $selectStatement->sanitizeIn($params['revision_id'], 'int', false);
             if ($revision_ids !== []) {
-                $sql->and('R.revision_id ' . $sql->in($revision_ids));
+                $selectStatement->and('R.revision_id ' . $selectStatement->in($revision_ids));
             }
         }
 
         if (isset($params['post_type'])) {
             if (is_array($params['post_type']) && $params['post_type'] !== []) {
-                $post_types = $sql->sanitizeIn($params['post_type'], 'string', false);
+                $post_types = $selectStatement->sanitizeIn($params['post_type'], 'string', false);
                 if ($post_types !== []) {
-                    $sql->and('R.revision_type ' . $sql->in($post_types));
+                    $selectStatement->and('R.revision_type ' . $selectStatement->in($post_types));
                 }
             } elseif (is_string($params['post_type']) && $params['post_type'] !== '') {
-                $sql->and('R.revision_type = ' . $sql->quote($params['post_type']));
+                $selectStatement->and('R.revision_type = ' . $selectStatement->quote($params['post_type']));
             }
         }
 
         if (!empty($params['sql']) && is_string($params['sql'])) {
-            $sql->sql($params['sql']);
+            $selectStatement->sql($params['sql']);
         }
 
         if (!$count_only) {
             if (!empty($params['order']) && is_string($params['order'])) {
-                $sql->order($sql->escape($params['order']));
+                $selectStatement->order($selectStatement->escape($params['order']));
             } else {
-                $sql->order('revision_dt DESC');
+                $selectStatement->order('revision_dt DESC');
             }
         }
 
@@ -142,10 +142,10 @@ class Revisions
                 $limit[1] = $values[1];
             }
 
-            $sql->limit($limit);
+            $selectStatement->limit($limit);
         }
 
-        $rs = $sql->select();
+        $rs = $selectStatement->select();
         if ($rs) {
             $rs->extend(RevisionsExtensions::class);
         } else {
@@ -158,11 +158,11 @@ class Revisions
     /**
      * Adds a revision.
      *
-     * @param      Cursor  $cur         Current cursor
+     * @param      Cursor  $cursor         Current cursor
      * @param      int     $post_id     Post id
      * @param      string  $type        Post type
      */
-    public function addRevision(Cursor $cur, int $post_id, string $type): void
+    public function addRevision(Cursor $cursor, int $post_id, string $type): void
     {
         $rs = new MetaRecord(App::db()->con()->select(
             'SELECT MAX(revision_id) FROM ' . App::db()->con()->prefix() . self::REVISION_TABLE_NAME
@@ -179,10 +179,10 @@ class Revisions
         ];
 
         $new = [
-            'post_excerpt'       => $cur->strField('post_excerpt'),
-            'post_excerpt_xhtml' => $cur->strField('post_excerpt_xhtml'),
-            'post_content'       => $cur->strField('post_content'),
-            'post_content_xhtml' => $cur->strField('post_content_xhtml'),
+            'post_excerpt'       => $cursor->strField('post_excerpt'),
+            'post_excerpt_xhtml' => $cursor->strField('post_excerpt_xhtml'),
+            'post_content'       => $cursor->strField('post_content'),
+            'post_content_xhtml' => $cursor->strField('post_content_xhtml'),
         ];
 
         $diff = $this->getDiff($new, $old);
@@ -266,12 +266,12 @@ class Revisions
 
         try {
             // Purge all revisions of the entry
-            $sql = new DeleteStatement();
-            $sql
+            $deleteStatement = new DeleteStatement();
+            $deleteStatement
                 ->from(App::db()->con()->prefix() . self::REVISION_TABLE_NAME)
-                ->where('post_id = ' . $sql->quote((string) $post_id))
+                ->where('post_id = ' . $deleteStatement->quote((string) $post_id))
             ;
-            $sql->delete();
+            $deleteStatement->delete();
 
             if (!App::error()->flag() && $redirect_url !== null) {
                 App::backend()->notices()->addSuccessNotice(__('All revisions have been deleted.'));
@@ -360,8 +360,8 @@ class Revisions
             'post_type' => $type,
         ];
 
-        $rs        = App::blog()->getPosts($params);
-        $revisions = $this->getRevisions($params);
+        $rs         = App::blog()->getPosts($params);
+        $metaRecord = $this->getRevisions($params);
 
         $patch = [
             'post_excerpt'       => $rs->strField('post_excerpt'),
@@ -378,17 +378,17 @@ class Revisions
             'post_content_xhtml' => 'revision_content_xhtml_diff',
         ];
 
-        while ($revisions->fetch()) {
-            $id = $revisions->intField('revision_id');
+        while ($metaRecord->fetch()) {
+            $id = $metaRecord->intField('revision_id');
             if ($id === 0) {
                 break;
             }
 
             $revision = [
-                'revision_excerpt_diff'       => $revisions->strField('revision_excerpt_diff'),
-                'revision_excerpt_xhtml_diff' => $revisions->strField('revision_excerpt_xhtml_diff'),
-                'revision_content_diff'       => $revisions->strField('revision_content_diff'),
-                'revision_content_xhtml_diff' => $revisions->strField('revision_content_xhtml_diff'),
+                'revision_excerpt_diff'       => $metaRecord->strField('revision_excerpt_diff'),
+                'revision_excerpt_xhtml_diff' => $metaRecord->strField('revision_excerpt_xhtml_diff'),
+                'revision_content_diff'       => $metaRecord->strField('revision_content_diff'),
+                'revision_content_xhtml_diff' => $metaRecord->strField('revision_content_xhtml_diff'),
             ];
 
             foreach ($patch as $field => $value) {
@@ -413,9 +413,9 @@ class Revisions
      */
     protected function canPatch(int $revision_id): bool
     {
-        $rs = $this->getRevisions(['revision_id' => $revision_id]);
+        $metaRecord = $this->getRevisions(['revision_id' => $revision_id]);
 
-        return (bool) $rs->canPatch();
+        return (bool) $metaRecord->canPatch();
     }
 
     /**

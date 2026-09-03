@@ -62,12 +62,12 @@ class BackendRest
 
         $new = App::backend()->revisions->getPatch($post_id, $revision_id, $type);
 
-        $rsp = new XmlTag();
+        $xmlTag = new XmlTag();
         foreach ($old as $field => $value) {
-            $rsp->insertNode(self::buildNode($value, $new[$field], 2, $field));
+            $xmlTag->insertNode(self::buildNode($value, $new[$field], 2, $field));
         }
 
-        return $rsp;
+        return $xmlTag;
     }
 
     /**
