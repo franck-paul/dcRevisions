@@ -145,12 +145,8 @@ class Revisions
             $selectStatement->limit($limit);
         }
 
-        $rs = $selectStatement->select();
-        if ($rs) {
-            $rs->extend(RevisionsExtensions::class);
-        } else {
-            $rs = MetaRecord::newFromArray([]);
-        }
+        $rs = $selectStatement->select() ?? MetaRecord::newFromArray([]);
+        $rs->extend(RevisionsExtensions::class);
 
         return $rs;
     }
