@@ -53,7 +53,8 @@ table.preview-rev td.center {
 }
 
 table.preview-rev td.col-line {
-  text-align: center;
+  text-align: right;
+  padding-inline-end: 1em;
 }
 
 table.preview-rev td.context,
