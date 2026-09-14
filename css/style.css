@@ -1,9 +1,9 @@
 #revisions-area {
-  padding-bottom: 1em;
+  padding-block-end: 1em;
 }
 
 #revisions-area p.form-note {
-  margin-top: 0.5em;
+  margin-block-start: 0.5em;
 }
 
 table#revisions-list {
@@ -33,7 +33,7 @@ table.preview-rev thead {
 }
 
 table.preview-rev thead tr.rev-number {
-  border-bottom: 1px solid #999;
+  border-block-end: 1px solid #999;
 }
 
 table.preview-rev thead tr.rev-header th,
@@ -53,7 +53,7 @@ table.preview-rev td.center {
 }
 
 table.preview-rev td.col-line {
-  text-align: right;
+  text-align: end;
   padding-inline-end: 1em;
 }
 
@@ -61,7 +61,7 @@ table.preview-rev td.context,
 table.preview-rev td.insert,
 table.preview-rev td.delete,
 table.preview-rev td.skip {
-  border-left: 1px solid #999;
+  border-inline-start: 1px solid #999;
 }
 
 /* Insert line */
