@@ -35,9 +35,7 @@ class RevisionsExtensions
     {
         $format ??= App::blog()->settings()->get('system')->getStr('date_format', false) ?: '%F';
 
-        $revision_dt = $metaRecord->strField('revision_dt');
         $revision_dt = $metaRecord->strField('revision_dt') ?: 'now';
-
         $revision_tz = $metaRecord->strField('revision_tz', true);
 
         return Date::dt2str($format, $revision_dt, $revision_tz);
