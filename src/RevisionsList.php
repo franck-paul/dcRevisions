@@ -148,7 +148,7 @@ class RevisionsList
                                 ->title(__('Apply patch'))
                                 ->class('patch')
                                 ->items([
-                                    (new Img(urldecode((string) App::backend()->page()->getPF('dcRevisions/images/apply.png'))))
+                                    (new Img(urldecode(App::backend()->page()->getPF('dcRevisions/images/apply.png'))))
                                         ->alt(__('Apply patch')),
                                 ]) :
                             (new None()),

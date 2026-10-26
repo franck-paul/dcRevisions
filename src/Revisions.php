@@ -411,7 +411,7 @@ class Revisions
     {
         $metaRecord = $this->getRevisions(['revision_id' => $revision_id]);
 
-        return (bool) $metaRecord->canPatch();
+        return $metaRecord->canPatch();
     }
 
     /**
@@ -426,6 +426,6 @@ class Revisions
     {
         $rs = App::blog()->getPosts(['post_id' => $post_id, 'post_type' => $type]);
 
-        return (bool) $rs->isEditable();
+        return $rs->isEditable();
     }
 }
