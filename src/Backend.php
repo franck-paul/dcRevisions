@@ -44,7 +44,7 @@ class Backend
 
         $settings = My::settings();
 
-        if ($settings->getBool('enable')) {
+        if ($settings->getBool('enable', false)) {
             App::behavior()->addBehaviors([
                 'adminPostHeaders' => BackendBehaviors::adminPostHeaders(...),
                 'adminPostForm'    => BackendBehaviors::adminPostForm(...),
@@ -72,7 +72,7 @@ class Backend
                 $id = is_numeric($id = $_GET['id']) ? (int) $id : 0;
                 if ($id > 0) {
                     $request_uri = isset($_SERVER['REQUEST_URI']) && is_string($request_uri = $_SERVER['REQUEST_URI']) ? $request_uri : '';
-                    if ($request_uri !== '' && preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $request_uri)) {
+                    if ($request_uri !== '' && (bool) preg_match('/index.php\?process=Post\&id=\d+(.*)$/', $request_uri)) {
                         // It's a post
                         $redir_url = App::backend()->url()->get('admin.post', ['id' => '%s'], '&', true);
                         if (isset($_GET['patch'])) {
@@ -84,7 +84,7 @@ class Backend
                             // Purge
                             App::backend()->revisions->purge($id, 'post', $redir_url);
                         }
-                    } elseif (preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $request_uri)) {
+                    } elseif ((bool) preg_match('/index.php\?process=Plugin\&p=pages\&act=page\&id=\d+(.*)$/', $request_uri)) {
                         // It's a page
                         $redir_url = App::backend()->url()->get('admin.plugin.pages', ['act' => 'page', 'id' => '%s'], '&', true);
                         if (isset($_GET['patch'])) {
