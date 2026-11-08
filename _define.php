@@ -18,9 +18,9 @@ if (isset($this) && is_object($this) && method_exists($this, 'registerModule') &
         'dcRevisions',
         'Allows entries versionning',
         'Tomtom, Franck Paul & contributors',
-        '9.0',
+        '10.0',
         [
-            'date'        => '2026-08-03T09:50:54+0200',
+            'date'        => '2026-11-08T10:13:46+0100',
             'requires'    => [['core', '2.40']],
             'permissions' => 'My',
             'type'        => 'plugin',
